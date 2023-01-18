@@ -1,0 +1,22 @@
+{
+  "base": {
+    "userRole": 2
+  },
+  "graphs": {
+    "available": [
+      "Ping",
+      "Status",
+      "AggregateTraffic",
+      "ProcessorsLoad",
+      "PollerDuration"
+    ]
+  },
+  "easyDCIM": {
+    "backendPath": "/backend/",
+    "racksPath": "/backend/racks/",
+    "locationPath": "/backend/locations/",
+    "orderPath": "/backend/orders/",
+    "serverPath": "/backend/devices/",
+    "endPath": "/summary"
+  }
+}

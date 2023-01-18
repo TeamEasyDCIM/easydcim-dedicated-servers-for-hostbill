@@ -1,0 +1,16 @@
+Array
+(
+    [11_2] => Array
+        (
+            [value] => 1146
+            [qty] => 1
+            [value_name] => 4|8
+            [config_cat] => 174
+            [cat_name] => CPU: GenuineIntel: Intel(R) Pentium(R) 4 CPU 3.00GHz
+            [config_id] => 1146
+            [variable_id] => 4|8
+            [default] => 
+            [type] => searchselect
+        )
+
+)

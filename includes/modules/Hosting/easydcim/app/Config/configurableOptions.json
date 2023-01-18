@@ -1,0 +1,216 @@
+[
+    {
+        "id": "9",
+        "type": "searchselect",
+        "required": "0",
+        "name": "Disk Layout",
+        "key": "",
+        "variable": "disk_layout",
+        "description": "",
+        "category": "",
+        "product_id": "18",
+        "copy_of": "9",
+        "options": "50",
+        "config": {
+            "upgradefee": "0.00",
+            "downgradefee": "0.00",
+            "conditionals": []
+        },
+        "sort_order": "1",
+        "group_id": "0",
+        "ftype": "searchselect",
+        "premade": true,
+        "items": [
+            {
+                "id": "13",
+                "category_id": "9",
+                "name": "test",
+                "variable_id": "test",
+                "sort_order": "1",
+                "copy_of": "13"
+            }
+        ]
+    },
+    {
+        "id": "10",
+        "type": "searchselect",
+        "required": "0",
+        "name": "Extras",
+        "key": "",
+        "variable": "extras",
+        "description": "",
+        "category": "",
+        "product_id": "18",
+        "copy_of": "10",
+        "options": "50",
+        "config": {
+            "upgradefee": "0.00",
+            "downgradefee": "0.00",
+            "conditionals": []
+        },
+        "sort_order": "2",
+        "group_id": "0",
+        "ftype": "searchselect",
+        "premade": true,
+        "items": [
+            {
+                "id": "14",
+                "category_id": "10",
+                "name": "test",
+                "copy_of": "14"
+            }
+        ]
+    },
+    {
+        "id": "11",
+        "type": "searchselect",
+        "required": "0",
+        "name": "Model",
+        "key": "",
+        "variable": "model",
+        "description": "",
+        "category": "",
+        "product_id": "18",
+        "copy_of": "11",
+        "options": "50",
+        "config": {
+            "upgradefee": "0.00",
+            "downgradefee": "0.00",
+            "conditionals": []
+        },
+        "sort_order": "3",
+        "group_id": "0",
+        "ftype": "searchselect",
+        "premade": true,
+        "items": [
+            {
+                "id": "15",
+                "category_id": "11",
+                "name": "test",
+                "copy_of": "15"
+            }
+        ]
+    },
+    {
+        "id": "12",
+        "type": "searchselect",
+        "required": "0",
+        "name": "Location",
+        "key": "",
+        "variable": "location",
+        "description": "",
+        "category": "",
+        "product_id": "18",
+        "copy_of": "12",
+        "options": "50",
+        "config": {
+            "upgradefee": "0.00",
+            "downgradefee": "0.00",
+            "conditionals": []
+        },
+        "sort_order": "4",
+        "group_id": "0",
+        "ftype": "searchselect",
+        "premade": true,
+        "items": [
+            {
+                "id": "16",
+                "category_id": "12",
+                "name": "test",
+                "copy_of": "16"
+            }
+        ]
+    },
+    {
+        "id": "13",
+        "type": "searchselect",
+        "required": "0",
+        "name": "OS Template",
+        "key": "",
+        "variable": "osTemplate",
+        "description": "",
+        "category": "",
+        "product_id": "18",
+        "copy_of": "13",
+        "options": "50",
+        "config": {
+            "upgradefee": "0.00",
+            "downgradefee": "0.00",
+            "conditionals": []
+        },
+        "sort_order": "5",
+        "group_id": "0",
+        "ftype": "searchselect",
+        "premade": true,
+        "items": [
+            {
+                "id": "17",
+                "category_id": "13",
+                "name": "test",
+                "copy_of": "17"
+            }
+        ]
+    },
+    {
+        "id": "14",
+        "type": "qty",
+        "required": "0",
+        "name": "Number of additional IP addresses",
+        "key": "",
+        "variable": "numberOfAdditionalIpAddresses",
+        "description": "",
+        "category": "",
+        "product_id": "18",
+        "copy_of": "14",
+        "options": "50",
+        "config": {
+            "minvalue": "0",
+            "maxvalue": "",
+            "upgradefee": "0.00",
+            "downgradefee": "0.00",
+            "conditionals": []
+        },
+        "sort_order": "6",
+        "group_id": "0",
+        "ftype": "qty",
+        "premade": true,
+        "items": [
+            {
+                "id": "18",
+                "category_id": "14",
+                "copy_of": "18"
+            }
+        ]
+    },
+    {
+        "id": "15",
+        "type": "qty",
+        "required": "0",
+        "name": " Bandwidth",
+        "key": "",
+        "variable": "bandwidth",
+        "description": "",
+        "category": "",
+        "product_id": "18",
+        "copy_of": "14",
+        "options": "50",
+        "config": {
+            "minvalue": "0",
+            "maxvalue": "",
+            "upgradefee": "0.00",
+            "downgradefee": "0.00",
+            "conditionals": []
+        },
+        "sort_order": "6",
+        "group_id": "0",
+        "ftype": "qty",
+        "premade": true,
+        "items": [
+            {
+                "id": "18",
+                "category_id": "14",
+                "copy_of": "18"
+            }
+        ]
+    }
+]

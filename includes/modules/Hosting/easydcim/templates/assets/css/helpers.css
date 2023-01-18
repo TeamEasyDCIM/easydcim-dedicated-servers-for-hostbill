@@ -1,0 +1,144 @@
+/* 10px padding and margins */
+.pad {
+    padding: 10px;
+}
+.margin {
+    margin: 10px;
+}
+/* Display inline */
+.inline {
+    display: inline;
+    width: auto;
+}
+/* Background colors */
+.bg-red,
+.bg-yellow,
+.bg-aqua,
+.bg-blue,
+.bg-light-blue,
+.bg-green,
+.bg-navy,
+.bg-teal,
+.bg-olive,
+.bg-lime,
+.bg-orange,
+.bg-fuchsia,
+.bg-purple,
+.bg-maroon,
+.bg-black {
+    color: #f9f9f9 !important;
+}
+.bg-gray {
+    background-color: #eaeaec !important;
+}
+.bg-black {
+    background-color: #222222 !important;
+}
+.bg-red {
+    background-color: #f55656 !important;
+}
+.bg-yellow {
+    background-color: #ff8f33 !important;
+}
+.bg-aqua {
+    background-color: #2ba7ff !important;
+}
+.bg-blue {
+    background-color: #0073b7 !important;
+}
+.bg-light-blue {
+    background-color: #2ba7ff !important;
+}
+.bg-green {
+    background-color: #62c45e !important;
+}
+.bg-navy {
+    background-color: #001f3f !important;
+}
+.bg-teal {
+    background-color: #39cccc !important;
+}
+.bg-olive {
+    background-color: #3d9970 !important;
+}
+.bg-lime {
+    background-color: #01ff70 !important;
+}
+.bg-orange {
+    background-color: #ff851b !important;
+}
+.bg-fuchsia {
+    background-color: #f012be !important;
+}
+.bg-purple {
+    background-color: #932ab6 !important;
+}
+.bg-maroon {
+    background-color: #85144b !important;
+}
+
+.text-red {
+    color: #f55656 !important;
+}
+.text-black {
+    color: #000 !important;
+}
+.text-yellow {
+    color: #ff8f33 !important;
+}
+.text-aqua {
+    color: #2ba7ff !important;
+}
+.text-blue {
+    color: #0073b7 !important;
+}
+.text-light-blue {
+    color: #2ba7ff !important;
+}
+.text-green {
+    color: #62c45e !important;
+}
+.text-navy {
+    color: #001f3f !important;
+}
+.text-teal {
+    color: #39cccc !important;
+}
+.text-olive {
+    color: #3d9970 !important;
+}
+.text-lime {
+    color: #01ff70 !important;
+}
+.text-orange {
+    color: #ff851b !important;
+}
+.text-fuchsia {
+    color: #f012be !important;
+}
+.text-purple {
+    color: #932ab6 !important;
+}
+.text-maroon {
+    color: #85144b !important;
+}
+/*Hide elements by display none only*/
+.hide {
+    display: none !important;
+}
+/* Remove borders */
+.no-border {
+    border: 0px !important;
+}
+/* Remove padding */
+.no-padding {
+    padding: 0px !important;
+}
+/* Remove margins */
+.no-margin {
+    margin: 0px !important;
+}
+/* Remove box shadow */
+.no-shadow {
+    box-shadow: none!important;
+}
