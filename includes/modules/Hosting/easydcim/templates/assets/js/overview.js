@@ -82,6 +82,9 @@ function changeHostname(e)
             div.append('<div class="alert alert-info">\n' +
                 '<a class="close">×</a>\n' +
                 ''+message+'<br></div>')
+            pntf_opts.text = message;
+            pntf_opts.type = 'info';
+            new PNotify(pntf_opts);
         },
         error: function(data) {
             let error = JSON.parse(data.responseText).data.error;
@@ -91,6 +94,9 @@ function changeHostname(e)
             div.append('<div class="alert alert-error">\n' +
                 '<a class="close">×</a>\n' +
                 ''+error+'<br></div>')
+            pntf_opts.text = error;
+            pntf_opts.type = 'error';
+            new PNotify(pntf_opts);
         }
     });
 }
