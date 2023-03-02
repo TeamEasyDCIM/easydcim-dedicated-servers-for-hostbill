@@ -9,14 +9,9 @@ $(document).ready(function (e) {
     let currentInstaltionStatus = instalationStatus;
     setInterval(function(a){
         let url = window.location.href;
-        let data = {
-            "ajax": "1",
-            "reloadRebuild": "1"
-        }
         $.ajax({
             type: "GET",
-            url: url,
-            data: data,
+            url: url + '&ajax=1&reloadRebuild=1',
             success: function(data){
                 currentInstaltionStatus = JSON.parse(data).data.installationStatus
                 if (currentInstaltionStatus != a)
@@ -50,17 +45,11 @@ function rebuild()
     let form = $('#rebuildForm');
     let serializeData = getFormData(form);
     let url = window.location.href;
-    let data = {
-        "ajax": "1",
-        "rebuild": "1",
-        "formdata": serializeData,
-    }
     closeModal();
 
     $.ajax({
         type: "GET",
-        url: url,
-        data: data,
+        url: url + '&ajax=1&rebuild=1&formdata='+serializeData,
         success: function(data){
             let message = JSON.parse(data).data.message;
             let div = $('#infos');
@@ -125,15 +114,10 @@ function generateCIModal(e,installationInformation)
 function cancelInstalation()
 {
     let url = window.location.href;
-    let data = {
-        "ajax": "1",
-        "cancelInstallation": "1",
-    }
     closeModal();
     $.ajax({
         type: "GET",
-        url: url,
-        data: data,
+        url: url + '&ajax=1&cancelInstallation=1',
         success: function(data){
             let message = JSON.parse(data).data.message;
             let div = $('#infos');

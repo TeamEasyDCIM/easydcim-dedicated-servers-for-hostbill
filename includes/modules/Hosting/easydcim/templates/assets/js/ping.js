@@ -3,11 +3,7 @@ $(document).ready(function () {
     let url = window.location.href;
     $.ajax({
         type: "GET",
-        url: url,
-        data: {
-            graphs : 'Ping',
-            interval: 'td'
-        },
+        url: url + '&graphs=Ping&interval=td',
         success: function (data) {
             let graphData
             if (data != '')
@@ -132,11 +128,7 @@ $(document).ready(function () {
         let url = window.location.href;
         $.ajax({
             type: "GET",
-            url: url,
-            data: {
-                graphs : 'Ping',
-                interval: option
-            },
+            url: url + '&graphs=Ping&interval='+option,
             success: function (data) {
                 let graphData
                 if (data != '')

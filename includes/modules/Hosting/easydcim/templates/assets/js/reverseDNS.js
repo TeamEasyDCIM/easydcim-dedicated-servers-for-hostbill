@@ -1,10 +1,10 @@
 $(document).ready(function (e) {
-   $('#ipAddressesTable').DataTable({
-       lengthChange: false,
-       ordering: false,
-       searching: false,
-       info:false
-   });
+    $('#ipAddressesTable').DataTable({
+        lengthChange: false,
+        ordering: false,
+        searching: false,
+        info:false
+    });
 
     $('#reverseDNS').DataTable({
         lengthChange: false,
@@ -170,11 +170,6 @@ function reverseDNS()
     let form = $('#reverseDNSForm');
     let serializeData = getFormData(form);
     let url = window.location.href;
-    let data = {
-        "ajax": "1",
-        "reverseDNS": "1",
-        "formdata": serializeData,
-    }
     let errorStatus = validate();
     if (errorStatus === true)
     {
@@ -184,8 +179,7 @@ function reverseDNS()
 
     $.ajax({
         type: "GET",
-        url: url,
-        data: data,
+        url: url + '&ajax=1&reverseDNS=1&formdata='+serializeData,
         success: function(data){
             // location.reload();
             let message = JSON.parse(data).data.message;
@@ -318,16 +312,10 @@ function editDNS()
     let form = $('#editForm');
     let serializeData = getFormData(form);
     let url = window.location.href;
-    let data = {
-        "ajax": "1",
-        "editDNS": "1",
-        "formdata": serializeData,
-    }
 
     $.ajax({
         type: "GET",
-        url: url,
-        data: data,
+        url: url + '&ajax=1&editDNS=1&formdata='+serializeData,
         success: function(data){
             // location.reload();
             let message = JSON.parse(data).data.message;
@@ -364,16 +352,10 @@ function deleteDNS()
     let form = $('#deleteForm');
     let serializeData = getFormData(form);
     let url = window.location.href;
-    let data = {
-        "ajax": "1",
-        "deleteDNS": "1",
-        "formdata": serializeData,
-    }
 
     $.ajax({
         type: "GET",
-        url: url,
-        data: data,
+        url: url + '&ajax=1&deleteDNS=1&formdata='+serializeData,
         success: function(data){
             // location.reload();
             let message = JSON.parse(data).data.message;

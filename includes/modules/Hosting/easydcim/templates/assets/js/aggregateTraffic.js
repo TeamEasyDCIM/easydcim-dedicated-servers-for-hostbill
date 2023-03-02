@@ -3,11 +3,7 @@ $(document).ready(function () {
     let url = window.location.href;
     $.ajax({
         type: "GET",
-        url: url,
-        data: {
-            graphs : 'AggregateTraffic',
-            interval: 'td'
-        },
+        url: url + '&graphs=AggregateTraffic&interval=td',
         success: function (data) {
             let graphData
             if (data != '')
@@ -32,33 +28,33 @@ $(document).ready(function () {
             const dataForGraph = {
                 labels: labels,
                 datasets: [
-                {
-                    backgroundColor: '#62C45E',
-                    borderColor: '#62C45E',
-                    spanGaps: true,
-                    borderWidth: 1.3,
-                    label: 'Traffic IN (GB)',
-                    fill: true,
-                    data: dataSet1,
-                },
-                {
-                    backgroundColor: '#2BA7FF',
-                    borderColor: '#2BA7FF',
-                    spanGaps: true,
-                    borderWidth: 1.3,
-                    label: 'Traffic OUT (GB)',
-                    fill: true,
-                    data: dataSet2,
-                },
-                {
-                    backgroundColor: '#0C6174',
-                    borderColor: '#0C6174',
-                    spanGaps: true,
-                    borderWidth: 1.3,
-                    label: 'Traffic IN & OUT (GB)',
-                    fill: true,
-                    data:dataSet3,
-                }]
+                    {
+                        backgroundColor: '#62C45E',
+                        borderColor: '#62C45E',
+                        spanGaps: true,
+                        borderWidth: 1.3,
+                        label: 'Traffic IN (GB)',
+                        fill: true,
+                        data: dataSet1,
+                    },
+                    {
+                        backgroundColor: '#2BA7FF',
+                        borderColor: '#2BA7FF',
+                        spanGaps: true,
+                        borderWidth: 1.3,
+                        label: 'Traffic OUT (GB)',
+                        fill: true,
+                        data: dataSet2,
+                    },
+                    {
+                        backgroundColor: '#0C6174',
+                        borderColor: '#0C6174',
+                        spanGaps: true,
+                        borderWidth: 1.3,
+                        label: 'Traffic IN & OUT (GB)',
+                        fill: true,
+                        data:dataSet3,
+                    }]
             };
 
             const config = {
@@ -154,11 +150,7 @@ $(document).ready(function () {
         let url = window.location.href;
         $.ajax({
             type: "GET",
-            url: url,
-            data: {
-                graphs : 'AggregateTraffic',
-                interval: option
-            },
+            url: url + '&graphs=AggregateTraffic&interval='+option,
             success: function (data) {
                 let graphData
                 if (data != '')

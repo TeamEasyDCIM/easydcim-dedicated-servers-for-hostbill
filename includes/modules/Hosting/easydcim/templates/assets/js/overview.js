@@ -63,17 +63,11 @@ function changeHostname(e)
     let form = $('#changeHostname');
     let serializeData = getFormData(form);
     let url = window.location.href;
-    let data = {
-        "ajax": "1",
-        "changeHostname": "1",
-        "formdata": serializeData,
-    }
     closeModal()
 
     $.ajax({
         type: "GET",
-        url: url,
-        data: data,
+        url: url + '&ajax=1&changeHostname=1&formdata='+serializeData,
         success: function(data){
             let message = JSON.parse(data).data.message;
             let div = $('#infos');

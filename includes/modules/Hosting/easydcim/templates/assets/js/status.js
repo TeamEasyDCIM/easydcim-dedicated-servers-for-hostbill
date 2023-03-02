@@ -3,11 +3,7 @@ $(document).ready(function () {
     let url = window.location.href;
     $.ajax({
         type: "GET",
-        url: url,
-        data: {
-            graphs : 'Status',
-            interval: 'td'
-        },
+        url: url + '&graphs=Status&interval=td',
         success: function (data) {
             let graphData
             if (data != '')
@@ -125,11 +121,7 @@ $(document).ready(function () {
         let url = window.location.href;
         $.ajax({
             type: "GET",
-            url: url,
-            data: {
-                graphs : 'Status',
-                interval: option
-            },
+            url: url + '&graphs=Status&interval='+option,
             success: function (data) {
                 let graphData
                 if (data != '')
