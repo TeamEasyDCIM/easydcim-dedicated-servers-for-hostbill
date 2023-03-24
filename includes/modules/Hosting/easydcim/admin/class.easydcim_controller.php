@@ -63,7 +63,7 @@ class easydcim_controller extends HBController
             }
             if (isset($_GET['createConfigurableOptionsForParts']))
             {
-                $this->createConfigurableOptionsForParts($_GET['configurableOptionPartType'],$_GET['configurableOptionPartModel'],$_GET['configurableOptionPartTypeName'],$_GET['configurableOptionPartModelName']);
+                $this->createConfigurableOptionsForParts($params['id'],$_GET['configurableOptionPartType'],$_GET['configurableOptionPartModel'],$_GET['configurableOptionPartTypeName'],$_GET['configurableOptionPartModelName']);
             }
             if (isset($_GET['partType']))
             {
@@ -289,7 +289,7 @@ class easydcim_controller extends HBController
         self::jsonEncode(['success'=>"Configurable Options Created Successfully"]);
     }
 
-    protected function createConfigurableOptionsForParts($type,$model,$typeName,$modelName)
+    protected function createConfigurableOptionsForParts($productId,$type,$model,$typeName,$modelName)
     {
         switch ($type)
         {
@@ -371,7 +371,7 @@ class easydcim_controller extends HBController
         }
         $config[] = $this->prepareArrayForConfigOptionPart($typeName.': '.$modelName,$type.'_'.$model,$items);
         $c = HBLoader::LoadModel("ConfigFields");
-        $c->importJson(18,json_encode($config));
+        $c->importJson($productId,json_encode($config));
         self::jsonEncode(['success'=>"Configurable Part Option Created Successfully"]);
     }
 
