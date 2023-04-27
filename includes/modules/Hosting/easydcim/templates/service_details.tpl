@@ -427,6 +427,84 @@
                                 </div>
                             </div>
                             <div class="lu-row">
+                                <div  class="lu-col-md-12">
+                                    <div class="lu-widget widgetActionComponent vueDatatableTable">
+                                        <div class="lu-widget__header"><div class="lu-widget__top lu-top">
+                                                <div class="lu-top__title">
+                                                    {$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableTitle}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="lu-widget__body">
+                                            <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
+                                                <div class="dataTables_wrapper no-footer">
+                                                    <div>
+                                                        <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
+                                                            <tbody>
+                                                            {if $configuration.Status == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>
+                                                                    <td>{$rawObject->generalInformation->getStatus()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.OrderId == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.orderID}</td>
+                                                                    <td>{$rawObject->generalInformation->getOrderID()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.ServiceStatus == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serviceStatus}</td>
+                                                                    <td {if $rawObject->generalInformation->getServiceStatus() == 'Activated'} class="lu-text-success" {else} class="lu-text-danger" {/if}>{$rawObject->generalInformation->getServiceStatus()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.Model == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.model}</td>
+                                                                    <td>{$rawObject->generalInformation->getModel()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.SerialNumber == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serialNumber}</td>
+                                                                    <td>{$rawObject->generalInformation->getSerialNumber()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.PurchaseDate == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.purchaseDate}</td>
+                                                                    <td>{$rawObject->generalInformation->getPurchaseDate()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.WarrantyMonths == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.warrantyMonths}</td>
+                                                                    <td>{$rawObject->generalInformation->getWarrantyMonths()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            </tbody>
+                                                        </table>
+                                                        <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
+                                                            <div class="lu-preloader lu-preloader--sm">
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lu-row">
                                 <div class="lu-col-md-12">
                                     <div class="lu-widget widgetActionComponent vueDatatableTable">
                                         <div class="lu-widget__header"><div class="lu-widget__top lu-top">
@@ -943,84 +1021,84 @@
                                 </div>
                             </div>
                         </div>
-                        {*                    <div class="lu-row">*}
-                        {*                        <div  class="lu-col-md-12">*}
-                        {*                            <div class="lu-widget widgetActionComponent vueDatatableTable">*}
-                        {*                                <div class="lu-widget__header"><div class="lu-widget__top lu-top">*}
-                        {*                                        <div class="lu-top__title">*}
-                        {*                                            {$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableTitle}*}
-                        {*                                        </div>*}
-                        {*                                    </div>*}
-                        {*                                </div>*}
-                        {*                                <div class="lu-widget__body">*}
-                        {*                                    <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">*}
-                        {*                                        <div class="dataTables_wrapper no-footer">*}
-                        {*                                            <div>*}
-                        {*                                                <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">*}
-                        {*                                                    <tbody>*}
-                        {*                                                    {if $configuration.Status == 'on'}*}
-                        {*                                                        <tr role="row">*}
-                        {*                                                            <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>*}
-                        {*                                                            <td>{$rawObject->generalInformation->getStatus()}</td>*}
-                        {*                                                        </tr>*}
-                        {*                                                    {/if}*}
+                        <div class="lu-row">
+                            <div  class="lu-col-md-12">
+                                <div class="lu-widget widgetActionComponent vueDatatableTable">
+                                    <div class="lu-widget__header"><div class="lu-widget__top lu-top">
+                                            <div class="lu-top__title">
+                                                {$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableTitle}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="lu-widget__body">
+                                        <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
+                                            <div class="dataTables_wrapper no-footer">
+                                                <div>
+                                                    <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
+                                                        <tbody>
+                                                        {if $configuration.Status == 'on'}
+                                                            <tr role="row">
+                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>
+                                                                <td>{$rawObject->generalInformation->getStatus()}</td>
+                                                            </tr>
+                                                        {/if}
 
-                        {*                                                    {if $configuration.OrderId == 'on'}*}
-                        {*                                                        <tr role="row">*}
-                        {*                                                            <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.orderID}</td>*}
-                        {*                                                            <td>{$rawObject->generalInformation->getOrderID()}</td>*}
-                        {*                                                        </tr>*}
-                        {*                                                    {/if}*}
+                                                        {if $configuration.OrderId == 'on'}
+                                                            <tr role="row">
+                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.orderID}</td>
+                                                                <td>{$rawObject->generalInformation->getOrderID()}</td>
+                                                            </tr>
+                                                        {/if}
 
-                        {*                                                    {if $configuration.ServiceStatus == 'on'}*}
-                        {*                                                        <tr role="row">*}
-                        {*                                                            <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serviceStatus}</td>*}
-                        {*                                                            <td {if $rawObject->generalInformation->getServiceStatus() == 'Activated'} class="lu-text-success" {else} class="lu-text-danger" {/if}>{$rawObject->generalInformation->getServiceStatus()}</td>*}
-                        {*                                                        </tr>*}
-                        {*                                                    {/if}*}
+                                                        {if $configuration.ServiceStatus == 'on'}
+                                                            <tr role="row">
+                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serviceStatus}</td>
+                                                                <td {if $rawObject->generalInformation->getServiceStatus() == 'Activated'} class="lu-text-success" {else} class="lu-text-danger" {/if}>{$rawObject->generalInformation->getServiceStatus()}</td>
+                                                            </tr>
+                                                        {/if}
 
-                        {*                                                    {if $configuration.Model == 'on'}*}
-                        {*                                                        <tr role="row">*}
-                        {*                                                            <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.model}</td>*}
-                        {*                                                            <td>{$rawObject->generalInformation->getModel()}</td>*}
-                        {*                                                        </tr>*}
-                        {*                                                    {/if}*}
+                                                        {if $configuration.Model == 'on'}
+                                                            <tr role="row">
+                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.model}</td>
+                                                                <td>{$rawObject->generalInformation->getModel()}</td>
+                                                            </tr>
+                                                        {/if}
 
-                        {*                                                    {if $configuration.SerialNumber == 'on'}*}
-                        {*                                                        <tr role="row">*}
-                        {*                                                            <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serialNumber}</td>*}
-                        {*                                                            <td>{$rawObject->generalInformation->getSerialNumber()}</td>*}
-                        {*                                                        </tr>*}
-                        {*                                                    {/if}*}
+                                                        {if $configuration.SerialNumber == 'on'}
+                                                            <tr role="row">
+                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serialNumber}</td>
+                                                                <td>{$rawObject->generalInformation->getSerialNumber()}</td>
+                                                            </tr>
+                                                        {/if}
 
-                        {*                                                    {if $configuration.PurchaseDate == 'on'}*}
-                        {*                                                        <tr role="row">*}
-                        {*                                                            <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.purchaseDate}</td>*}
-                        {*                                                            <td>{$rawObject->generalInformation->getPurchaseDate()}</td>*}
-                        {*                                                        </tr>*}
-                        {*                                                    {/if}*}
+                                                        {if $configuration.PurchaseDate == 'on'}
+                                                            <tr role="row">
+                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.purchaseDate}</td>
+                                                                <td>{$rawObject->generalInformation->getPurchaseDate()}</td>
+                                                            </tr>
+                                                        {/if}
 
-                        {*                                                    {if $configuration.WarrantyMonths == 'on'}*}
-                        {*                                                        <tr role="row">*}
-                        {*                                                            <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.warrantyMonths}</td>*}
-                        {*                                                            <td>{$rawObject->generalInformation->getWarrantyMonths()}</td>*}
-                        {*                                                        </tr>*}
-                        {*                                                    {/if}*}
+                                                        {if $configuration.WarrantyMonths == 'on'}
+                                                            <tr role="row">
+                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.warrantyMonths}</td>
+                                                                <td>{$rawObject->generalInformation->getWarrantyMonths()}</td>
+                                                            </tr>
+                                                        {/if}
 
-                        {*                                                    </tbody>*}
-                        {*                                                </table>*}
-                        {*                                                <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">*}
-                        {*                                                    <div class="lu-preloader lu-preloader--sm">*}
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
+                                                        <div class="lu-preloader lu-preloader--sm">
 
-                        {*                                                    </div>*}
-                        {*                                                </div>*}
-                        {*                                            </div>*}
-                        {*                                        </div>*}
-                        {*                                    </div>*}
-                        {*                                </div>*}
-                        {*                            </div>*}
-                        {*                        </div>*}
-                        {*                    </div>*}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="lu-row">
                             <div class="lu-col-md-12">
                                 <div class="lu-widget widgetActionComponent vueDatatableTable">

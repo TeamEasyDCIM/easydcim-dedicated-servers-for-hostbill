@@ -179,7 +179,7 @@ function reverseDNS()
 
     $.ajax({
         type: "GET",
-        url: url + '&ajax=1&reverseDNS=1&formdata='+serializeData,
+        url: url + '&ajax=1&reverseDNS=1&' + $.param({formdata: serializeData}),
         success: function(data){
             // location.reload();
             let message = JSON.parse(data).data.message;
@@ -315,7 +315,7 @@ function editDNS()
 
     $.ajax({
         type: "GET",
-        url: url + '&ajax=1&editDNS=1&formdata='+serializeData,
+        url: url + '&ajax=1&editDNS=1&' + $.param({formdata: serializeData}),
         success: function(data){
             // location.reload();
             let message = JSON.parse(data).data.message;
@@ -355,7 +355,7 @@ function deleteDNS()
 
     $.ajax({
         type: "GET",
-        url: url + '&ajax=1&deleteDNS=1&formdata='+serializeData,
+        url: url + '&ajax=1&deleteDNS=1&' + $.param({formdata: serializeData}),
         success: function(data){
             // location.reload();
             let message = JSON.parse(data).data.message;

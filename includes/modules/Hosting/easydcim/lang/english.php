@@ -492,6 +492,47 @@ $lang['serverAA']['servicePageIntegration']['button']['settingButton'] = 'Scope'
 
 $lang['serverAA']['servicePageIntegration']['mainContainer']['bandwidthTable']['interval']['interval'] = 'Interval';
 
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['isoImagesTable'] = 'ISO Images';
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['table']['Id'] = 'Id';
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['table']['name'] = 'Name';
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['table']['iso_url'] = 'ISO URL';
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['table']['remote_agent'] = 'Remote Agents';
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['table']['users'] = 'Users';
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['table']['avaibility'] = 'Availability';
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['table']['status'] = 'Status';
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['createButton']['button']['createButton'] = 'Add ISO Image';
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['updateButton']['button']['updateButton'] = 'Update';
+$lang['serverCA']['isoImages']['mainContainer']['isoImagesTable']['deleteButton']['button']['deleteButton'] = 'Delete';
+
+$lang['serverCA']['isoImages']['createModal']['modal']['createModal'] = 'Add ISO Image';
+$lang['serverCA']['isoImages']['createModal']['baseAcceptButton']['title'] = 'Confirm';
+$lang['serverCA']['isoImages']['createModal']['baseCancelButton']['title'] = 'Cancel';
+$lang['serverCA']['isoImages']['createModal']['createForm']['name']['name'] = 'Name';
+$lang['serverCA']['isoImages']['createModal']['createForm']['iso_url']['iso_url'] = 'ISO URL';
+$lang['serverCA']['isoImages']['createModal']['createForm']['message'] = 'ISO images are used to manually install the operating system. If you want to use an ISO image, you cannot perform an automatic OS installation within EasyDCIM. Available ISO images are accessible when a noVNC session is used. The images will be automatically mounted when creating a noVNC session in the “/home/iso” directory.';
+
+
+$lang['serverCA']['isoImages']['updateModal']['modal']['updateModal'] = 'Update ISO Image';
+$lang['serverCA']['isoImages']['updateModal']['baseAcceptButton']['title'] = 'Confirm';
+$lang['serverCA']['isoImages']['updateModal']['baseCancelButton']['title'] = 'Cancel';
+$lang['serverCA']['isoImages']['updateModal']['editForm']['name']['name'] = 'Name';
+$lang['serverCA']['isoImages']['updateModal']['editForm']['iso_url']['iso_url'] = 'ISO URL';
+
+$lang['serverCA']['isoImages']['deleteModal']['modal']['deleteModal'] = 'Delete ISO Image';
+$lang['serverCA']['isoImages']['deleteModal']['baseAcceptButton']['title'] = 'Delete';
+$lang['serverCA']['isoImages']['deleteModal']['baseCancelButton']['title'] = 'Cancel';
+$lang['serverCA']['isoImages']['deleteModal']['deleteForm']['confirmDelete'] = 'Are you sure that you want to delete this ISO Image?';
+
+$lang['serverCA']['isoImages']['Finished'] = 'Finished';
+$lang['serverCA']['isoImages']['Started'] = 'Started';
+$lang['serverCA']['isoImages']['Waiting'] = 'Waiting';
+$lang['serverCA']['isoImages']['Error'] = 'Error';
+
+$lang['serverCA']['isoImages']['Downloading is finished'] = 'The ISO image has been downloaded';
+$lang['serverCA']['isoImages']['Error ocured during downloading'] = 'An error occurred while downloading the ISO image';
+$lang['serverCA']['isoImages']['Waiting for downloading to start'] = 'The ISO image is awaiting the download to begin';
+
+
 $lang['addonAA']['breadcrumbs']['Home'] = '';
 $lang['region']['asia-east1'] = 'asia-east1 (Taiwan)';
 $lang['region']['asia-east2'] = 'asia-east2 (Hong Kong)';
