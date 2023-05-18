@@ -8,6 +8,11 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Os\IsoImagesRecord
 
 class IsoImages
 {
+    public const STATUS_SUCCESS = 'lu-label--success';
+    public const STATUS_DANGER = 'lu-label--danger';
+    public const STATUS_WARNING = 'lu-label--warning';
+    public const STATUS_DEFAULT = 'lu-label--default';
+
     /**
      * @var EasyDCIM
      */
@@ -34,6 +39,27 @@ class IsoImages
     {
         foreach ($this->api->os->getIsoImagesForDevice($this->client->getEasyServerID()) as $isoImage)
         {
+            $progress = 0;
+            $isoData = unserialize($isoImage->data);
+            $status = self::$statusMap[$isoImage->status];
+            switch ($status)
+            {
+                case 'Finished':
+                    $colorStatus = self::STATUS_SUCCESS;
+                    break;
+                case 'Started':
+                    $colorStatus = self::STATUS_WARNING;
+                    $progress = intval($isoData['downloadedBytes']/$isoData['downloadTotal']*100);
+                    break;
+                case 'Error':
+                    $colorStatus = self::STATUS_DANGER;
+                    break;
+                default:
+                    $status = 'Waiting';
+                    $colorStatus = self::STATUS_DEFAULT;
+                    break;
+            }
+
             $data[] = [
                 'id' => base64_encode(json_encode([
                     'id'=>$isoImage->id,
@@ -43,8 +69,10 @@ class IsoImages
                 'Id' => $isoImage->id,
                 'name' => $isoImage->name,
                 'iso_url' => $isoImage->iso_url,
-                'status' => self::$statusMap[$isoImage->status],
-                'data' => $isoImage->data,
+                'status' => $status,
+                'data' => $isoData,
+                'colorStatus' => $colorStatus,
+                'progress' => $progress,
             ];
         }
 

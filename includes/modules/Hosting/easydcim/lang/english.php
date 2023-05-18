@@ -528,9 +528,9 @@ $lang['serverCA']['isoImages']['Started'] = 'Started';
 $lang['serverCA']['isoImages']['Waiting'] = 'Waiting';
 $lang['serverCA']['isoImages']['Error'] = 'Error';
 
-$lang['serverCA']['isoImages']['Downloading is finished'] = 'The ISO image has been downloaded';
-$lang['serverCA']['isoImages']['Error ocured during downloading'] = 'An error occurred while downloading the ISO image';
-$lang['serverCA']['isoImages']['Waiting for downloading to start'] = 'The ISO image is awaiting the download to begin';
+$lang['serverCA']['isoImages']['Downloadingisfinished'] = 'The ISO image has been downloaded';
+$lang['serverCA']['isoImages']['Errorocuredduringdownloading'] = 'An error occurred while downloading the ISO image';
+$lang['serverCA']['isoImages']['Waitingfordownloadingtostart'] = 'The ISO image is awaiting the download to begin';
 
 
 $lang['addonAA']['breadcrumbs']['Home'] = '';

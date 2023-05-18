@@ -57,7 +57,37 @@
                                                 {$i.iso_url}
                                             </td>
                                             <td>
-                                                {$i.status}
+                                                {if $i.status eq 'Finished'}
+                                                    <span class="lu-label lu-label--status {$i.colorStatus} lu-tooltip drop-target
+                                                drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center"
+                                                          data-toggle="lu-tooltip" data-title="The ISO image has been downloaded"
+                                                          style="margin-left: 0px; margin-right: 10px; margin-bottom: 5px;">{$i.status}
+                                                    <span class="tooltiptext">{$lang.serverCA.isoImages.Downloadingisfinished}</span></span>
+                                                {elseif $i.status eq 'Error'}
+                                                    <span class="lu-label lu-label--status {$i.colorStatus} lu-tooltip drop-target
+                                                drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center"
+                                                          data-toggle="lu-tooltip" data-title="The ISO image has been downloaded"
+                                                          style="margin-left: 0px; margin-right: 10px; margin-bottom: 5px;">{$i.status}
+                                                    <span class="tooltiptext">Error: {$i.data.message}</span></span>
+                                                {elseif $i.status eq 'Started'}
+                                                    <span class="lu-label lu-label--status {$i.colorStatus} lu-tooltip drop-target
+                                                drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center"
+                                                          data-toggle="lu-tooltip" data-title="The ISO image has been downloaded"
+                                                          style="margin-left: 0px; margin-right: 10px; margin-bottom: 5px;">{$i.status}
+                                                    <span class="tooltiptext"><div style="padding:5px ">
+                                                        <div class="progress" style="margin-bottom:0px; width: 100%;">
+                                                            <div class="progress-bar" role="progressbar" aria-valuenow="{$i.progress}" aria-valuemin="1" aria-valuemax="100" style="width:{$i.progress}% ">
+                                                                {$i.progress}%
+                                                            </div>
+                                                        </div>
+                                                    </div></span></span>
+                                                {else}
+                                                    <span class="lu-label lu-label--status {$i.colorStatus} lu-tooltip drop-target
+                                                drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center"
+                                                          data-toggle="lu-tooltip" data-title="The ISO image has been downloaded"
+                                                          style="margin-left: 0px; margin-right: 10px; margin-bottom: 5px;">{$i.status}
+                                                    <span class="tooltiptext">{$lang.serverCA.isoImages.Waitingfordownloadingtostart}</span></span>
+                                                {/if}
                                             </td>
                                             <td class="lu-cell-actions mgTableActions">
                                                 <a href="javascript:;" onclick="editIsoImageModal('{$i.Id}','{$i.name}','{$i.iso_url}')" data-toggle="lu-tooltip" class="lu-btn lu-btn--sm lu-btn--link lu-btn--icon
