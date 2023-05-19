@@ -13,7 +13,6 @@
             $('.has-spinner').attr("disabled", true);
             $(self).attr('data-btn-text', $(self).text());
             var text = 'Create Configurable Options';
-            console.log($(self).attr('data-load-text'));
             if($(self).attr('data-load-text') != undefined && $(self).attr('data-load-text') != ""){
                 var text = $(self).attr('data-load-text');
             }
@@ -21,8 +20,13 @@
             $(self).addClass('active');
         }
         if (action == 'stop') {
-            $(self).html('<i class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i> <span\n' +
-                '        class="lu-btn__text">Create Configurable Options</span>');
+            if($(self).attr('data-load-text') != undefined && $(self).attr('data-load-text') != ""){
+                $(self).html('<i class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i> <span\n' +
+                    '        class="lu-btn__text">'+$(self).attr('data-load-text')+'</span>');
+            }else{
+                $(self).html('<i class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i> <span\n' +
+                    '        class="lu-btn__text">Create Configurable Options</span>');
+            }
             $(self).removeClass('active');
             $('.has-spinner').attr("disabled", false);
         }

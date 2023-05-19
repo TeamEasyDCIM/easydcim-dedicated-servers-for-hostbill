@@ -28,6 +28,10 @@ class System extends AbstractEasyDCIMAPI
         return $this->api->get()->execut('fields');
     }
 
+    public function showField($fieldId){
+        return $this->api->get()->execut('fields/'.$fieldId);
+    }
+
     /**
      * EasyDCIM System - Get activated modules
      * @documentation https://www.easydcim.com/api/index.html#api-System-Modules

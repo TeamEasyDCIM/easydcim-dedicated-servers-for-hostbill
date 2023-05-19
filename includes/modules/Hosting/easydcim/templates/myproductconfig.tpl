@@ -256,6 +256,32 @@
         <div class="lu-widget__header">
             <div class="lu-widget__top lu-top">
                 <div class="lu-top__title">
+                    {$lang.serverAA.productConfig.mainContainer.configForm.additionalMetadataSection.additionalMetadataSection}
+                </div>
+                <div class="lu-top__toolbar"><a href="javascript:;" onclick="appendMetadataModal(this)" data-load-text="{$lang.serverAA.productConfig.mainContainer.configForm.additionalMetadataSection.addMetadata.button.addMetadata}" class="lu-btn lu-btn--primary"><i
+                                class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i> <span class="lu-btn__text">{$lang.serverAA.productConfig.mainContainer.configForm.additionalMetadataSection.addMetadata.button.addMetadata}</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="lu-widget__body">
+            <div class="lu-widget__content">
+                <div class="lu-alert lu-alert--sm lu-alert--info lu-alert--faded modal-alert-top">
+                    <div class="lu-alert__body">
+                        {$lang.serverAA.configOptions.message}
+                    </div>
+                </div>
+                <div class="lu-row">
+                    <div id="additionalMetadataRow" class="lu-col-md-12 ">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="lu-widget">
+        <div class="lu-widget__header">
+            <div class="lu-widget__top lu-top">
+                <div class="lu-top__title">
                     {$lang.serverAA.productConfig.mainContainer.configForm.clientAreaFeaturesSection.clientAreaFeaturesSection}
                 </div>
             </div>
@@ -908,6 +934,10 @@
                     <a id="second" href="javascript:;" class="lu-btn lu-btn--success has-spinner" onclick="appendConfigurableOptionsPartsModal()">
                         <i class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i>
                         <span class="lu-btn__text">Create Configurable Options For Parts</span>
+                    </a>
+                    <a id="third" href="javascript:;" class="lu-btn lu-btn--success has-spinner" data-load-text="Create Configurable Options Or Custom Fields For Metadata" onclick="appendConfigurableOptionsMetadataModal(this)">
+                        <i class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i>
+                        <span class="lu-btn__text">Create Configurable Options Or Custom Fields For Metadata</span>
                     </a>
                 </div>
             </div>

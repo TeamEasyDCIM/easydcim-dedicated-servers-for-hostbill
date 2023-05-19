@@ -552,3 +552,272 @@ function addConfigurableOptionForPart(e)
     });
 
 }
+
+function appendConfigurableOptionsMetadataModal(e)
+{
+    let btn = $(e);
+    $(btn).buttonLoader('start');
+    let url = window.location.href;
+    let data = {
+        "metadataSelect": 1,
+        "id": getUrlParameter('id')
+    }
+    $.ajax({
+        type: 'GET',
+        url: url,
+        data: data
+    }).then(function (data) {
+        $(btn).buttonLoader('stop');
+        const layers = $('#layers');
+        layers.append('<div id="confirmationConfigurableOptionsModal"  class="lu-modal show lu-modal--md">\n' +
+            '    <div class="lu-modal__dialog">\n' +
+            '        <div id="mgModalContainer" class="lu-modal__content">\n' +
+            '            <div class="lu-modal__top lu-top">\n' +
+            '                <div class="lu-top__title lu-type-6"><span class="lu-text-faded lu-font-weight-normal">\n' +
+            '                        Create Configurable Option For Metadata\n' +
+            '                    </span></div>\n' +
+            '                <div class="lu-top__toolbar">\n' +
+            '                    <button onclick="closeConfigurableOptionsModal()" data-dismiss="lu-modal" aria-label="Close"\n' +
+            '                            class="lu-btn lu-btn--xs lu-btn--default lu-btn--icon lu-btn--link lu-btn--plain closeModal">\n' +
+            '                        <i class="lu-btn__icon lu-zmdi lu-zmdi-close"></i></button>\n' +
+            '                </div>\n' +
+            '            </div>\n' +
+            '            <div class="lu-modal__body">\n' +
+            '                <div class="lu-row">\n' +
+            '                    <div class="lu-col-md-12">\n' +
+            '                        <form id="addConfigurableOptionsMetadataForm">\n' +
+            '                            <div class="lu-form-group">\n' +
+            '                               <label class="lu-form-label">\n' +
+            '                                    Metadata Configurable Option\n' +
+            '                               </label>\n' +
+            '                                <select name="metadataType" class="metadataTypeOption" tabindex="-1">\n' +
+            '                                   <option></option>\n' +
+            '                               </select>\n' +
+            '                           </div>\n' +
+            '                        </form>\n' +
+            '                    </div>\n' +
+            '                </div>\n' +
+            '            </div>\n' +
+            '            <div class="lu-modal__actions">\n' +
+            '                <button onclick="addConfigurableOptionForMetadata(event)" class="lu-btn lu-btn--success">\n' +
+            '                    Create\n' +
+            '                </button>\n' +
+            '                <button onclick="closeConfigurableOptionsModal()" class="lu-btn lu-btn--danger lu-btn--outline lu-btn--plain closeModal">\n' +
+            '                    Cancel\n' +
+            '                </button>\n' +
+            '            </div>\n' +
+            '        </div>\n' +
+            '    </div>\n' +
+            '</div>');
+        let metadataTypeOption = $('.metadataTypeOption');
+        metadataTypeOption.select2({
+            placeholder: "Choose Metadata",
+            allowClear: true
+        });
+        let metadata = JSON.parse(data).data;
+        $( metadata ).each(function( index,value ) {
+            let option = new Option(value.label, value.id, false, false);
+            metadataTypeOption.append(option)
+        });
+    });
+
+}
+
+function addConfigurableOptionForMetadata(e)
+{
+    e.preventDefault();
+    let form = $('#addConfigurableOptionsMetadataForm');
+    let serializeData = getFormData(form);
+    let url = window.location.href;
+    let data = {
+        "ajax": "1",
+        "createConfigurableOptionsForMetadata": "1",
+        "configurableOptionMetadataId": serializeData.metadataType,
+    }
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        data: data,
+        success: function(data){
+            let message = JSON.parse(data).data.success
+            closeConfigurableOptionsModal()
+            $('body').append('<ul class="messenger messenger-fixed messenger-on-bottom messenger-on-right messenger-theme-flat">\n' +
+                '    <li class="messenger-message-slot messenger-shown messenger-first">\n' +
+                '        <div class="messenger-message message alert info message-info alert-info">\n' +
+                '            <button type="button" class="messenger-close" data-dismiss="alert">×</button>\n' +
+                '            <div class="messenger-message-inner">'+message+'</div>\n' +
+                '            <div class="messenger-spinner">\n' +
+                '    <span class="messenger-spinner-side messenger-spinner-side-left">\n' +
+                '        <span class="messenger-spinner-fill"></span>\n' +
+                '    </span>\n' +
+                '                <span class="messenger-spinner-side messenger-spinner-side-right">\n' +
+                '        <span class="messenger-spinner-fill"></span>\n' +
+                '    </span>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </li>\n' +
+                '</ul>');
+
+        },
+        error: function(error) {
+            let errorMessage = JSON.parse(error.responseText).data.error;
+            $('body').append('<ul class="messenger messenger-fixed messenger-on-bottom messenger-on-right messenger-theme-flat">\n' +
+                '    <li class="messenger-message-slot messenger-shown messenger-first">\n' +
+                '        <div class="messenger-message message alert alert-error">\n' +
+                '            <button type="button" class="messenger-close" data-dismiss="alert">×</button>\n' +
+                '            <div class="messenger-message-inner">'+errorMessage+'</div>\n' +
+                '            <div class="messenger-spinner">\n' +
+                '    <span class="messenger-spinner-side messenger-spinner-side-left">\n' +
+                '        <span class="messenger-spinner-fill"></span>\n' +
+                '    </span>\n' +
+                '                <span class="messenger-spinner-side messenger-spinner-side-right">\n' +
+                '        <span class="messenger-spinner-fill"></span>\n' +
+                '    </span>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </li>\n' +
+                '</ul>')
+        }
+    });
+
+}
+
+
+function appendMetadataModal(e)
+{
+    let btn = $(e);
+    $(btn).buttonLoader('start');
+    let url = window.location.href;
+    let data = {
+        "metadataSelect": 1,
+        "id": getUrlParameter('id')
+    }
+    $.ajax({
+        type: 'GET',
+        url: url,
+        data: data
+    }).then(function (data) {
+        $(btn).buttonLoader('stop');
+        const layers = $('#layers');
+        layers.append('<div id="confirmationModal"  class="lu-modal show lu-modal--md">\n' +
+            '    <div class="lu-modal__dialog">\n' +
+            '        <div id="mgModalContainer" class="lu-modal__content">\n' +
+            '            <div class="lu-modal__top lu-top">\n' +
+            '                <div class="lu-top__title lu-type-6"><span class="lu-text-faded lu-font-weight-normal">\n' +
+            '                        Add Metadata Requirement\n' +
+            '                    </span></div>\n' +
+            '                <div class="lu-top__toolbar">\n' +
+            '                    <button onclick="closeModal()" data-dismiss="lu-modal" aria-label="Close"\n' +
+            '                            class="lu-btn lu-btn--xs lu-btn--default lu-btn--icon lu-btn--link lu-btn--plain closeModal">\n' +
+            '                        <i class="lu-btn__icon lu-zmdi lu-zmdi-close"></i></button>\n' +
+            '                </div>\n' +
+            '            </div>\n' +
+            '            <div class="lu-modal__body">\n' +
+            '                <div class="lu-row">\n' +
+            '                    <div class="lu-col-md-12">\n' +
+            '                        <form id="addMetadataForm">\n' +
+            '                            <div class="lu-form-group">\n' +
+            '                               <label class="lu-form-label">\n' +
+            '                                    Metadata Requirement\n' +
+            '                               </label>\n' +
+            '                                <select name="metadataType" class="metadataTypeOption" tabindex="-1">\n' +
+            '                                   <option></option>\n' +
+            '                               </select>\n' +
+            '                           </div>\n' +
+            '                        </form>\n' +
+            '                    </div>\n' +
+            '                </div>\n' +
+            '            </div>\n' +
+            '            <div class="lu-modal__actions">\n' +
+            '                <button onclick="additionalMetadataAppend(event)" class="lu-btn lu-btn--success">\n' +
+            '                    Create\n' +
+            '                </button>\n' +
+            '                <button onclick="closeModal()" class="lu-btn lu-btn--danger lu-btn--outline lu-btn--plain closeModal">\n' +
+            '                    Cancel\n' +
+            '                </button>\n' +
+            '            </div>\n' +
+            '        </div>\n' +
+            '    </div>\n' +
+            '</div>');
+        let metadataTypeOption = $('.metadataTypeOption');
+        metadataTypeOption.select2({
+            placeholder: "Choose Metadata",
+            allowClear: true
+        });
+        let metadata = JSON.parse(data).data;
+        $( metadata ).each(function( index,value ) {
+            let option = new Option(value.label, value.id, false, false);
+            metadataTypeOption.append(option)
+        });
+    });
+}
+
+function additionalMetadataAppend(e)
+{
+    e.preventDefault();
+    let form = $('#addMetadataForm');
+    let serializeData = getFormData(form);
+    let type = serializeData.metadataType;
+    let url = window.location.href;
+    let data = {
+        "ajax": "1",
+        "metadataType": type,
+    }
+    closeModal();
+
+    if (type != 'default')
+    {
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: data,
+            success: function(data){
+                let metadata = JSON.parse(data).data.fieldData;
+                $('div#additionalMetadataRow').append(metadataRowToAppend(metadata))
+                $('.mg-select2-after').select2();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    }
+}
+
+function metadataRowToAppend(metadata)
+{
+    if (metadata.element === 'dropdown')
+    {
+        let options = '';
+        $.each(metadata.options,function( index,value ) {
+            options += '<option value="'+index+'">'+value+'</option>';
+        });
+        let div = '<div class="lu-row lu-m-b-2x">\n' +
+            '        <div class="lu-col-md-11">\n' +
+            '                <label>'+metadata.label+'</label><select name="options[metadata]['+metadata.id+']" class="mg-select2-after">\n' +
+            '\n' +  options +
+            '                </select>\n' +
+            '        </div>\n' +
+            '        <div class="lu-col-md-1">\n' +
+            '                <a style="margin-top: 25px\n' +
+            '\n" href="javascript:;" data-toggle="lu-tooltip" onclick="removePartsRow(this)" data-title="Remove" class="lu-btn lu-btn--sm lu-btn--danger lu-btn--link lu-btn--icon lu-btn--plain lu-tooltip drop-target drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center">\n' +
+            '                        <i class="lu-btn__icon lu-zmdi lu-zmdi-delete"></i>\n' +
+            '                </a>\n' +
+            '        </div>\n' +
+            '</div>';
+        return div;
+    }else{
+        let div = '<div class="lu-row lu-m-b-2x">\n' +
+            '        <div class="lu-col-md-11">\n' +
+            '                <label>'+metadata.label+'</label><input name="options[metadata]['+metadata.id+']" class="lu-form-control">\n' +
+            '        </div>\n' +
+            '        <div class="lu-col-md-1">\n' +
+            '                <a style="margin-top: 25px\n' +
+            '\n" href="javascript:;" data-toggle="lu-tooltip" onclick="removePartsRow(this)" data-title="Remove" class="lu-btn lu-btn--sm lu-btn--danger lu-btn--link lu-btn--icon lu-btn--plain lu-tooltip drop-target drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center">\n' +
+            '                        <i class="lu-btn__icon lu-zmdi lu-zmdi-delete"></i>\n' +
+            '                </a>\n' +
+            '        </div>\n' +
+            '</div>';
+        return div;
+    }
+
+}

@@ -180,6 +180,14 @@ $lang['serverAA']['configOptions']['addPartModal']['baseAcceptButton']['title'] 
 $lang['serverAA']['configOptions']['addPartModal']['baseCancelButton']['title'] = 'Cancel';
 $lang['ajaxResponses']['partAddedSuccessfully'] = 'Part Requirement Added Successfully';
 
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['additionalMetadataSection']['additionalMetadataSection'] = 'Metadata Requirements';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['additionalMetadataSection']['addMetadata']['button']['addMetadata'] = 'Add Metadata Requirement';
+$lang['serverAA']['configOptions']['addMetadataModal']['modal']['addMetadataModal'] = 'Add Metadata Requirement';
+$lang['serverAA']['configOptions']['addMetadataModal']['baseAcceptButton']['title'] = 'Confirm';
+$lang['serverAA']['configOptions']['addMetadataModal']['baseCancelButton']['title'] = 'Cancel';
+$lang['ajaxResponses']['metadataAddedSuccessfully'] = 'The Metadata Requirement has been added successfully';
+$lang['serverAA']['configOptions']['addMetadataModal']['addMetadataForm']['metadataRequirments']['MetadataRequirments'] = 'Metadata Requirement';
+
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['message'] = 'Define what features and information will be available for customers in the client area.';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['clientAreaFeaturesSection'] = 'Client Area Features';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['generalInfo']['generalInfo'] = 'General Information';

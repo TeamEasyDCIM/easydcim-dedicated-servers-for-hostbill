@@ -65,9 +65,17 @@ class easydcim_controller extends HBController
             {
                 $this->createConfigurableOptionsForParts($params['id'],$_GET['configurableOptionPartType'],$_GET['configurableOptionPartModel'],$_GET['configurableOptionPartTypeName'],$_GET['configurableOptionPartModelName']);
             }
+            if (isset($_GET['createConfigurableOptionsForMetadata']))
+            {
+                $this->createConfigurableOptionsForMetadata($params['id'],$_GET['configurableOptionMetadataId'],$this->api);
+            }
             if (isset($_GET['partType']))
             {
                 $this->additionalParts->getTypes($_GET['partType']);
+            }
+            if (isset($_GET['metadataType']))
+            {
+                self::jsonEncode(['fieldData'=>$this->api->system->showField($_GET['metadataType'])]);
             }
             if (isset($_GET['partTypeName']) && isset($_GET['partTypeId']))
             {
@@ -87,6 +95,10 @@ class easydcim_controller extends HBController
             {
                 $result['addons'] = $this->defaultOptions->getAddonsList($_GET['osTemplateId'],$_GET['locationId']);
                 self::jsonEncode($result);
+            }
+            if (isset($_GET['metadataSelect']))
+            {
+                self::jsonEncode($this->clientAreaFeatures->getFields());
             }
             $path = APPDIR_MODULES.'Hosting/easydcim/templates/myproductconfig.tpl';
             $assetsUrl = '.././includes/modules/Hosting/easydcim/templates/assets';
@@ -375,6 +387,37 @@ class easydcim_controller extends HBController
         self::jsonEncode(['success'=>"Configurable Part Option Created Successfully"]);
     }
 
+    protected function createConfigurableOptionsForMetadata($productId,$metadataId,EasyDCIM $api)
+    {
+        if($metadataId === '' || $metadataId === 'default')
+        {
+            header('HTTP/1.1 400 Bad Request');
+            self::jsonEncode(['error'=>"You have to choose a metadata type"]);
+        }
+
+        $metadata = $api->system->showField($metadataId);
+        if ($metadata->element === 'dropdown')
+        {
+            foreach ($metadata->options as $key=>$option) {
+                $items[] = [
+                    "id" => $key,
+                    "category_id" => 9,
+                    "name" => $key,
+                    "variable_id" => $option,
+                ];
+            }
+            $config[] = $this->prepareArrayForConfigOptionMetadata('Metadata'.': '.$metadata->label,'Metadata'.'_'.$metadataId,$items);
+            $c = HBLoader::LoadModel("ConfigFields");
+            $c->importJson($productId,json_encode($config));
+            self::jsonEncode(['success'=>"Configurable Metadata Option Created Successfully"]);
+        }else{
+            $config[] = $this->prepareArrayForConfigOptionMetadata('Metadata'.': '.$metadata->label,'Metadata'.'_'.$metadataId);
+            $c = HBLoader::LoadModel("ConfigFields");
+            $c->importJson($productId,json_encode($config));
+            self::jsonEncode(['success'=>"Configurable Metadata Option Created Successfully"]);
+        }
+    }
+
     /**
      * @param array $data
      */
@@ -397,6 +440,30 @@ class easydcim_controller extends HBController
             'premade'=>true,
             'items'=>$items
         ];
+    }
+
+    protected function prepareArrayForConfigOptionMetadata($name,$variable,$items = [])
+    {
+        if (!empty($items))
+        {
+            return [
+                'type'=>'searchselect',
+                'name'=>$name,
+                'variable'=> $variable,
+                'ftype'=>'searchselect',
+                'premade'=>true,
+                'items'=>$items
+            ];
+        }else{
+            return [
+                'type'=>'input',
+                'name'=>$name,
+                'variable'=> $variable,
+                'ftype'=>'input',
+                'premade'=>true,
+            ];
+        }
+
     }
 
     public function __destruct()
