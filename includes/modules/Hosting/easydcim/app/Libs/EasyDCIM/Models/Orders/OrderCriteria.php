@@ -28,9 +28,19 @@ class OrderCriteria extends Serializer
     protected $require_parts;
 
     /**
+     * @var integer
+     */
+    protected $require_metadata;
+
+    /**
      * @var array
      */
     protected $parts = [];
+
+    /**
+     * @var array
+     */
+    protected $metadata = [];
 
     /**
      * @var integer
@@ -87,6 +97,30 @@ class OrderCriteria extends Serializer
     public function setParts($parts)
     {
         $this->parts = $parts;
+        return $this;
+    }
+
+    /**
+     * Require Metadata
+     *
+     * $params integer $requireMetadata
+     * @return object $this
+     */
+    public function setRequireMetadata($requireMetadata)
+    {
+        $this->require_metadata = $requireMetadata;
+        return $this;
+    }
+
+    /**
+     * Metadata
+     *
+     * $params object $metadata
+     * @return object $this
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
         return $this;
     }
 

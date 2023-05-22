@@ -85,6 +85,10 @@ class easydcim_controller extends HBController
             {
                 $this->additionalParts->getParts($this->parseConfig()->parts);
             }
+            if (isset($_GET['getMetadataSettings']))
+            {
+                $this->getMetadataSettings($this->parseConfig()->metadata);
+            }
             if (isset($_GET['reloadSelectsForLocation']))
             {
                 $result['templates'] = $this->defaultOptions->getTemplateList($_GET['locationId']);
@@ -182,6 +186,21 @@ class easydcim_controller extends HBController
         }
 
         return $serverConfig;
+    }
+
+    protected function getMetadataSettings($metadataSettings)
+    {
+        $metadata = [];
+        foreach ($metadataSettings as $key=>$value)
+        {
+            $field = $this->api->system->showField($key);
+            $field->settingsValue = $value;
+            $metadata[] = $field;
+        }
+
+        self::jsonEncode([
+            'metadata'=>$metadata
+        ]);
     }
 
     protected function getServerId($productId)

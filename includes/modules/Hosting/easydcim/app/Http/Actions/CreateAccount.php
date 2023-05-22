@@ -10,6 +10,7 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderCreate;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderCriteria;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderMetadataContainer;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderPart;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderPartContainer;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderService;
@@ -74,7 +75,7 @@ class CreateAccount
     {
         $this->module = $module;
         $this->mailer = $mailer;
-        $this->checkOrderId();
+//        $this->checkOrderId();
         $this->params = $this->module->getAccount();
         $this->serverModel = $serverModel;
         $this->params['clientsdetails'] = $this->module->getClient();
@@ -98,6 +99,10 @@ class CreateAccount
      */
     public function execute(): ?array
     {
+        $file = fopen(dirname(__FILE__).DIRECTORY_SEPARATOR."test2.txt", "w");
+        fwrite($file, print_r($this->params,true));
+        fclose($file);
+        die;
         $orderData = $this->addOrder($this->client);
         return $orderData;
     }
@@ -113,6 +118,7 @@ class CreateAccount
     {
         $clientID = $this->getClientID($client);
         $parts = $this->getParts($client);
+        $metadata = $this->getMetadata($client);
 
         $criteriaModel = new OrderCriteria();
         $criteriaModel->setModel($client->getModelID())
@@ -120,7 +126,10 @@ class CreateAccount
             ->setRequirePdu($client->getBaseFeatures()['requirePdu'])
             ->setRequireSwitch($client->getBaseFeatures()['requireSwitch'])
             ->setRequireParts($this->checkPartIsActive($client))
-            ->setParts($parts);
+            ->setRequireMetadata($this->checkMetadataIsActive($client))
+            ->setParts($parts)
+            ->setMetadata($metadata);
+
 
         try
         {
@@ -228,6 +237,38 @@ class CreateAccount
             }
         }
         return '/' . $mask;
+    }
+
+    /**
+     * Get Container of metadata
+     *
+     * $param $client insteandof ClientAdapter
+     *
+     */
+    private function getMetadata(IClient $client)
+    {
+        $metadataContainer = new OrderMetadataContainer();
+
+        $metadata = $client->getMetadata();
+        $confMetadata = $client->getConfigMetadata();
+
+        if (!empty($metadata))
+        {
+            foreach ($metadata as $key=>$value)
+            {
+                $metadataValue = $confMetadata['Metadata_' . $key] ?? $value;
+                $metadataContainer->set($key,$metadataValue);
+            }
+        }else{
+            foreach ($confMetadata as $key=>$value)
+            {
+                $arr = explode("_", $key);
+                $id = $arr[1];
+                $metadataContainer->set($id,$value);
+            }
+        }
+
+        return $metadataContainer->getAll();
     }
 
     /**
@@ -373,6 +414,23 @@ class CreateAccount
     private function checkPartIsActive(IClient $client)
     {
         if (!empty($client->getParts()) || !empty($client->getConfigOptParts()))
+        {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Check Active Parts
+     *
+     * $param $client insteandof ClientAdapter
+     *
+     * @return integer
+     *
+     */
+    private function checkMetadataIsActive(IClient $client)
+    {
+        if (!empty($client->getMetadata()) || !empty($client->getConfigMetadata()))
         {
             return 1;
         }

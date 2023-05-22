@@ -1,5 +1,6 @@
 $(document).ready(function () {
     getSettings();
+    getMetadataSettings();
     $('.mg-select2').select2();
     $('#LocationID').on('change', function() {
         let url = window.location.href;
@@ -318,6 +319,30 @@ function getSettings()
                 // console.log(parts.size[index]);
                 // console.log(value);
             });
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        }
+    });
+
+}
+
+function getMetadataSettings()
+{
+    let url = window.location.href;
+    let data = {
+        "getMetadataSettings": "1",
+    }
+    $.ajax({
+        type: "GET",
+        url: url,
+        data: data,
+        success: function(data){
+            let metadata = JSON.parse(data).data.metadata
+            $.each(metadata,function (index,value){
+                $('div#additionalMetadataRow').append(metadataRowToAppend(value))
+                $('.mg-select2-after').select2();
+            })
+            console.log(metadata);
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
         }
@@ -785,11 +810,24 @@ function additionalMetadataAppend(e)
 
 function metadataRowToAppend(metadata)
 {
+    let settingsValue = '';
+    if(typeof metadata.settingsValue !== 'undefined')
+    {
+        settingsValue = metadata.settingsValue;
+    }
+
     if (metadata.element === 'dropdown')
     {
+
         let options = '';
         $.each(metadata.options,function( index,value ) {
-            options += '<option value="'+index+'">'+value+'</option>';
+            if (index === settingsValue)
+            {
+                options += '<option value="'+index+'" selected>'+value+'</option>';
+            }else
+            {
+                options += '<option value="'+index+'">'+value+'</option>';
+            }
         });
         let div = '<div class="lu-row lu-m-b-2x">\n' +
             '        <div class="lu-col-md-11">\n' +
@@ -808,7 +846,7 @@ function metadataRowToAppend(metadata)
     }else{
         let div = '<div class="lu-row lu-m-b-2x">\n' +
             '        <div class="lu-col-md-11">\n' +
-            '                <label>'+metadata.label+'</label><input name="options[metadata]['+metadata.id+']" class="lu-form-control">\n' +
+            '                <label>'+metadata.label+'</label><input name="options[metadata]['+metadata.id+']" class="lu-form-control" value="'+settingsValue+'">\n' +
             '        </div>\n' +
             '        <div class="lu-col-md-1">\n' +
             '                <a style="margin-top: 25px\n' +
