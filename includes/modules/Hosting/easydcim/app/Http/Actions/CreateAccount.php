@@ -99,10 +99,6 @@ class CreateAccount
      */
     public function execute(): ?array
     {
-        $file = fopen(dirname(__FILE__).DIRECTORY_SEPARATOR."test2.txt", "w");
-        fwrite($file, print_r($this->params,true));
-        fclose($file);
-        die;
         $orderData = $this->addOrder($this->client);
         return $orderData;
     }
@@ -394,7 +390,7 @@ class CreateAccount
                 unset($options[$key]);
             }
 
-            if (in_array($key, $this->disabledOptions) || preg_match('/^[0-9]+:[0-9]+/', $key))
+            if (in_array($key, $this->disabledOptions) || preg_match('/^[0-9]+:[0-9]+/', $key) || strpos($key, "Metadata") !== false)
             {
                 unset($options[$key]);
             }

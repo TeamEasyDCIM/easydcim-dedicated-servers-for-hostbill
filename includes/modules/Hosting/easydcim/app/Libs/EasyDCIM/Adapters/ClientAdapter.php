@@ -309,7 +309,12 @@ class ClientAdapter implements IClient
         $metadata = [];
         foreach ($params['config']['configoptions'] as $key => $value) {
             if (strpos($key, 'Metadata_') === 0) {
-                $metadata[$key] = $value['variable_id'];
+                if ($value['type'] === 'searchselect')
+                {
+                    $metadata[$key] = $value['variable_id'];
+                }else{
+                    $metadata[$key] = $value['value'];
+                }
             }
         }
         $this->configMetadata          = $metadata;
