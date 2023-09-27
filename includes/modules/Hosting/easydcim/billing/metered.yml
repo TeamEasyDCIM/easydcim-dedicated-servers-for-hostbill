@@ -2,31 +2,31 @@ variables:
   bandwidthIn:
     name: Bandwidth IN
     friendlyName:
-    scheme: tiered
+    scheme: peak
     unit_name: MB
     description: Billing for Usage of Bandwidth
   bandwidthOut:
     name: Bandwidth OUT
-    scheme: tiered
+    scheme: peak
     unit_name: MB
     description: Billing for Usage of Bandwidth
   bandwidthTotal:
     name: Bandwidth TOTAL
-    scheme: tiered
+    scheme: peak
     unit_name: MB
     description: Billing for Usage of Bandwidth
   percentileIn:
     name: 95th Percentile IN
-    scheme: tiered
+    scheme: peak
     unit_name: Mbps
     description: Billing for 95th Percentile
   percentileOut:
     name: 95th Percentile OUT
-    scheme: tiered
+    scheme: peak
     unit_name: Mbps
     description: Billing for 95th Percentile
   percentileTotal:
     name: 95th Percentile TOTAL
-    scheme: tiered
+    scheme: peak
     unit_name: Mbps
     description: Billing for 95th Percentile

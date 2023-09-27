@@ -4,6 +4,7 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\API;
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Abstracts\AbstractEasyDCIMAPI;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Os\Configuration;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Os\DataContainer;
 
 class Os extends AbstractEasyDCIMAPI
 {
@@ -77,5 +78,50 @@ class Os extends AbstractEasyDCIMAPI
     public function getAddonList(Configuration $model)
     {
         return $this->api->get($model->toArray()['configuration'])->execut('os/addon');
+    }
+
+    /**
+     * EasyDCIM OsInstallation - List Iso Images
+     * @documentation ??
+     * @return JSON object
+     * @throws error
+     *
+     */
+    public function getIsoImagesForDevice($deviceId)
+    {
+        return $this->api->get()->execut('os/isoimages/device/'.$deviceId);
+    }
+
+    /**
+     * EasyDCIM OsInstallation - Create Iso Image
+     * @documentation https://www.easydcim.com/api/index.html#api-OsInstallation-installOperatingSystem
+     * @return JSON object
+     * @throws error
+     */
+    public function createIsoImage(DataContainer $model)
+    {
+        return $this->api->post($model->toArray())->execut('os/isoimages');
+    }
+
+    /**
+     * EasyDCIM OsInstallation - Update Iso Image
+     * @documentation https://www.easydcim.com/api/index.html#api-OsInstallation-installOperatingSystem
+     * @return JSON object
+     * @throws error
+     */
+    public function updateIsoImage(DataContainer $model,$id)
+    {
+        return $this->api->put($model->toArray())->execut('os/isoimages/'.$id);
+    }
+
+    /**
+     * EasyDCIM OsInstallation - Delete Iso Image
+     * @documentation https://www.easydcim.com/api/index.html#api-OsInstallation-installOperatingSystem
+     * @return JSON object
+     * @throws error
+     */
+    public function deleteIsoImage($id)
+    {
+        return $this->api->delete()->execut('os/isoimages/'.$id);
     }
 }

@@ -46,12 +46,34 @@ function submitCSRModal(action,pageModalCover,modalGenerateCsr) {
                 div.append('<div class="alert alert-info">\n' +
                     '<a class="close">×</a>\n' +
                     ''+message+'<br></div>')
+                let pntf_opts = {}
                 pntf_opts.text = message;
                 pntf_opts.type = 'info';
-                new PNotify(pntf_opts);
+                if (typeof PNotify !== 'undefined') {
+                    new PNotify(pntf_opts);
+                }
                 if (result.data.hasOwnProperty('url'))
                 {
                     window.open(result.data.url,'_blank');
+                }
+                if (result.data.hasOwnProperty('kvmConsole'))
+                {
+                    let res = result.data.kvmConsole;
+
+                    const javaAplet = res.result;
+                    const headers = res.headers || {};
+
+                    // Set the Content-Type header to application/x-java-jnlp-file
+                    headers['Content-Type'] = 'application/x-java-jnlp-file';
+
+                    // Create a new blob with the Java applet data and Content-Type header
+                    const blob = new Blob([javaAplet], { type: 'application/x-java-jnlp-file' });
+
+                    // Create a URL for the blob
+                    const url = URL.createObjectURL(blob);
+
+                    // Open the URL in a new tab
+                    window.open(url, '_blank');
                 }
             },
             error:function(data){
@@ -63,9 +85,12 @@ function submitCSRModal(action,pageModalCover,modalGenerateCsr) {
                 div.append('<div class="alert alert-error">\n' +
                     '<a class="close">×</a>\n' +
                     ''+error+'<br></div>')
+                let pntf_opts = {}
                 pntf_opts.text = error;
                 pntf_opts.type = 'error';
-                new PNotify(pntf_opts);
+                if (typeof PNotify !== 'undefined') {
+                    new PNotify(pntf_opts);
+                }
             },
         });
     });
@@ -113,10 +138,13 @@ function generateCSRModal(message,action) {
             title = 'Enable Rescue Mode';
             break;
         case 'kvmConsole':
-            title = 'KVM Console';
+            title = 'KVM Java Console';
             break;
         case 'noVNCConsole':
-            title = 'NO VNC Console';
+            title = 'noVNC KVM Console';
+            break;
+        case 'logIntoPanel':
+            title = 'Log In To Panel';
             break;
 
     }

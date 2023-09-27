@@ -10,69 +10,75 @@
 <script src="{$assetsURL}/js/ping.js"></script>
 <script src="{$assetsURL}/js/status.js"></script>
 <div id="layers">
-    <div class="lu-row">
-        <div class="lu-col-md-12">
-            <div class="lu-widget">
-                <div class="lu-widget__header">
-                    <div class="lu-widget__top lu-top">
-                        <div class="lu-top__title">
-                            {$lang.serverAA.servicePageIntegration.mainContainer.aggregateTraffic.title}
-                        </div>
-                        <div class="lu-top__toolbar">
-                            <a data-toggle="modal" data-target="#aggregateModal" onclick="showTrafficModal()">
-                                <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i>
-                            </a>
+    {if $configuration.AggregateTraffic == 'on'}
+        <div class="lu-row">
+            <div class="lu-col-md-12">
+                <div class="lu-widget">
+                    <div class="lu-widget__header">
+                        <div class="lu-widget__top lu-top">
+                            <div class="lu-top__title">
+                                {$lang.serverAA.servicePageIntegration.mainContainer.aggregateTraffic.title}
+                            </div>
+                            <div class="lu-top__toolbar">
+                                <a data-toggle="modal" data-target="#aggregateModal" onclick="showTrafficModal()">
+                                    <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="lu-widget__body">
-                    <canvas id="aggregateTraffic" style="height: 400px;"></canvas>
+                    <div class="lu-widget__body">
+                        <canvas id="aggregateTraffic" style="height: 400px;"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="lu-row">
-        <div class="lu-col-md-12">
-            <div class="lu-widget">
-                <div class="lu-widget__header">
-                    <div class="lu-widget__top lu-top">
-                        <div class="lu-top__title">
-                            {$lang.serverAA.servicePageIntegration.mainContainer.pingGraph.title}
-                        </div>
-                        <div class="lu-top__toolbar">
-                            <a data-toggle="modal" data-target="#pingModal" onclick="showPingModal()">
-                                <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i>
-                            </a>
+    {/if}
+    {if $configuration.Ping == 'on'}
+        <div class="lu-row">
+            <div class="lu-col-md-12">
+                <div class="lu-widget">
+                    <div class="lu-widget__header">
+                        <div class="lu-widget__top lu-top">
+                            <div class="lu-top__title">
+                                {$lang.serverAA.servicePageIntegration.mainContainer.pingGraph.title}
+                            </div>
+                            <div class="lu-top__toolbar">
+                                <a data-toggle="modal" data-target="#pingModal" onclick="showPingModal()">
+                                    <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="lu-widget__body">
-                    <canvas id="pingGraph" style="height: 400px;"></canvas>
+                    <div class="lu-widget__body">
+                        <canvas id="pingGraph" style="height: 400px;"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="lu-row">
-        <div class="lu-col-md-12">
-            <div class="lu-widget">
-                <div class="lu-widget__header">
-                    <div class="lu-widget__top lu-top">
-                        <div class="lu-top__title">
-                            {$lang.serverAA.servicePageIntegration.mainContainer.statusGraph.title}
-                        </div>
-                        <div class="lu-top__toolbar">
-                            <a data-toggle="modal" data-target="#statusModal" onclick="showStatusModal()">
-                                <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i>
-                            </a>
+    {/if}
+    {if $configuration.Status == 'on'}
+        <div class="lu-row">
+            <div class="lu-col-md-12">
+                <div class="lu-widget">
+                    <div class="lu-widget__header">
+                        <div class="lu-widget__top lu-top">
+                            <div class="lu-top__title">
+                                {$lang.serverAA.servicePageIntegration.mainContainer.statusGraph.title}
+                            </div>
+                            <div class="lu-top__toolbar">
+                                <a data-toggle="modal" data-target="#statusModal" onclick="showStatusModal()">
+                                    <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="lu-widget__body">
-                    <canvas id="statusGraph" style="height: 400px;"></canvas>
+                    <div class="lu-widget__body">
+                        <canvas id="statusGraph" style="height: 400px;"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {/if}
 
 
     <div id="confirmationModal1" class="lu-modal lu-modal--md">

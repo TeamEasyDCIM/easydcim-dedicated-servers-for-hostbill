@@ -177,6 +177,26 @@ function submitCSRModal(action,pageModalCover,modalGenerateCsr) {
                 {
                     window.open(result.data.url,'_blank');
                 }
+
+                if (result.data.hasOwnProperty('kvmConsole'))
+                {
+                    let res = result.data.kvmConsole;
+
+                    const javaAplet = res.result;
+                    const headers = res.headers || {};
+
+                    // Set the Content-Type header to application/x-java-jnlp-file
+                    headers['Content-Type'] = 'application/x-java-jnlp-file';
+
+                    // Create a new blob with the Java applet data and Content-Type header
+                    const blob = new Blob([javaAplet], { type: 'application/x-java-jnlp-file' });
+
+                    // Create a URL for the blob
+                    const url = URL.createObjectURL(blob);
+
+                    // Open the URL in a new tab
+                    window.open(url, '_blank');
+                }
             },
             error:function(data){
                 const body = $('body');
@@ -242,10 +262,13 @@ function generateCSRModal(message,action) {
             title = 'Enable Rescue Mode';
             break;
         case 'kvmConsole':
-            title = 'KVM Console';
+            title = 'KVM Java Console';
             break;
         case 'noVNCConsole':
-            title = 'NO VNC Console';
+            title = 'noVNC KVM Console';
+            break;
+        case 'logIntoPanel':
+            title = 'Log In To Panel';
             break;
 
     }
@@ -269,11 +292,9 @@ function generateCSRModal(message,action) {
                             <strong>Error!</strong> <span></span>\n\
                         </div>\n\
                         <form>\n\
-                            <div class="col-md-1"></div>\n\
-                              <div class="col-md-10" style="width:80%;">\n\
-                                   <span class="message">' + message + '</span>\n\
-                              </div>\n\
-                            <div class="col-md-1"></div>\n\
+                          <div class="col-md-12" style="text-align: left">\n\
+                               <span class="message">' + message + '</span>\n\
+                          </div>\n\
                     </div>\n\
                     <div class="modal-footer panel-footer">\n\
                         <button type="button" id="submitModalBtn' + action + '" class="btn btn-primary">\n\

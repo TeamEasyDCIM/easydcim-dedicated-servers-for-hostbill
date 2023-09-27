@@ -38,6 +38,7 @@ class easydcim_controller extends HBController
     protected $graphs;
     protected $serviceActions;
     protected $servers;
+    protected $configFieldsModel;
 
     public function productdetails($params)
     {
@@ -46,6 +47,7 @@ class easydcim_controller extends HBController
         $serverId = $this->getServerId($params['id']);
         if ($serverId != null && $serverId != '')
         {
+            $this->configFieldsModel = HBLoader::LoadModel("ConfigFields");
             $serverHelper = HBLoader::LoadModel('Servers');
             $this->servers = $serverHelper->findServersBy('module','easydcim');
             $this->serverDetails = $this->getServerDetails($this->getServerId($params['id']));
@@ -65,9 +67,17 @@ class easydcim_controller extends HBController
             {
                 $this->createConfigurableOptionsForParts($params['id'],$_GET['configurableOptionPartType'],$_GET['configurableOptionPartModel'],$_GET['configurableOptionPartTypeName'],$_GET['configurableOptionPartModelName']);
             }
+            if (isset($_GET['createConfigurableOptionsForMetadata']))
+            {
+                $this->createConfigurableOptionsForMetadata($params['id'],$_GET['configurableOptionMetadataId'],$this->api);
+            }
             if (isset($_GET['partType']))
             {
                 $this->additionalParts->getTypes($_GET['partType']);
+            }
+            if (isset($_GET['metadataType']))
+            {
+                self::jsonEncode(['fieldData'=>$this->api->system->showField($_GET['metadataType'])]);
             }
             if (isset($_GET['partTypeName']) && isset($_GET['partTypeId']))
             {
@@ -76,6 +86,10 @@ class easydcim_controller extends HBController
             if (isset($_GET['getSettings']))
             {
                 $this->additionalParts->getParts($this->parseConfig()->parts);
+            }
+            if (isset($_GET['getMetadataSettings']))
+            {
+                $this->getMetadataSettings($this->parseConfig()->metadata);
             }
             if (isset($_GET['reloadSelectsForLocation']))
             {
@@ -88,13 +102,18 @@ class easydcim_controller extends HBController
                 $result['addons'] = $this->defaultOptions->getAddonsList($_GET['osTemplateId'],$_GET['locationId']);
                 self::jsonEncode($result);
             }
+            if (isset($_GET['metadataSelect']))
+            {
+                self::jsonEncode($this->clientAreaFeatures->getFields());
+            }
+
             $path = APPDIR_MODULES.'Hosting/easydcim/templates/myproductconfig.tpl';
             $assetsUrl = '.././includes/modules/Hosting/easydcim/templates/assets';
             $config = $this->parseConfig();
             $this->template->assign('customconfig',$path);
             $this->template->assign('assetsURL',$assetsUrl);
             $this->template->assign('locationList',$this->defaultOptions->getLocationList());
-            $this->template->assign('modelList',$this->defaultOptions->getModelList('Server'));
+            $this->template->assign('modelList',$this->defaultOptions->getModelList());
             $this->template->assign('templateList',$this->defaultOptions->getTemplateList($config->LocationID));
             $this->template->assign('addonsList',$this->defaultOptions->getAddonsList($config->OsTemplateID,$config->LocationID));
             $this->template->assign('accessLevelList',$this->automationSettings->getAccessLevelList());
@@ -104,6 +123,8 @@ class easydcim_controller extends HBController
             $this->template->assign('adminEmailTemplateList',$this->emailNotifications->getAdminEmailTemplates());
             $this->template->assign('clientEmailTemplateList',$this->emailNotifications->getClientEmailTemplates());
             $this->template->assign('moduleConfiguration',$config);
+            $this->template->assign('configurableOptions',$this->configFieldsModel->exportData($params['id']));
+            $this->template->assign('productId',$params['id']);
         }
 
     }
@@ -121,6 +142,9 @@ class easydcim_controller extends HBController
         {
             $serverHelper = HBLoader::LoadModel('Servers');
             $this->servers = $serverHelper->findServersBy('module','easydcim');
+            $clientModel = HBLoader::LoadModel("Clients");
+            $clientData = $clientModel->getClient($params['account']['client_id']);
+            $params['account']['clientsdetails'] = $clientData;
             $db = new Database();
             $this->db = $db->getConnection();
             $this->serverDetails = $this->getServerDetails($this->getServerId($params['account']['product_id']));
@@ -131,7 +155,7 @@ class easydcim_controller extends HBController
             $this->locationInformation = new LocationInformation($this->api,$this->client);
             $this->bandwidth = new Bandwidth($this->api);
             $this->graphs = new Graphs($this->api);
-            $this->serviceActions = new ServiceActions($this->api);
+            $this->serviceActions = new ServiceActions($this->api,$this->client);
 
             if (isset($_GET['graphs']))
             {
@@ -170,6 +194,21 @@ class easydcim_controller extends HBController
         }
 
         return $serverConfig;
+    }
+
+    protected function getMetadataSettings($metadataSettings)
+    {
+        $metadata = [];
+        foreach ($metadataSettings as $key=>$value)
+        {
+            $field = $this->api->system->showField($key);
+            $field->settingsValue = $value;
+            $metadata[] = $field;
+        }
+
+        self::jsonEncode([
+            'metadata'=>$metadata
+        ]);
     }
 
     protected function getServerId($productId)
@@ -375,6 +414,37 @@ class easydcim_controller extends HBController
         self::jsonEncode(['success'=>"Configurable Part Option Created Successfully"]);
     }
 
+    protected function createConfigurableOptionsForMetadata($productId,$metadataId,EasyDCIM $api)
+    {
+        if($metadataId === '' || $metadataId === 'default')
+        {
+            header('HTTP/1.1 400 Bad Request');
+            self::jsonEncode(['error'=>"You have to choose a metadata type"]);
+        }
+
+        $metadata = $api->system->showField($metadataId);
+        if ($metadata->element === 'dropdown')
+        {
+            foreach ($metadata->options as $key=>$option) {
+                $items[] = [
+                    "id" => $key,
+                    "category_id" => 9,
+                    "name" => $key,
+                    "variable_id" => $option,
+                ];
+            }
+            $config[] = $this->prepareArrayForConfigOptionMetadata('Metadata'.': '.$metadata->label,'Metadata'.'_'.$metadataId,$items);
+            $c = HBLoader::LoadModel("ConfigFields");
+            $c->importJson($productId,json_encode($config));
+            self::jsonEncode(['success'=>"Configurable Metadata Option Created Successfully"]);
+        }else{
+            $config[] = $this->prepareArrayForConfigOptionMetadata('Metadata'.': '.$metadata->label,'Metadata'.'_'.$metadataId);
+            $c = HBLoader::LoadModel("ConfigFields");
+            $c->importJson($productId,json_encode($config));
+            self::jsonEncode(['success'=>"Configurable Metadata Option Created Successfully"]);
+        }
+    }
+
     /**
      * @param array $data
      */
@@ -397,6 +467,30 @@ class easydcim_controller extends HBController
             'premade'=>true,
             'items'=>$items
         ];
+    }
+
+    protected function prepareArrayForConfigOptionMetadata($name,$variable,$items = [])
+    {
+        if (!empty($items))
+        {
+            return [
+                'type'=>'searchselect',
+                'name'=>$name,
+                'variable'=> $variable,
+                'ftype'=>'searchselect',
+                'premade'=>true,
+                'items'=>$items
+            ];
+        }else{
+            return [
+                'type'=>'input',
+                'name'=>$name,
+                'variable'=> $variable,
+                'ftype'=>'input',
+                'premade'=>true,
+            ];
+        }
+
     }
 
     public function __destruct()

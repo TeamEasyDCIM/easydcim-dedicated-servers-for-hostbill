@@ -176,7 +176,7 @@ class Rebuild
           'sshRootPassword'=>$device->metadata->{'SSH Root Password'},
           'macAddress'=>$device->metadata->{'MAC Address'},
           'path'=>$path,
-          'installationStatus'=>$instalationStatus,
+          'installationStatus'=>$instalationStatus == '' ? 'No Installation' : $instalationStatus,
         ];
     }
 }

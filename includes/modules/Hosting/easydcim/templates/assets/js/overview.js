@@ -1,3 +1,12 @@
+$(document).ready(function (e) {
+    $('#serverInformation').DataTable({
+        lengthChange: false,
+        ordering: false,
+        searching: false,
+        info: false
+    });
+});
+
 function  showChangeHostnameModal(hostname)
 {
     const layers = $('#layers');
@@ -67,7 +76,7 @@ function changeHostname(e)
 
     $.ajax({
         type: "GET",
-        url: url + '&ajax=1&changeHostname=1&formdata='+serializeData,
+        url: url + '&ajax=1&changeHostname=1&' + $.param({formdata: serializeData}),
         success: function(data){
             let message = JSON.parse(data).data.message;
             let div = $('#infos');
@@ -76,9 +85,12 @@ function changeHostname(e)
             div.append('<div class="alert alert-info">\n' +
                 '<a class="close">×</a>\n' +
                 ''+message+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = message;
             pntf_opts.type = 'info';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         },
         error: function(data) {
             let error = JSON.parse(data.responseText).data.error;
@@ -88,9 +100,12 @@ function changeHostname(e)
             div.append('<div class="alert alert-error">\n' +
                 '<a class="close">×</a>\n' +
                 ''+error+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = error;
             pntf_opts.type = 'error';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         }
     });
 }

@@ -68,7 +68,8 @@ class Connection
 
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, 100);
+        curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
+        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 10);
         $this->setHeader();
     }
 

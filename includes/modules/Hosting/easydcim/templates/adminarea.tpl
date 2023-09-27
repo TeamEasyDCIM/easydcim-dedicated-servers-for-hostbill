@@ -75,6 +75,14 @@
                                 <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.modal.noVNCKVMConsoleInstance}</span>
                             </a>
                         </div>
+                        <div class="lu-col-xs-6 lu-col-md-20p">
+                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateModal(this,'{$lang.serverAA.adminServicesTabFields.logInToPanelInstance.logInToPanelForm.confirmLogInToPanelInstance}','logIntoPanel')">
+                                <div class="lu-i-c-6x">
+                                    <img class="serviceActionsImages" src="{$assetsURL}/img/logIntopanel.png" alt="">
+                                </div>
+                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.logInToPanelInstance.modal.logInToPanelInstance}</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="lu-row">
@@ -107,7 +115,7 @@
                                                     </tr>
                                                     <tr role="row">
                                                         <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.os}</td>
-                                                        <td>{$rawObject->serverInformation->getCurrentOS()} - <b>{$rawObject->serverInformation->getInstallationStatus()}</b></td>
+                                                        <td>{$rawObject->serverInformation->getCurrentOS()}{if $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
                                                     </tr>
                                                     <tr role="row">
                                                         <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.hostname}</td>
@@ -115,7 +123,7 @@
                                                     </tr>
                                                     <tr role="row">
                                                         <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.ipAddresses}</td>
-                                                        <td class="overflow">{$rawObject->serverInformation->getIPAddresses()}</td>
+                                                        <td><div class='overflow'>{$rawObject->serverInformation->getIPAddresses()}</div></td>
                                                     </tr>
                                                     <tr role="row">
                                                         <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.macAddress}</td>
@@ -138,7 +146,7 @@
                                                                 {/if}
                                                             {elseif $i.header == 'Additional IP Addresses'}
                                                                 <td class="informationTablesWidth">{$i.header}</td>
-                                                                <td class="overflow">{$i.value}</td>
+                                                                <td><div class='overflow'>{$i.value}</div></td>
                                                             {else}
                                                                 <td class="informationTablesWidth">{$i.header}</td>
                                                                 <td>{$i.value}</td>

@@ -200,6 +200,19 @@ class ClientAdapter implements IClient
     private $caSelectedGraphs;
 
     private $notificationServerCreate;
+    private $metadata;
+    /**
+     * @var mixed
+     */
+    private $parts;
+    /**
+     * @var array
+     */
+    private $configMetadata;
+    /**
+     * @var array|mixed
+     */
+    private $configOptParts;
 
     /**
      * Create Client Adapter
@@ -253,45 +266,38 @@ class ClientAdapter implements IClient
         $this->osTemplate               = ($params['config']['configoptions']['osTemplate']['variable_id'] ?: $productConfiguration['OsTemplateID']);
         $this->bandwidth               = ($params['config']['configoptions']['bandwidth']['value'] ?: $productConfiguration['Bandwidth']);
         $this->additionalIPAddress     = ($params['config']['configoptions']['numberOfAdditionalIpAddresses']['value'] ?: $productConfiguration['AdditionalIPAddresses']);
-//        if (!empty($this->getWhmcsParamByKey('pid')))
-//        {
-            $this->baseFeatures             = [
-                'requirePdu'=>$productConfiguration['RequirePDU'] == "on" ? 1 : 0,
-                'requireSwitch'=>$productConfiguration['RequireSwitch'] == "on" ? 1 : 0,
-                'debug'=>$productConfiguration['Debug'] == "on" ? 1 : 0,
-                'autoAccept'=>$productConfiguration['AutoAccept'] == "on" ? 1 : 0,
-            ];
-            $this->caBaseFeatures = [
-//                'caImage'=>$this->productSetting()->Image == "on" ? 1 : 0,
-                'caModel'=>$productConfiguration['Model'] == "on" ? 1 : 0,
-                'caLabel'=>$productConfiguration['Label'] == "on" ? 1 : 0,
-                'caStatus'=>$productConfiguration['ServerStatus'] == "on" ? 1 : 0,
-                'caSerialnumber'=>$productConfiguration['SerialNumber'] == "on" ? 1 : 0,
-                'caPurchaseDate'=>$productConfiguration['PurchaseDate'] == "on" ? 1 : 0,
-                'caWarrantyMonths'=>$productConfiguration['WarrantyMonths'] == "on" ? 1 : 0,
-                'caHostname'=>$productConfiguration['Hostname'] == "on" ? 1 : 0,
-                'caChangeHostname'=>$productConfiguration['ChangeHostname'] == "on" ? 1 : 0,
-                'caIps'=>$productConfiguration['IPAddresses'] == "on" ? 1 : 0,
-                'caLocation'=>$productConfiguration['Location'] == "on" ? 1 : 0,
-//                'caRack'=>$this->productSetting()->Rack == "on" ? 1 : 0,
-                'caGraphs'=>$productConfiguration['Graphs'] == "on" ? 1 : 0,
-                'caSshDetails'=>$productConfiguration['SSHDetails'] == "on" ? 1 : 0,
-                'caOs'=>$productConfiguration['CurrentOS'] == "on" ? 1 : 0,
-                'caOsInstallation'=>$productConfiguration['OsInstallation'] == "on" ? 1 : 0,
-            ];
-            $this->caSelectedGraphs = [
-                'Ping'=>$productConfiguration['Ping'] == "on" ? 1 : 0,
-                'Status'=>$productConfiguration['Status'] == "on" ? 1 : 0,
-                'AggregateTraffic'=>$productConfiguration['AggregateTraffic'] == "on" ? 1 : 0,
-//                'ProcessorsLoad'=>$productConfiguration['ServerStatus'] == "on" ? 1 : 0,
-//                'PollerDuration'=>$productConfiguration['PollerDuration'] == "on" ? 1 : 0,
-            ];
-            $this->notificationServerCreate = $productConfiguration['CreateServerNotification'];
-//        }
-//        if (!empty($this->getWhmcsParamByKey('pid')))
-//        {
-            $this->parts = $productConfiguration['parts'];
-//        }
+
+        $this->baseFeatures             = [
+            'requirePdu'=>$productConfiguration['RequirePDU'] == "on" ? 1 : 0,
+            'requireSwitch'=>$productConfiguration['RequireSwitch'] == "on" ? 1 : 0,
+            'debug'=>$productConfiguration['Debug'] == "on" ? 1 : 0,
+            'autoAccept'=>$productConfiguration['AutoAccept'] == "on" ? 1 : 0,
+        ];
+        $this->caBaseFeatures = [
+            'caModel'=>$productConfiguration['Model'] == "on" ? 1 : 0,
+            'caLabel'=>$productConfiguration['Label'] == "on" ? 1 : 0,
+            'caStatus'=>$productConfiguration['ServerStatus'] == "on" ? 1 : 0,
+            'caSerialnumber'=>$productConfiguration['SerialNumber'] == "on" ? 1 : 0,
+            'caPurchaseDate'=>$productConfiguration['PurchaseDate'] == "on" ? 1 : 0,
+            'caWarrantyMonths'=>$productConfiguration['WarrantyMonths'] == "on" ? 1 : 0,
+            'caHostname'=>$productConfiguration['Hostname'] == "on" ? 1 : 0,
+            'caChangeHostname'=>$productConfiguration['ChangeHostname'] == "on" ? 1 : 0,
+            'caIps'=>$productConfiguration['IPAddresses'] == "on" ? 1 : 0,
+            'caLocation'=>$productConfiguration['Location'] == "on" ? 1 : 0,
+            'caGraphs'=>$productConfiguration['Graphs'] == "on" ? 1 : 0,
+            'caSshDetails'=>$productConfiguration['SSHDetails'] == "on" ? 1 : 0,
+            'caOs'=>$productConfiguration['CurrentOS'] == "on" ? 1 : 0,
+            'caOsInstallation'=>$productConfiguration['OsInstallation'] == "on" ? 1 : 0,
+        ];
+        $this->caSelectedGraphs = [
+            'Ping'=>$productConfiguration['Ping'] == "on" ? 1 : 0,
+            'Status'=>$productConfiguration['Status'] == "on" ? 1 : 0,
+            'AggregateTraffic'=>$productConfiguration['AggregateTraffic'] == "on" ? 1 : 0,
+        ];
+        $this->notificationServerCreate = $productConfiguration['CreateServerNotification'];
+        $this->parts = $productConfiguration['parts'];
+        $this->metadata = $productConfiguration['metadata'];
+
         $partsOptions = preg_grep('/^\d{1,}_\w{1}/', array_keys($params['config']['configoptions']));
         $this->configOptParts           = array_intersect_key($params['config']['configoptions'], array_flip($partsOptions));
 
@@ -300,6 +306,18 @@ class ClientAdapter implements IClient
             $this->configOptParts[$key] = $value['variable_id'];
         }
 
+        $metadata = [];
+        foreach ($params['config']['configoptions'] as $key => $value) {
+            if (strpos($key, 'Metadata_') === 0) {
+                if ($value['type'] === 'searchselect')
+                {
+                    $metadata[$key] = $value['variable_id'];
+                }else{
+                    $metadata[$key] = $value['value'];
+                }
+            }
+        }
+        $this->configMetadata          = $metadata;
         $this->autoAccept              = $productConfiguration['AutoAccept'] == "on" ? 1 : 0;
         $this->acccessLevel            = $productConfiguration['serviceAccessID'];
         $this->suspendAction           = $productConfiguration['SuspensionAction'] == "on" ? 1 : 0;
@@ -310,8 +328,6 @@ class ClientAdapter implements IClient
         $this->terminateActiontemplate = $productConfiguration['TerminateTemplate'];
         $this->adminis                 = $productConfiguration['adminID'];
         $this->trafficAction           = $productConfiguration['TrafficStatistics'];
-//        $this->powerUsageAction        = $productConfiguration['BootServer'];
-//        $this->powerOutletsAction      = $productConfiguration['BootServer'];
         /*
          * Custom Fields Group;
          */
@@ -353,6 +369,38 @@ class ClientAdapter implements IClient
     public function getAdditionalIPAddress()
     {
         return $this->additionalIPAddress;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfigMetadata(): array
+    {
+        return $this->configMetadata;
+    }
+
+    /**
+     * @param array $configMetadata
+     */
+    public function setConfigMetadata(array $configMetadata): void
+    {
+        $this->configMetadata = $configMetadata;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * @param mixed $metadata
+     */
+    public function setMetadata($metadata): void
+    {
+        $this->metadata = $metadata;
     }
 
     /**
