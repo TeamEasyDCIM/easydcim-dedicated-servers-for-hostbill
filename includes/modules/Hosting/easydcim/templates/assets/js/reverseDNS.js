@@ -189,9 +189,12 @@ function reverseDNS()
             div.append('<div class="alert alert-info">\n' +
                 '<a class="close">×</a>\n' +
                 ''+message+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = message;
             pntf_opts.type = 'info';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         },
         error: function(data) {
             // location.reload();
@@ -202,9 +205,12 @@ function reverseDNS()
             div.append('<div class="alert alert-error">\n' +
                 '<a class="close">×</a>\n' +
                 ''+error+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = error;
             pntf_opts.type = 'error';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         }
     });
 }
@@ -326,9 +332,12 @@ function editDNS()
             div.append('<div class="alert alert-info">\n' +
                 '<a class="close">×</a>\n' +
                 ''+message+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = message;
             pntf_opts.type = 'info';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         },
         error: function(data) {
             // location.reload();
@@ -340,9 +349,12 @@ function editDNS()
             div.append('<div class="alert alert-error">\n' +
                 '<a class="close">×</a>\n' +
                 ''+error+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = error;
             pntf_opts.type = 'error';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         }
     });
 }
@@ -366,9 +378,12 @@ function deleteDNS()
             div.append('<div class="alert alert-info">\n' +
                 '<a class="close">×</a>\n' +
                 ''+message+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = message;
             pntf_opts.type = 'info';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         },
         error: function(data) {
             // location.reload();
@@ -380,9 +395,12 @@ function deleteDNS()
             div.append('<div class="alert alert-error">\n' +
                 '<a class="close">×</a>\n' +
                 ''+error+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = error;
             pntf_opts.type = 'error';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         }
     });
 }

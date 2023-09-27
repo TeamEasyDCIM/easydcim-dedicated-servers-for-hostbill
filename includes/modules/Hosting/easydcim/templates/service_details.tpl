@@ -230,193 +230,218 @@
                             </table>
                         </div>
                     {/if}
+                    {if $service.status == 'Active' && !empty($service.extra_details.option4) && !empty($service.extra_details.option5)}
                         <link href="{$assetsURL}/css/fonts.css" rel="stylesheet">
+                        <link rel="stylesheet" href="{$assetsURL}/css/datatables.min.css">
                         <link rel="stylesheet" href="{$assetsURL}/css/layers-ui.css">
                         <link rel="stylesheet" href="{$assetsURL}/css/mg_styles.css">
                         <link rel="stylesheet" href="{$assetsURL}/css/select2.css">
+                        <script src="{$assetsURL}/js/datatables.js"></script>
                         <script src="{$assetsURL}/js/select2.js"></script>
                         <script src="{$assetsURL}/js/index.js"></script>
                         <script src="{$assetsURL}/js/serviceActions.js"></script>
                         <script src="{$assetsURL}/js/overview.js"></script>
 
                         <div id="layers">
-                            <div class="lu-col-md-12">
-                                <div class="lu-h5 lu-m-b-3x lu-m-t-2x">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.statusWidgetTitle}</div>
-                                <div class="lu-tiles lu-row lu-row--eq-height">
-                                    {if $configuration.BootServer == 'on'}
-                                        <div class="lu-col-xs-6 lu-col-md-20p">
-                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.startInstance.startForm.confirmStartInstance}','boot')">
-                                                <div class="lu-i-c-6x">
-                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/powerOnButton.png" alt="">
-                                                </div>
-                                                <span class="lu-tile__title">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.start.startTitle}</span>
-                                            </a>
-                                        </div>
-                                    {/if}
-                                    {if $configuration.ShutdownServer == 'on'}
-                                        <div class="lu-col-xs-6 lu-col-md-20p">
-                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.stopInstance.stopForm.confirmStopInstance}','shutdown')">
-                                                <div class="lu-i-c-6x">
-                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/powerOffButton.png" alt="">
-                                                </div>
-                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.stopInstance.baseAcceptButton.title}</span>
-                                            </a>
-                                        </div>
-                                    {/if}
-                                    {if $configuration.RebootServer == 'on'}
-                                        <div class="lu-col-xs-6 lu-col-md-20p">
-                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.resetInstance.resetForm.confirmResetInstance}','reboot')">
-                                                <div class="lu-i-c-6x">
-                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/reboot.png" alt="">
-                                                </div>
-                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.resetInstance.baseAcceptButton.title}</span>
-                                            </a>
-                                        </div>
-                                    {/if}
-                                    {if $configuration.BMCColdReset == 'on'}
-                                        <div class="lu-col-xs-6 lu-col-md-20p">
-                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.bmcColdResetInstance.bmcColdResetForm.confirmBMCColdResetInstance}','bmcColdReset')">
-                                                <div class="lu-i-c-6x">
-                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/reinstall.png" alt="">
-                                                </div>
-                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.bmcColdResetInstance.modal.bmcColdResetInstance}</span>
-                                            </a>
-                                        </div>
-                                    {/if}
-                                    {if $configuration.RescueMode == 'on'}
-                                        <div class="lu-col-xs-6 lu-col-md-20p">
-                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.enableRescueModeInstance.enableRescueModeForm.confirmEnableRescueModeInstance}','enableRescueMode')">
-                                                <div class="lu-i-c-6x">
-                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/rescue.png" alt="">
-                                                </div>
-                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.enableRescueModeInstance.modal.enableRescueModeInstance}</span>
-                                            </a>
-                                        </div>
-                                    {/if}
-                                    {if $configuration.KVMJavaConsole == 'on'}
-                                        <div class="lu-col-xs-6 lu-col-md-20p">
-                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.kVMJavaConsoleForm.confirmKVMJavaConsoleInstance}','kvmConsole')">
-                                                <div class="lu-i-c-6x">
-                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/vnc.png" alt="">
-                                                </div>
-                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.modal.kVMJavaConsoleInstance}</span>
-                                            </a>
-                                        </div>
-                                    {/if}
-                                    {if $configuration.noVNCKVMConsole == 'on'}
-                                        <div class="lu-col-xs-6 lu-col-md-20p">
-                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.noVNCKVMConsoleForm.confirmNoVNCKVMConsoleInstance}','noVNCConsole')">
-                                                <div class="lu-i-c-6x">
-                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/novnc.png" alt="">
-                                                </div>
-                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.modal.noVNCKVMConsoleInstance}</span>
-                                            </a>
-                                        </div>
-                                    {/if}
-                                </div>
-                            </div>
-                            <div class="lu-row">
+                            {if $configuration.BootServer == 'on' || $configuration.ShutdownServer == 'on' || $configuration.RebootServer == 'on' || $configuration.BMCColdReset == 'on' || $configuration.RescueMode == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.noVNCKVMConsole == 'on'}
                                 <div class="lu-col-md-12">
-                                    <div class="lu-widget widgetActionComponent vueDatatableTable">
-                                        <div class="lu-widget__header">
-                                            <div class="lu-widget__top lu-top">
-                                                <div class="lu-top__title">
-                                                    {$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableTitle}
-                                                </div>
-                                                <div class="lu-top__toolbar">
-                                                    {if $configuration.ChangeHostname == 'on'}
-                                                    <a href="javascript:;" onclick="showChangeHostnameModal('{$rawObject->serverInformation->getHostname()}')" data-toggle="lu-tooltip"
-                                                       class="lu-btn lu-btn--link lu-btn--plain lu-btn--default lu-tooltip drop-target drop-pinned drop-pinned-bottom drop-element-attached-center drop-target-attached-center"
-                                                       data-title=""><i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i> <span
-                                                                class="lu-btn__text"></span></a>
-                                                    {/if}<input type="hidden" name="serviceInfo" value="1"
-                                                                id="serviceInfo"></div>
+                                    <div class="lu-h5 lu-m-b-3x lu-m-t-2x">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.statusWidgetTitle}</div>
+                                    <div class="lu-tiles lu-row lu-row--eq-height">
+                                        {if $configuration.BootServer == 'on'}
+                                            <div class="lu-col-xs-6 lu-col-md-20p">
+                                                <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.startInstance.startForm.confirmStartInstance}','boot')">
+                                                    <div class="lu-i-c-6x">
+                                                        <img class="serviceActionsImages" src="{$assetsURL}/img/powerOnButton.png" alt="">
+                                                    </div>
+                                                    <span class="lu-tile__title">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.start.startTitle}</span>
+                                                </a>
                                             </div>
-                                        </div>
-                                        <div class="lu-widget__body">
-                                            <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
-                                                <div class="dataTables_wrapper no-footer">
-                                                    <div>
-                                                        <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
-                                                            <tbody>
-                                                            {if $configuration.ServerId == 'on'}
+                                        {/if}
+                                        {if $configuration.ShutdownServer == 'on'}
+                                            <div class="lu-col-xs-6 lu-col-md-20p">
+                                                <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.stopInstance.stopForm.confirmStopInstance}','shutdown')">
+                                                    <div class="lu-i-c-6x">
+                                                        <img class="serviceActionsImages" src="{$assetsURL}/img/powerOffButton.png" alt="">
+                                                    </div>
+                                                    <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.stopInstance.baseAcceptButton.title}</span>
+                                                </a>
+                                            </div>
+                                        {/if}
+                                        {if $configuration.RebootServer == 'on'}
+                                            <div class="lu-col-xs-6 lu-col-md-20p">
+                                                <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.resetInstance.resetForm.confirmResetInstance}','reboot')">
+                                                    <div class="lu-i-c-6x">
+                                                        <img class="serviceActionsImages" src="{$assetsURL}/img/reboot.png" alt="">
+                                                    </div>
+                                                    <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.resetInstance.baseAcceptButton.title}</span>
+                                                </a>
+                                            </div>
+                                        {/if}
+                                        {if $configuration.BMCColdReset == 'on'}
+                                            <div class="lu-col-xs-6 lu-col-md-20p">
+                                                <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.bmcColdResetInstance.bmcColdResetForm.confirmBMCColdResetInstance}','bmcColdReset')">
+                                                    <div class="lu-i-c-6x">
+                                                        <img class="serviceActionsImages" src="{$assetsURL}/img/reinstall.png" alt="">
+                                                    </div>
+                                                    <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.bmcColdResetInstance.modal.bmcColdResetInstance}</span>
+                                                </a>
+                                            </div>
+                                        {/if}
+                                        {if $configuration.RescueMode == 'on'}
+                                            <div class="lu-col-xs-6 lu-col-md-20p">
+                                                <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.enableRescueModeInstance.enableRescueModeForm.confirmEnableRescueModeInstance}','enableRescueMode')">
+                                                    <div class="lu-i-c-6x">
+                                                        <img class="serviceActionsImages" src="{$assetsURL}/img/rescue.png" alt="">
+                                                    </div>
+                                                    <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.enableRescueModeInstance.modal.enableRescueModeInstance}</span>
+                                                </a>
+                                            </div>
+                                        {/if}
+                                        {if $configuration.KVMJavaConsole == 'on'}
+                                            <div class="lu-col-xs-6 lu-col-md-20p">
+                                                <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.kVMJavaConsoleForm.confirmKVMJavaConsoleInstance}','kvmConsole')">
+                                                    <div class="lu-i-c-6x">
+                                                        <img class="serviceActionsImages" src="{$assetsURL}/img/vnc.png" alt="">
+                                                    </div>
+                                                    <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.modal.kVMJavaConsoleInstance}</span>
+                                                </a>
+                                            </div>
+                                        {/if}
+                                        {if $configuration.noVNCKVMConsole == 'on'}
+                                            <div class="lu-col-xs-6 lu-col-md-20p">
+                                                <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.noVNCKVMConsoleForm.confirmNoVNCKVMConsoleInstance}','noVNCConsole')">
+                                                    <div class="lu-i-c-6x">
+                                                        <img class="serviceActionsImages" src="{$assetsURL}/img/novnc.png" alt="">
+                                                    </div>
+                                                    <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.modal.noVNCKVMConsoleInstance}</span>
+                                                </a>
+                                            </div>
+                                        {/if}
+                                        {if $configuration.AutoLoginLink == 'on'}
+                                            <div class="lu-col-xs-6 lu-col-md-20p">
+                                                <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.logInToPanelInstance.logInToPanelForm.confirmLogInToPanelInstance}','logIntoPanel')">
+                                                    <div class="lu-i-c-6x">
+                                                        <img class="serviceActionsImages" src="{$assetsURL}/img/logIntopanel.png" alt="">
+                                                    </div>
+                                                    <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.logInToPanelInstance.modal.logInToPanelInstance}</span>
+                                                </a>
+                                            </div>
+                                        {/if}
+                                    </div>
+                                </div>
+                            {/if}
+                            {if ($configuration.ServerId == 'on' || $configuration.Label == 'on' || $configuration.ServerStatus == 'on' || $configuration.CurrentOS == 'on' || $configuration.Hostname == 'on' || $configuration.IPAddresses == 'on' || $configuration.MacAddress == 'on' || !empty($metadata)) && $configuration.BlockServerInformationTable != 'on'}
+                                <div class="lu-row">
+                                    <div class="lu-col-md-12">
+                                        <div class="lu-widget widgetActionComponent vueDatatableTable">
+                                            <div class="lu-widget__header">
+                                                <div class="lu-widget__top lu-top">
+                                                    <div class="lu-top__title">
+                                                        {$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableTitle}
+                                                    </div>
+                                                    <div class="lu-top__toolbar">
+                                                        {if $configuration.ChangeHostname == 'on'}
+                                                        <a href="javascript:;" onclick="showChangeHostnameModal('{$rawObject->serverInformation->getHostname()}')" data-toggle="lu-tooltip"
+                                                           class="lu-btn lu-btn--link lu-btn--plain lu-btn--default lu-tooltip drop-target drop-pinned drop-pinned-bottom drop-element-attached-center drop-target-attached-center"
+                                                           data-title=""><i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i> <span
+                                                                    class="lu-btn__text"></span></a>
+                                                        {/if}<input type="hidden" name="serviceInfo" value="1"
+                                                                    id="serviceInfo"></div>
+                                                </div>
+                                            </div>
+                                            <div class="lu-widget__body">
+                                                <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
+                                                    <div class="dataTables_wrapper">
+                                                        <div>
+                                                            <table id="serverInformation" width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable dtr-column" style="margin-top:0px!important">
+                                                                <thead style="display: none">
                                                                 <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serverID}</td>
-                                                                    <td>{$rawObject->serverInformation->getServerID()}</td>
+                                                                    <th aria-sort="descending" name="header" class="sorting "><span
+                                                                                class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableHeader.header}</span></th>
+                                                                    <th aria-sort="descending" name="value" class="sorting "><span
+                                                                                class="lu-table__text">{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.tableHeader.value}</span></th>
                                                                 </tr>
-                                                            {/if}
+                                                                </thead>
+                                                                <tbody>
+                                                                {if $configuration.ServerId == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serverID}</td>
+                                                                        <td>{$rawObject->serverInformation->getServerID()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.Label == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.label}</td>
-                                                                    <td>{$rawObject->serverInformation->getLabel()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.Label == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.label}</td>
+                                                                        <td>{$rawObject->serverInformation->getLabel()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.ServerStatus == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.deviceStatus}</td>
-                                                                    <td{if $rawObject->serverInformation->getDeviceStatus() === 'Down'} class="lu-text-danger" {else} class="lu-text-success" {/if}>{$rawObject->serverInformation->getDeviceStatus()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.ServerStatus == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.deviceStatus}</td>
+                                                                        <td{if $rawObject->serverInformation->getDeviceStatus() === 'Down'} class="lu-text-danger" {else} class="lu-text-success" {/if}>{$rawObject->serverInformation->getDeviceStatus()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.CurrentOS == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.os}</td>
-                                                                    <td>{$rawObject->serverInformation->getCurrentOS()} - <b>{$rawObject->serverInformation->getInstallationStatus()}</b></td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.CurrentOS == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.os}</td>
+                                                                        <td>{$rawObject->serverInformation->getCurrentOS()}{if $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.Hostname == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.hostname}</td>
-                                                                    <td>{$rawObject->serverInformation->getHostname()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.Hostname == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.hostname}</td>
+                                                                        <td>{$rawObject->serverInformation->getHostname()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.IPAddresses == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.ipAddresses}</td>
-                                                                    <td class="overflow">{$rawObject->serverInformation->getIPAddresses()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.IPAddresses == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.ipAddresses}</td>
+                                                                        <td><div class='overflow'>{$rawObject->serverInformation->getIPAddresses()}</div></td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.MacAddress == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.macAddress}</td>
-                                                                    <td>{$rawObject->serverInformation->getMacAddress()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.MacAddress == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.macAddress}</td>
+                                                                        <td>{$rawObject->serverInformation->getMacAddress()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {foreach from=$metadata key=myId item=i}
-                                                                <tr role="row">
-                                                                    {if $i.header == 'SSH Password' || $i.header == 'SSH Root Password'}
-                                                                        {if $i.value == ''}
+                                                                {foreach from=$metadata key=myId item=i}
+                                                                    <tr role="row">
+                                                                        {if $i.header == 'SSH Password' || $i.header == 'SSH Root Password'}
+                                                                            {if $i.value == ''}
+                                                                                <td class="informationTablesWidth">{$i.header}</td>
+                                                                                <td>-</td>
+                                                                            {else}
+                                                                                <td class="informationTablesWidth">{$i.header}</td>
+                                                                                <td><span class="password_element"><input class="elementPasswordInput"
+                                                                                                                          type="password" value="{$i.value}"
+                                                                                                                          readonly=""><i
+                                                                                                class="elementPasswordIcon lu-zmdi lu-zmdi-eye-off"
+                                                                                                onclick="changePasswordElement(this)"></i></span>
+                                                                                </td>
+                                                                            {/if}
+                                                                        {elseif $i.header == 'Additional IP Addresses'}
                                                                             <td class="informationTablesWidth">{$i.header}</td>
-                                                                            <td>-</td>
+                                                                            <td><div class='overflow'>{$i.value}</div></td>
                                                                         {else}
                                                                             <td class="informationTablesWidth">{$i.header}</td>
-                                                                            <td><span class="password_element"><input class="elementPasswordInput"
-                                                                                                                      type="password" value="{$i.value}"
-                                                                                                                      readonly=""><i
-                                                                                            class="elementPasswordIcon lu-zmdi lu-zmdi-eye-off"
-                                                                                            onclick="changePasswordElement(this)"></i></span>
-                                                                            </td>
+                                                                            <td>{$i.value}</td>
                                                                         {/if}
-                                                                    {elseif $i.header == 'Additional IP Addresses'}
-                                                                        <td class="informationTablesWidth">{$i.header}</td>
-                                                                        <td class="overflow">{$i.value}</td>
-                                                                    {else}
-                                                                        <td class="informationTablesWidth">{$i.header}</td>
-                                                                        <td>{$i.value}</td>
-                                                                    {/if}
-                                                                </tr>
-                                                            {/foreach}
-                                                            </tbody>
-                                                        </table>
-                                                        <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
-                                                            <div class="lu-preloader lu-preloader--sm">
+                                                                    </tr>
+                                                                {/foreach}
+                                                                </tbody>
+                                                            </table>
+                                                            <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
+                                                                <div class="lu-preloader lu-preloader--sm">
 
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -425,76 +450,78 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="lu-row">
-                                <div  class="lu-col-md-12">
-                                    <div class="lu-widget widgetActionComponent vueDatatableTable">
-                                        <div class="lu-widget__header"><div class="lu-widget__top lu-top">
-                                                <div class="lu-top__title">
-                                                    {$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableTitle}
+                            {/if}
+                            {if ($configuration.Status == 'on' || $configuration.OrderId == 'on' || $configuration.ServiceStatus == 'on' || $configuration.Model == 'on' || $configuration.SerialNumber == 'on' || $configuration.PurchaseDate == 'on' || $configuration.WarrantyMonths == 'on') && $configuration.BlockGeneralInformationTable != 'on'}
+                                <div class="lu-row">
+                                    <div  class="lu-col-md-12">
+                                        <div class="lu-widget widgetActionComponent vueDatatableTable">
+                                            <div class="lu-widget__header"><div class="lu-widget__top lu-top">
+                                                    <div class="lu-top__title">
+                                                        {$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableTitle}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="lu-widget__body">
-                                            <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
-                                                <div class="dataTables_wrapper no-footer">
-                                                    <div>
-                                                        <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
-                                                            <tbody>
-                                                            {if $configuration.Status == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>
-                                                                    <td>{$rawObject->generalInformation->getStatus()}</td>
-                                                                </tr>
-                                                            {/if}
+                                            <div class="lu-widget__body">
+                                                <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
+                                                    <div class="dataTables_wrapper no-footer">
+                                                        <div>
+                                                            <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
+                                                                <tbody>
+                                                                {if $configuration.Status == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>
+                                                                        <td>{$rawObject->generalInformation->getStatus()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.OrderId == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.orderID}</td>
-                                                                    <td>{$rawObject->generalInformation->getOrderID()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.OrderId == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.orderID}</td>
+                                                                        <td>{$rawObject->generalInformation->getOrderID()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.ServiceStatus == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serviceStatus}</td>
-                                                                    <td {if $rawObject->generalInformation->getServiceStatus() == 'Activated'} class="lu-text-success" {else} class="lu-text-danger" {/if}>{$rawObject->generalInformation->getServiceStatus()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.ServiceStatus == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serviceStatus}</td>
+                                                                        <td {if $rawObject->generalInformation->getServiceStatus() == 'Activated'} class="lu-text-success" {else} class="lu-text-danger" {/if}>{$rawObject->generalInformation->getServiceStatus()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.Model == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.model}</td>
-                                                                    <td>{$rawObject->generalInformation->getModel()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.Model == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.model}</td>
+                                                                        <td>{$rawObject->generalInformation->getModel()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.SerialNumber == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serialNumber}</td>
-                                                                    <td>{$rawObject->generalInformation->getSerialNumber()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.SerialNumber == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serialNumber}</td>
+                                                                        <td>{$rawObject->generalInformation->getSerialNumber()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.PurchaseDate == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.purchaseDate}</td>
-                                                                    <td>{$rawObject->generalInformation->getPurchaseDate()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.PurchaseDate == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.purchaseDate}</td>
+                                                                        <td>{$rawObject->generalInformation->getPurchaseDate()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.WarrantyMonths == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.warrantyMonths}</td>
-                                                                    <td>{$rawObject->generalInformation->getWarrantyMonths()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.WarrantyMonths == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.warrantyMonths}</td>
+                                                                        <td>{$rawObject->generalInformation->getWarrantyMonths()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            </tbody>
-                                                        </table>
-                                                        <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
-                                                            <div class="lu-preloader lu-preloader--sm">
+                                                                </tbody>
+                                                            </table>
+                                                            <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
+                                                                <div class="lu-preloader lu-preloader--sm">
 
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -503,69 +530,72 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="lu-row">
-                                <div class="lu-col-md-12">
-                                    <div class="lu-widget widgetActionComponent vueDatatableTable">
-                                        <div class="lu-widget__header"><div class="lu-widget__top lu-top">
-                                                <div class="lu-top__title">
-                                                    {$lang.serverAA.servicePageIntegration.mainContainer.location.location}
+                            {/if}
+
+                            {if ($configuration.Location == 'on' || $configuration.LabeledRack == 'on' || $configuration.Floor == 'on' || $configuration.Address == 'on' || $configuration.PhoneNumber == 'on' || $configuration.Description == 'on') && $configuration.BlockLocationInformationTable != 'on'}
+                                <div class="lu-row">
+                                    <div class="lu-col-md-12">
+                                        <div class="lu-widget widgetActionComponent vueDatatableTable">
+                                            <div class="lu-widget__header"><div class="lu-widget__top lu-top">
+                                                    <div class="lu-top__title">
+                                                        {$lang.serverAA.servicePageIntegration.mainContainer.location.location}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="lu-widget__body">
-                                            <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
-                                                <div class="dataTables_wrapper no-footer">
-                                                    <div>
-                                                        <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
-                                                            <tbody>
-                                                            {if $configuration.Location == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.locationName}</td>
-                                                                    <td>{$rawObject->locationInformation->getLocationName()} ({$rawObject->locationInformation->getRackName()})</td>
-                                                                </tr>
-                                                            {/if}
+                                            <div class="lu-widget__body">
+                                                <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
+                                                    <div class="dataTables_wrapper no-footer">
+                                                        <div>
+                                                            <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
+                                                                <tbody>
+                                                                {if $configuration.Location == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.locationName}</td>
+                                                                        <td>{$rawObject->locationInformation->getLocationName()} ({$rawObject->locationInformation->getRackName()})</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.LabeledRack == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.labeledRackWithPosition}</td>
-                                                                    <td>{$rawObject->locationInformation->getRackWithPosition()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.LabeledRack == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.labeledRackWithPosition}</td>
+                                                                        <td>{$rawObject->locationInformation->getRackWithPosition()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.Floor == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.floor}</td>
-                                                                    <td>{$rawObject->locationInformation->getFloor()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.Floor == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.floor}</td>
+                                                                        <td>{$rawObject->locationInformation->getFloor()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.Address == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.address}</td>
-                                                                    <td>{$rawObject->locationInformation->getAddress()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.Address == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.address}</td>
+                                                                        <td>{$rawObject->locationInformation->getAddress()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.PhoneNumber == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.phone}</td>
-                                                                    <td>{$rawObject->locationInformation->getPhoneNumber()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.PhoneNumber == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.phone}</td>
+                                                                        <td>{$rawObject->locationInformation->getPhoneNumber()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            {if $configuration.Description == 'on'}
-                                                                <tr role="row">
-                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.description}</td>
-                                                                    <td >{$rawObject->locationInformation->getDescription()}</td>
-                                                                </tr>
-                                                            {/if}
+                                                                {if $configuration.Description == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.description}</td>
+                                                                        <td >{$rawObject->locationInformation->getDescription()}</td>
+                                                                    </tr>
+                                                                {/if}
 
-                                                            </tbody>
-                                                        </table>
-                                                        <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
-                                                            <div class="lu-preloader lu-preloader--sm">
+                                                                </tbody>
+                                                            </table>
+                                                            <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
+                                                                <div class="lu-preloader lu-preloader--sm">
 
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -574,46 +604,48 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="lu-row">
-                                <div class="lu-col-md-12">
-                                    <div class="lu-widget widgetActionComponent vueDatatableTable">
-                                        <div class="lu-widget__header">
-                                            <div class="lu-widget__top lu-top">
-                                                <div class="lu-top__title">
-                                                    {$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.bandwidthTable}
+                            {/if}
+                            {if $configuration.BlockBandwidthTable != 'on'}
+                                <div class="lu-row">
+                                    <div class="lu-col-md-12">
+                                        <div class="lu-widget widgetActionComponent vueDatatableTable">
+                                            <div class="lu-widget__header">
+                                                <div class="lu-widget__top lu-top">
+                                                    <div class="lu-top__title">
+                                                        {$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.bandwidthTable}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="lu-widget__body">
-                                            <div data-table-container="" data-check-container=""
-                                                 class="lu-t-c  datatableLoader">
-                                                <div class="dataTables_wrapper no-footer">
-                                                    <div>
-                                                        <table width="100%" role="grid"
-                                                               class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
-                                                            <thead>
-                                                            <tr role="row">
-                                                                <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthInterval}</span></th>
-                                                                <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthIn}</span></th>
-                                                                <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthOut}</span></th>
-                                                                <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthTotal}</span></th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {foreach from=$rawObject->bandwidth->getData() key=myId item=i}
+                                            <div class="lu-widget__body">
+                                                <div data-table-container="" data-check-container=""
+                                                     class="lu-t-c  datatableLoader">
+                                                    <div class="dataTables_wrapper no-footer">
+                                                        <div>
+                                                            <table width="100%" role="grid"
+                                                                   class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
+                                                                <thead>
                                                                 <tr role="row">
-                                                                    <td>{$i.bandwidthInterval}</td>
-                                                                    <td>{$i.bandwidthIn}</td>
-                                                                    <td>{$i.bandwidthOut}</td>
-                                                                    <td>{$i.bandwidthTotal}</td>
+                                                                    <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthInterval}</span></th>
+                                                                    <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthIn}</span></th>
+                                                                    <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthOut}</span></th>
+                                                                    <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthTotal}</span></th>
                                                                 </tr>
-                                                            {/foreach}
-                                                            </tbody>
-                                                        </table>
-                                                        <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay"
-                                                             style="display: none;">
-                                                            <div class="lu-preloader lu-preloader--sm"></div>
+                                                                </thead>
+                                                                <tbody>
+                                                                {foreach from=$rawObject->bandwidth->getData() key=myId item=i}
+                                                                    <tr role="row">
+                                                                        <td>{$i.bandwidthInterval}</td>
+                                                                        <td>{$i.bandwidthIn}</td>
+                                                                        <td>{$i.bandwidthOut}</td>
+                                                                        <td>{$i.bandwidthTotal}</td>
+                                                                    </tr>
+                                                                {/foreach}
+                                                                </tbody>
+                                                            </table>
+                                                            <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay"
+                                                                 style="display: none;">
+                                                                <div class="lu-preloader lu-preloader--sm"></div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -621,8 +653,10 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            {/if}
                         </div>
+                    {/if}
+
                     {/if}
                 </div>
             </div>
@@ -825,193 +859,293 @@
                     </div>
                 {/if}
 
+                {if $service.status == 'Active' && !empty($service.extra_details.option4) && !empty($service.extra_details.option5)}
                     <link href="{$assetsURL}/css/fonts.css" rel="stylesheet">
+                    <link rel="stylesheet" href="{$assetsURL}/css/datatables.min.css">
                     <link rel="stylesheet" href="{$assetsURL}/css/layers-ui.css">
                     <link rel="stylesheet" href="{$assetsURL}/css/mg_styles.css">
                     <link rel="stylesheet" href="{$assetsURL}/css/select2.css">
+                    <script src="{$assetsURL}/js/datatables.js"></script>
                     <script src="{$assetsURL}/js/select2.js"></script>
                     <script src="{$assetsURL}/js/index.js"></script>
                     <script src="{$assetsURL}/js/serviceActions.js"></script>
                     <script src="{$assetsURL}/js/overview.js"></script>
 
                     <div id="layers">
-                        <div class="lu-col-md-12">
-                            <div class="lu-h5 lu-m-b-3x lu-m-t-2x">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.statusWidgetTitle}</div>
-                            <div class="lu-tiles lu-row lu-row--eq-height">
-                                {if $configuration.BootServer == 'on'}
-                                    <div class="lu-col-xs-6 lu-col-md-20p">
-                                        <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.startInstance.startForm.confirmStartInstance}','boot')">
-                                            <div class="lu-i-c-6x">
-                                                <img class="serviceActionsImages" src="{$assetsURL}/img/powerOnButton.png" alt="">
-                                            </div>
-                                            <span class="lu-tile__title">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.start.startTitle}</span>
-                                        </a>
-                                    </div>
-                                {/if}
-                                {if $configuration.ShutdownServer == 'on'}
-                                    <div class="lu-col-xs-6 lu-col-md-20p">
-                                        <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.stopInstance.stopForm.confirmStopInstance}','shutdown')">
-                                            <div class="lu-i-c-6x">
-                                                <img class="serviceActionsImages" src="{$assetsURL}/img/powerOffButton.png" alt="">
-                                            </div>
-                                            <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.stopInstance.baseAcceptButton.title}</span>
-                                        </a>
-                                    </div>
-                                {/if}
-                                {if $configuration.RebootServer == 'on'}
-                                    <div class="lu-col-xs-6 lu-col-md-20p">
-                                        <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.resetInstance.resetForm.confirmResetInstance}','reboot')">
-                                            <div class="lu-i-c-6x">
-                                                <img class="serviceActionsImages" src="{$assetsURL}/img/reboot.png" alt="">
-                                            </div>
-                                            <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.resetInstance.baseAcceptButton.title}</span>
-                                        </a>
-                                    </div>
-                                {/if}
-                                {if $configuration.BMCColdReset == 'on'}
-                                    <div class="lu-col-xs-6 lu-col-md-20p">
-                                        <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.bmcColdResetInstance.bmcColdResetForm.confirmBMCColdResetInstance}','bmcColdReset')">
-                                            <div class="lu-i-c-6x">
-                                                <img class="serviceActionsImages" src="{$assetsURL}/img/reinstall.png" alt="">
-                                            </div>
-                                            <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.bmcColdResetInstance.modal.bmcColdResetInstance}</span>
-                                        </a>
-                                    </div>
-                                {/if}
-                                {if $configuration.RescueMode == 'on'}
-                                    <div class="lu-col-xs-6 lu-col-md-20p">
-                                        <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.enableRescueModeInstance.enableRescueModeForm.confirmEnableRescueModeInstance}','enableRescueMode')">
-                                            <div class="lu-i-c-6x">
-                                                <img class="serviceActionsImages" src="{$assetsURL}/img/rescue.png" alt="">
-                                            </div>
-                                            <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.enableRescueModeInstance.modal.enableRescueModeInstance}</span>
-                                        </a>
-                                    </div>
-                                {/if}
-                                {if $configuration.KVMJavaConsole == 'on'}
-                                    <div class="lu-col-xs-6 lu-col-md-20p">
-                                        <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.kVMJavaConsoleForm.confirmKVMJavaConsoleInstance}','kvmConsole')">
-                                            <div class="lu-i-c-6x">
-                                                <img class="serviceActionsImages" src="{$assetsURL}/img/vnc.png" alt="">
-                                            </div>
-                                            <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.modal.kVMJavaConsoleInstance}</span>
-                                        </a>
-                                    </div>
-                                {/if}
-                                {if $configuration.noVNCKVMConsole == 'on'}
-                                    <div class="lu-col-xs-6 lu-col-md-20p">
-                                        <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.noVNCKVMConsoleForm.confirmNoVNCKVMConsoleInstance}','noVNCConsole')">
-                                            <div class="lu-i-c-6x">
-                                                <img class="serviceActionsImages" src="{$assetsURL}/img/novnc.png" alt="">
-                                            </div>
-                                            <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.modal.noVNCKVMConsoleInstance}</span>
-                                        </a>
-                                    </div>
-                                {/if}
-                            </div>
-                        </div>
-                        <div class="lu-row">
+                        {if $configuration.BootServer == 'on' || $configuration.ShutdownServer == 'on' || $configuration.RebootServer == 'on' || $configuration.BMCColdReset == 'on' || $configuration.RescueMode == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.noVNCKVMConsole == 'on'}
                             <div class="lu-col-md-12">
-                                <div class="lu-widget widgetActionComponent vueDatatableTable">
-                                    <div class="lu-widget__header">
-                                        <div class="lu-widget__top lu-top">
-                                            <div class="lu-top__title">
-                                                {$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableTitle}
-                                            </div>
-                                            <div class="lu-top__toolbar">
-                                                {if $configuration.ChangeHostname == 'on'}
-                                                <a href="javascript:;" onclick="showChangeHostnameModal('{$rawObject->serverInformation->getHostname()}')" data-toggle="lu-tooltip"
-                                                   class="lu-btn lu-btn--link lu-btn--plain lu-btn--default lu-tooltip drop-target drop-pinned drop-pinned-bottom drop-element-attached-center drop-target-attached-center"
-                                                   data-title=""><i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i> <span
-                                                            class="lu-btn__text"></span></a>
-                                                {/if}<input type="hidden" name="serviceInfo" value="1"
-                                                            id="serviceInfo"></div>
+                                <div class="lu-h5 lu-m-b-3x lu-m-t-2x">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.statusWidgetTitle}</div>
+                                <div class="lu-tiles lu-row lu-row--eq-height">
+                                    {if $configuration.BootServer == 'on'}
+                                        <div class="lu-col-xs-6 lu-col-md-20p">
+                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.startInstance.startForm.confirmStartInstance}','boot')">
+                                                <div class="lu-i-c-6x">
+                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/powerOnButton.png" alt="">
+                                                </div>
+                                                <span class="lu-tile__title">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.start.startTitle}</span>
+                                            </a>
                                         </div>
-                                    </div>
-                                    <div class="lu-widget__body">
-                                        <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
-                                            <div class="dataTables_wrapper no-footer">
-                                                <div>
-                                                    <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
-                                                        <tbody>
-                                                        {if $configuration.ServerId == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serverID}</td>
-                                                                <td>{$rawObject->serverInformation->getServerID()}</td>
-                                                            </tr>
-                                                        {/if}
+                                    {/if}
+                                    {if $configuration.ShutdownServer == 'on'}
+                                        <div class="lu-col-xs-6 lu-col-md-20p">
+                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.stopInstance.stopForm.confirmStopInstance}','shutdown')">
+                                                <div class="lu-i-c-6x">
+                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/powerOffButton.png" alt="">
+                                                </div>
+                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.stopInstance.baseAcceptButton.title}</span>
+                                            </a>
+                                        </div>
+                                    {/if}
+                                    {if $configuration.RebootServer == 'on'}
+                                        <div class="lu-col-xs-6 lu-col-md-20p">
+                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.resetInstance.resetForm.confirmResetInstance}','reboot')">
+                                                <div class="lu-i-c-6x">
+                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/reboot.png" alt="">
+                                                </div>
+                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.resetInstance.baseAcceptButton.title}</span>
+                                            </a>
+                                        </div>
+                                    {/if}
+                                    {if $configuration.BMCColdReset == 'on'}
+                                        <div class="lu-col-xs-6 lu-col-md-20p">
+                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.bmcColdResetInstance.bmcColdResetForm.confirmBMCColdResetInstance}','bmcColdReset')">
+                                                <div class="lu-i-c-6x">
+                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/reinstall.png" alt="">
+                                                </div>
+                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.bmcColdResetInstance.modal.bmcColdResetInstance}</span>
+                                            </a>
+                                        </div>
+                                    {/if}
+                                    {if $configuration.RescueMode == 'on'}
+                                        <div class="lu-col-xs-6 lu-col-md-20p">
+                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.enableRescueModeInstance.enableRescueModeForm.confirmEnableRescueModeInstance}','enableRescueMode')">
+                                                <div class="lu-i-c-6x">
+                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/rescue.png" alt="">
+                                                </div>
+                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.enableRescueModeInstance.modal.enableRescueModeInstance}</span>
+                                            </a>
+                                        </div>
+                                    {/if}
+                                    {if $configuration.KVMJavaConsole == 'on'}
+                                        <div class="lu-col-xs-6 lu-col-md-20p">
+                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.kVMJavaConsoleForm.confirmKVMJavaConsoleInstance}','kvmConsole')">
+                                                <div class="lu-i-c-6x">
+                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/vnc.png" alt="">
+                                                </div>
+                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.modal.kVMJavaConsoleInstance}</span>
+                                            </a>
+                                        </div>
+                                    {/if}
+                                    {if $configuration.noVNCKVMConsole == 'on'}
+                                        <div class="lu-col-xs-6 lu-col-md-20p">
+                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.noVNCKVMConsoleForm.confirmNoVNCKVMConsoleInstance}','noVNCConsole')">
+                                                <div class="lu-i-c-6x">
+                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/novnc.png" alt="">
+                                                </div>
+                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.modal.noVNCKVMConsoleInstance}</span>
+                                            </a>
+                                        </div>
+                                    {/if}
+                                    {if $configuration.AutoLoginLink == 'on'}
+                                        <div class="lu-col-xs-6 lu-col-md-20p">
+                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.logInToPanelInstance.logInToPanelForm.confirmLogInToPanelInstance}','logIntoPanel')">
+                                                <div class="lu-i-c-6x">
+                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/logIntopanel.png" alt="">
+                                                </div>
+                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.logInToPanelInstance.modal.logInToPanelInstance}</span>
+                                            </a>
+                                        </div>
+                                    {/if}
+                                </div>
+                            </div>
+                        {/if}
+                        {if ($configuration.ServerId == 'on' || $configuration.Label == 'on' || $configuration.ServerStatus == 'on' || $configuration.CurrentOS == 'on' || $configuration.Hostname == 'on' || $configuration.IPAddresses == 'on' || $configuration.MacAddress == 'on' || !empty($metadata)) && $configuration.BlockServerInformationTable != 'on'}
+                            <div class="lu-row">
+                                <div class="lu-col-md-12">
+                                    <div class="lu-widget widgetActionComponent vueDatatableTable">
+                                        <div class="lu-widget__header">
+                                            <div class="lu-widget__top lu-top">
+                                                <div class="lu-top__title">
+                                                    {$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableTitle}
+                                                </div>
+                                                <div class="lu-top__toolbar">
+                                                    {if $configuration.ChangeHostname == 'on'}
+                                                    <a href="javascript:;" onclick="showChangeHostnameModal('{$rawObject->serverInformation->getHostname()}')" data-toggle="lu-tooltip"
+                                                       class="lu-btn lu-btn--link lu-btn--plain lu-btn--default lu-tooltip drop-target drop-pinned drop-pinned-bottom drop-element-attached-center drop-target-attached-center"
+                                                       data-title=""><i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i> <span
+                                                                class="lu-btn__text"></span></a>
+                                                    {/if}<input type="hidden" name="serviceInfo" value="1"
+                                                                id="serviceInfo"></div>
+                                            </div>
+                                        </div>
+                                        <div class="lu-widget__body">
+                                            <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
+                                                <div class="dataTables_wrapper">
+                                                    <div>
+                                                        <table id="serverInformation" width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable dtr-column" style="margin-top:0px!important">
+                                                            <thead style="display: none">
+                                                                <tr role="row">
+                                                                    <th aria-sort="descending" name="header" class="sorting "><span
+                                                                                class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableHeader.header}</span></th>
+                                                                    <th aria-sort="descending" name="value" class="sorting "><span
+                                                                                class="lu-table__text">{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.tableHeader.value}</span></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {if $configuration.ServerId == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serverID}</td>
+                                                                    <td>{$rawObject->serverInformation->getServerID()}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.Label == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.label}</td>
-                                                                <td>{$rawObject->serverInformation->getLabel()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.Label == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.label}</td>
+                                                                    <td>{$rawObject->serverInformation->getLabel()}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.ServerStatus == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.deviceStatus}</td>
-                                                                <td{if $rawObject->serverInformation->getDeviceStatus() === 'Down'} class="lu-text-danger" {else} class="lu-text-success" {/if}>{$rawObject->serverInformation->getDeviceStatus()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.ServerStatus == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.deviceStatus}</td>
+                                                                    <td{if $rawObject->serverInformation->getDeviceStatus() === 'Down'} class="lu-text-danger" {else} class="lu-text-success" {/if}>{$rawObject->serverInformation->getDeviceStatus()}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.CurrentOS == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.os}</td>
-                                                                <td>{$rawObject->serverInformation->getCurrentOS()} - <b>{$rawObject->serverInformation->getInstallationStatus()}</b></td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.CurrentOS == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.os}</td>
+                                                                    <td>{$rawObject->serverInformation->getCurrentOS()}{if $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.Hostname == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.hostname}</td>
-                                                                <td>{$rawObject->serverInformation->getHostname()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.Hostname == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.hostname}</td>
+                                                                    <td>{$rawObject->serverInformation->getHostname()}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.IPAddresses == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.ipAddresses}</td>
-                                                                <td class="overflow">{$rawObject->serverInformation->getIPAddresses()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.IPAddresses == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.ipAddresses}</td>
+                                                                    <td><div class='overflow'>{$rawObject->serverInformation->getIPAddresses()}</div></td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.MacAddress == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.macAddress}</td>
-                                                                <td>{$rawObject->serverInformation->getMacAddress()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.MacAddress == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.macAddress}</td>
+                                                                    <td>{$rawObject->serverInformation->getMacAddress()}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {foreach from=$metadata key=myId item=i}
-                                                            <tr role="row">
-                                                                {if $i.header == 'SSH Password' || $i.header == 'SSH Root Password'}
-                                                                    {if $i.value == ''}
+                                                            {foreach from=$metadata key=myId item=i}
+                                                                <tr role="row">
+                                                                    {if $i.header == 'SSH Password' || $i.header == 'SSH Root Password'}
+                                                                        {if $i.value == ''}
+                                                                            <td class="informationTablesWidth">{$i.header}</td>
+                                                                            <td>-</td>
+                                                                        {else}
+                                                                            <td class="informationTablesWidth">{$i.header}</td>
+                                                                            <td><span class="password_element"><input class="elementPasswordInput"
+                                                                                                                      type="password" value="{$i.value}"
+                                                                                                                      readonly=""><i
+                                                                                            class="elementPasswordIcon lu-zmdi lu-zmdi-eye-off"
+                                                                                            onclick="changePasswordElement(this)"></i></span>
+                                                                            </td>
+                                                                        {/if}
+                                                                    {elseif $i.header == 'Additional IP Addresses'}
                                                                         <td class="informationTablesWidth">{$i.header}</td>
-                                                                        <td>-</td>
+                                                                        <td><div class='overflow'>{$i.value}</div></td>
                                                                     {else}
                                                                         <td class="informationTablesWidth">{$i.header}</td>
-                                                                        <td><span class="password_element"><input class="elementPasswordInput"
-                                                                                                                  type="password" value="{$i.value}"
-                                                                                                                  readonly=""><i
-                                                                                        class="elementPasswordIcon lu-zmdi lu-zmdi-eye-off"
-                                                                                        onclick="changePasswordElement(this)"></i></span>
-                                                                        </td>
+                                                                        <td>{$i.value}</td>
                                                                     {/if}
-                                                                {elseif $i.header == 'Additional IP Addresses'}
-                                                                    <td class="informationTablesWidth">{$i.header}</td>
-                                                                    <td class="overflow">{$i.value}</td>
-                                                                {else}
-                                                                    <td class="informationTablesWidth">{$i.header}</td>
-                                                                    <td>{$i.value}</td>
-                                                                {/if}
-                                                            </tr>
-                                                        {/foreach}
-                                                        </tbody>
-                                                    </table>
-                                                    <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
-                                                        <div class="lu-preloader lu-preloader--sm">
+                                                                </tr>
+                                                            {/foreach}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {/if}
+                        {if ($configuration.Status == 'on' || $configuration.OrderId == 'on' || $configuration.ServiceStatus == 'on' || $configuration.Model == 'on' || $configuration.SerialNumber == 'on' || $configuration.PurchaseDate == 'on' || $configuration.WarrantyMonths == 'on') && $configuration.BlockGeneralInformationTable != 'on'}
+                            <div class="lu-row">
+                                <div  class="lu-col-md-12">
+                                    <div class="lu-widget widgetActionComponent vueDatatableTable">
+                                        <div class="lu-widget__header"><div class="lu-widget__top lu-top">
+                                                <div class="lu-top__title">
+                                                    {$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableTitle}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="lu-widget__body">
+                                            <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
+                                                <div class="dataTables_wrapper no-footer">
+                                                    <div>
+                                                        <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
+                                                            <tbody>
+                                                            {if $configuration.Status == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>
+                                                                    <td>{$rawObject->generalInformation->getStatus()}</td>
+                                                                </tr>
+                                                            {/if}
 
+                                                            {if $configuration.OrderId == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.orderID}</td>
+                                                                    <td>{$rawObject->generalInformation->getOrderID()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.ServiceStatus == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serviceStatus}</td>
+                                                                    <td {if $rawObject->generalInformation->getServiceStatus() == 'Activated'} class="lu-text-success" {else} class="lu-text-danger" {/if}>{$rawObject->generalInformation->getServiceStatus()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.Model == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.model}</td>
+                                                                    <td>{$rawObject->generalInformation->getModel()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.SerialNumber == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serialNumber}</td>
+                                                                    <td>{$rawObject->generalInformation->getSerialNumber()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.PurchaseDate == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.purchaseDate}</td>
+                                                                    <td>{$rawObject->generalInformation->getPurchaseDate()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            {if $configuration.WarrantyMonths == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.warrantyMonths}</td>
+                                                                    <td>{$rawObject->generalInformation->getWarrantyMonths()}</td>
+                                                                </tr>
+                                                            {/if}
+
+                                                            </tbody>
+                                                        </table>
+                                                        <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
+                                                            <div class="lu-preloader lu-preloader--sm">
+
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1020,76 +1154,72 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="lu-row">
-                            <div  class="lu-col-md-12">
-                                <div class="lu-widget widgetActionComponent vueDatatableTable">
-                                    <div class="lu-widget__header"><div class="lu-widget__top lu-top">
-                                            <div class="lu-top__title">
-                                                {$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableTitle}
+                        {/if}
+
+                        {if ($configuration.Location == 'on' || $configuration.LabeledRack == 'on' || $configuration.Floor == 'on' || $configuration.Address == 'on' || $configuration.PhoneNumber == 'on' || $configuration.Description == 'on') && $configuration.BlockLocationInformationTable != 'on'}
+                            <div class="lu-row">
+                                <div class="lu-col-md-12">
+                                    <div class="lu-widget widgetActionComponent vueDatatableTable">
+                                        <div class="lu-widget__header"><div class="lu-widget__top lu-top">
+                                                <div class="lu-top__title">
+                                                    {$lang.serverAA.servicePageIntegration.mainContainer.location.location}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="lu-widget__body">
-                                        <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
-                                            <div class="dataTables_wrapper no-footer">
-                                                <div>
-                                                    <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
-                                                        <tbody>
-                                                        {if $configuration.Status == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>
-                                                                <td>{$rawObject->generalInformation->getStatus()}</td>
-                                                            </tr>
-                                                        {/if}
+                                        <div class="lu-widget__body">
+                                            <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
+                                                <div class="dataTables_wrapper no-footer">
+                                                    <div>
+                                                        <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
+                                                            <tbody>
+                                                            {if $configuration.Location == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.locationName}</td>
+                                                                    <td>{$rawObject->locationInformation->getLocationName()} ({$rawObject->locationInformation->getRackName()})</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.OrderId == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.orderID}</td>
-                                                                <td>{$rawObject->generalInformation->getOrderID()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.LabeledRack == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.labeledRackWithPosition}</td>
+                                                                    <td>{$rawObject->locationInformation->getRackWithPosition()}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.ServiceStatus == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serviceStatus}</td>
-                                                                <td {if $rawObject->generalInformation->getServiceStatus() == 'Activated'} class="lu-text-success" {else} class="lu-text-danger" {/if}>{$rawObject->generalInformation->getServiceStatus()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.Floor == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.floor}</td>
+                                                                    <td>{$rawObject->locationInformation->getFloor()}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.Model == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.model}</td>
-                                                                <td>{$rawObject->generalInformation->getModel()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.Address == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.address}</td>
+                                                                    <td>{$rawObject->locationInformation->getAddress()}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.SerialNumber == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serialNumber}</td>
-                                                                <td>{$rawObject->generalInformation->getSerialNumber()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.PhoneNumber == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.phone}</td>
+                                                                    <td>{$rawObject->locationInformation->getPhoneNumber()}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.PurchaseDate == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.purchaseDate}</td>
-                                                                <td>{$rawObject->generalInformation->getPurchaseDate()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            {if $configuration.Description == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.description}</td>
+                                                                    <td >{$rawObject->locationInformation->getDescription()}</td>
+                                                                </tr>
+                                                            {/if}
 
-                                                        {if $configuration.WarrantyMonths == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.warrantyMonths}</td>
-                                                                <td>{$rawObject->generalInformation->getWarrantyMonths()}</td>
-                                                            </tr>
-                                                        {/if}
+                                                            </tbody>
+                                                        </table>
+                                                        <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
+                                                            <div class="lu-preloader lu-preloader--sm">
 
-                                                        </tbody>
-                                                    </table>
-                                                    <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
-                                                        <div class="lu-preloader lu-preloader--sm">
-
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1098,69 +1228,47 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="lu-row">
-                            <div class="lu-col-md-12">
-                                <div class="lu-widget widgetActionComponent vueDatatableTable">
-                                    <div class="lu-widget__header"><div class="lu-widget__top lu-top">
-                                            <div class="lu-top__title">
-                                                {$lang.serverAA.servicePageIntegration.mainContainer.location.location}
+                        {/if}
+                        {if $configuration.BlockBandwidthTable != 'on'}
+                            <div class="lu-row">
+                                <div class="lu-col-md-12">
+                                    <div class="lu-widget widgetActionComponent vueDatatableTable">
+                                        <div class="lu-widget__header">
+                                            <div class="lu-widget__top lu-top">
+                                                <div class="lu-top__title">
+                                                    {$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.bandwidthTable}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="lu-widget__body">
-                                        <div data-table-container="" data-check-container="" class="lu-t-c  datatableLoader">
-                                            <div class="dataTables_wrapper no-footer">
-                                                <div>
-                                                    <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
-                                                        <tbody>
-                                                        {if $configuration.Location == 'on'}
+                                        <div class="lu-widget__body">
+                                            <div data-table-container="" data-check-container=""
+                                                 class="lu-t-c  datatableLoader">
+                                                <div class="dataTables_wrapper no-footer">
+                                                    <div>
+                                                        <table width="100%" role="grid"
+                                                               class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
+                                                            <thead>
                                                             <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.locationName}</td>
-                                                                <td>{$rawObject->locationInformation->getLocationName()} ({$rawObject->locationInformation->getRackName()})</td>
+                                                                <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthInterval}</span></th>
+                                                                <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthIn}</span></th>
+                                                                <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthOut}</span></th>
+                                                                <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthTotal}</span></th>
                                                             </tr>
-                                                        {/if}
-
-                                                        {if $configuration.LabeledRack == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.labeledRackWithPosition}</td>
-                                                                <td>{$rawObject->locationInformation->getRackWithPosition()}</td>
-                                                            </tr>
-                                                        {/if}
-
-                                                        {if $configuration.Floor == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.floor}</td>
-                                                                <td>{$rawObject->locationInformation->getFloor()}</td>
-                                                            </tr>
-                                                        {/if}
-
-                                                        {if $configuration.Address == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.address}</td>
-                                                                <td>{$rawObject->locationInformation->getAddress()}</td>
-                                                            </tr>
-                                                        {/if}
-
-                                                        {if $configuration.PhoneNumber == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.phone}</td>
-                                                                <td>{$rawObject->locationInformation->getPhoneNumber()}</td>
-                                                            </tr>
-                                                        {/if}
-
-                                                        {if $configuration.Description == 'on'}
-                                                            <tr role="row">
-                                                                <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.location.tableField.description}</td>
-                                                                <td >{$rawObject->locationInformation->getDescription()}</td>
-                                                            </tr>
-                                                        {/if}
-
-                                                        </tbody>
-                                                    </table>
-                                                    <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" style="display: none;">
-                                                        <div class="lu-preloader lu-preloader--sm">
-
+                                                            </thead>
+                                                            <tbody>
+                                                            {foreach from=$rawObject->bandwidth->getData() key=myId item=i}
+                                                                <tr role="row">
+                                                                    <td>{$i.bandwidthInterval}</td>
+                                                                    <td>{$i.bandwidthIn}</td>
+                                                                    <td>{$i.bandwidthOut}</td>
+                                                                    <td>{$i.bandwidthTotal}</td>
+                                                                </tr>
+                                                            {/foreach}
+                                                            </tbody>
+                                                        </table>
+                                                        <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay"
+                                                             style="display: none;">
+                                                            <div class="lu-preloader lu-preloader--sm"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1169,55 +1277,10 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="lu-row">
-                            <div class="lu-col-md-12">
-                                <div class="lu-widget widgetActionComponent vueDatatableTable">
-                                    <div class="lu-widget__header">
-                                        <div class="lu-widget__top lu-top">
-                                            <div class="lu-top__title">
-                                                {$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.bandwidthTable}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="lu-widget__body">
-                                        <div data-table-container="" data-check-container=""
-                                             class="lu-t-c  datatableLoader">
-                                            <div class="dataTables_wrapper no-footer">
-                                                <div>
-                                                    <table width="100%" role="grid"
-                                                           class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
-                                                        <thead>
-                                                        <tr role="row">
-                                                            <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthInterval}</span></th>
-                                                            <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthIn}</span></th>
-                                                            <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthOut}</span></th>
-                                                            <th><span class="lu-table__text">{$lang.serverAA.servicePageIntegration.mainContainer.bandwidthTable.table.bandwidthTotal}</span></th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {foreach from=$rawObject->bandwidth->getData() key=myId item=i}
-                                                            <tr role="row">
-                                                                <td>{$i.bandwidthInterval}</td>
-                                                                <td>{$i.bandwidthIn}</td>
-                                                                <td>{$i.bandwidthOut}</td>
-                                                                <td>{$i.bandwidthTotal}</td>
-                                                            </tr>
-                                                        {/foreach}
-                                                        </tbody>
-                                                    </table>
-                                                    <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay"
-                                                         style="display: none;">
-                                                        <div class="lu-preloader lu-preloader--sm"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {/if}
                     </div>
+                {/if}
+
                 {/if}
             </div>
 

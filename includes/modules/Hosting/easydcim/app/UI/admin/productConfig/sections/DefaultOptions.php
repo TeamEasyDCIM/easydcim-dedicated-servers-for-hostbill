@@ -24,11 +24,9 @@ class DefaultOptions
         return $this->api->locations->getLists();
     }
 
-    public function getModelList($type)
+    public function getModelList()
     {
-        $model = new ListWithType();
-        $model->setType($type);
-        return $this->api->models->listModelsWithType($model);
+        return $this->api->models->listServerModels();
     }
 
     public function getTemplateList($locationId)

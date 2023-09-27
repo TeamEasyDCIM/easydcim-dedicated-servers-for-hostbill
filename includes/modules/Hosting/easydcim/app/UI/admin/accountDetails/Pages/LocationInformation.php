@@ -51,7 +51,7 @@ class LocationInformation
      */
     public function getLocationName(): string
     {
-        return $this->locationInformations->location->name ?? '-';
+        return $this->locationInformations->location->name != '' ? $this->locationInformations->location->name : '-';
     }
 
     /**
@@ -59,7 +59,7 @@ class LocationInformation
      */
     public function getAddress(): string
     {
-        return $this->locationInformations->location->address ?? '-';
+        return $this->locationInformations->location->address != '' ? $this->locationInformations->location->address :'-';
     }
 
     /**
@@ -67,7 +67,7 @@ class LocationInformation
      */
     public function getPhoneNumber(): string
     {
-        return $this->locationInformations->location->phone ?? '-';
+        return $this->locationInformations->location->phone != '' ? $this->locationInformations->location->phone :'-';
     }
 
     /**
@@ -75,7 +75,7 @@ class LocationInformation
      */
     public function getDescription(): string
     {
-        return $this->locationInformations->location->description ?? '-';
+        return $this->locationInformations->location->description != '' ? $this->locationInformations->location->description :'-';
     }
 
     /**
@@ -83,7 +83,7 @@ class LocationInformation
      */
     public function getRackWithPosition(): string
     {
-        return $this->locationInformations->labeledRackWithPosition ?? '-';
+        return $this->locationInformations->labeledRackWithPosition != '' ? $this->locationInformations->labeledRackWithPosition :'-';
     }
 
     /**
@@ -91,7 +91,7 @@ class LocationInformation
      */
     public function getFloor(): string
     {
-        return $this->locationInformations->rack->floor_id ?? '-';
+        return $this->locationInformations->rack->floor_id != '' ? $this->locationInformations->rack->floor_id :'-';
     }
 
     /**
@@ -99,7 +99,7 @@ class LocationInformation
      */
     public function getRackName(): string
     {
-        return $this->locationInformations->rack->name ?? '-';
+        return $this->locationInformations->rack->name != '' ? $this->locationInformations->rack->name :'-';
     }
 
     /**

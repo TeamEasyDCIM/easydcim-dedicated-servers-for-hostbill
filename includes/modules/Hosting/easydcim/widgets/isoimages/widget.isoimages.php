@@ -49,9 +49,9 @@ class widget_isoimages extends HostingWidget
      */
     public function clientFunction(&$module) {
         $this->params = $module->getAccount();
-        if ($this->params['options']['TrafficStatistics'] != 'on')
+        if ($this->params['options']['IsoImages'] != 'on' || $this->params['options']['OsInstallation'] != 'on')
         {
-            return 'This page is disabled';
+            return array('disabledPage.tpl', $variables);
         }
         $this->params['clientsdetails'] = $module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($module->connection,$this->params);

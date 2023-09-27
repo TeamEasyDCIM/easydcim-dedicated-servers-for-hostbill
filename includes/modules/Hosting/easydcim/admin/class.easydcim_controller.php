@@ -38,6 +38,7 @@ class easydcim_controller extends HBController
     protected $graphs;
     protected $serviceActions;
     protected $servers;
+    protected $configFieldsModel;
 
     public function productdetails($params)
     {
@@ -46,6 +47,7 @@ class easydcim_controller extends HBController
         $serverId = $this->getServerId($params['id']);
         if ($serverId != null && $serverId != '')
         {
+            $this->configFieldsModel = HBLoader::LoadModel("ConfigFields");
             $serverHelper = HBLoader::LoadModel('Servers');
             $this->servers = $serverHelper->findServersBy('module','easydcim');
             $this->serverDetails = $this->getServerDetails($this->getServerId($params['id']));
@@ -104,13 +106,14 @@ class easydcim_controller extends HBController
             {
                 self::jsonEncode($this->clientAreaFeatures->getFields());
             }
+
             $path = APPDIR_MODULES.'Hosting/easydcim/templates/myproductconfig.tpl';
             $assetsUrl = '.././includes/modules/Hosting/easydcim/templates/assets';
             $config = $this->parseConfig();
             $this->template->assign('customconfig',$path);
             $this->template->assign('assetsURL',$assetsUrl);
             $this->template->assign('locationList',$this->defaultOptions->getLocationList());
-            $this->template->assign('modelList',$this->defaultOptions->getModelList('Server'));
+            $this->template->assign('modelList',$this->defaultOptions->getModelList());
             $this->template->assign('templateList',$this->defaultOptions->getTemplateList($config->LocationID));
             $this->template->assign('addonsList',$this->defaultOptions->getAddonsList($config->OsTemplateID,$config->LocationID));
             $this->template->assign('accessLevelList',$this->automationSettings->getAccessLevelList());
@@ -120,6 +123,8 @@ class easydcim_controller extends HBController
             $this->template->assign('adminEmailTemplateList',$this->emailNotifications->getAdminEmailTemplates());
             $this->template->assign('clientEmailTemplateList',$this->emailNotifications->getClientEmailTemplates());
             $this->template->assign('moduleConfiguration',$config);
+            $this->template->assign('configurableOptions',$this->configFieldsModel->exportData($params['id']));
+            $this->template->assign('productId',$params['id']);
         }
 
     }
@@ -137,6 +142,9 @@ class easydcim_controller extends HBController
         {
             $serverHelper = HBLoader::LoadModel('Servers');
             $this->servers = $serverHelper->findServersBy('module','easydcim');
+            $clientModel = HBLoader::LoadModel("Clients");
+            $clientData = $clientModel->getClient($params['account']['client_id']);
+            $params['account']['clientsdetails'] = $clientData;
             $db = new Database();
             $this->db = $db->getConnection();
             $this->serverDetails = $this->getServerDetails($this->getServerId($params['account']['product_id']));
@@ -147,7 +155,7 @@ class easydcim_controller extends HBController
             $this->locationInformation = new LocationInformation($this->api,$this->client);
             $this->bandwidth = new Bandwidth($this->api);
             $this->graphs = new Graphs($this->api);
-            $this->serviceActions = new ServiceActions($this->api);
+            $this->serviceActions = new ServiceActions($this->api,$this->client);
 
             if (isset($_GET['graphs']))
             {

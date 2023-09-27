@@ -27,7 +27,7 @@
                 </div>
                 <div class="lu-widget__body">
                     <div class="lu-t-c">
-                        <div class="dataTables_wrapper no-footer">
+                        <div class="dataTables_wrapper no-footer" style="overflow: unset!important;">
                             <div>
                                 <table id="isoImages" width="100%" role="grid"
                                        class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">

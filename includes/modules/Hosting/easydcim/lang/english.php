@@ -191,17 +191,15 @@ $lang['serverAA']['configOptions']['addMetadataModal']['addMetadataForm']['metad
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['message'] = 'Define what features and information will be available for customers in the client area.';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['clientAreaFeaturesSection'] = 'Client Area Features';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['generalInfo']['generalInfo'] = 'General Information';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['generalInfo']['generalInfoSelectAll']['generalInfoSelectAll'] = 'Select All General Information Features';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['generalInfo']['generalInfoSelectAll']['generalInfoSelectAll'] = 'Select All';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['serviceInfo']['serviceInfo'] = 'Service Information';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['serviceInfo']['serviceInfoSelectAll']['serviceInfoSelectAll'] = 'Select All Service Information Features';
-//$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['baseFeatures']['baseFeatures'] = 'Base Features';
-//$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['baseFeatures']['baseFeaturesSelectAll']['baseFeaturesSelectAll'] = 'Select All Base Features';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['baseFeatures']['ServerId']['ServerId'] = 'Server Id';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['serviceInfo']['serviceInfoSelectAll']['serviceInfoSelectAll'] = 'Select All';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['baseFeatures']['ServerId']['ServerId'] = 'Server ID';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['baseFeatures']['Image']['Image'] = 'Image';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['baseFeatures']['Image']['description'] = 'Enable if you want clients to have access to the "Image" section in the client area.';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['generalInfo']['Model']['Model'] = 'Server Model';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['generalInfo']['Status']['Status'] = 'Status';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['generalInfo']['OrderID']['OrderID'] = 'Order Id';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['generalInfo']['OrderID']['OrderID'] = 'Order ID';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['generalInfo']['ServiceStatus']['ServiceStatus'] = 'Service Status';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['baseFeatures']['Model']['description'] = 'Enable if you want clients to have access to the "Model" section in the client area.';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['serviceInfo']['Label']['Label'] = 'Label';
@@ -238,7 +236,7 @@ $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFea
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['baseFeatures']['HideHostingInformation']['description'] = 'Hide general Hosting Information on Service Details Page in Client Area';
 
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['locationInfo']['locationInfo'] = 'Location Information';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['locationInfo']['locationInfoSelectAll']['locationInfoSelectAll'] = 'Select All Location Information Features';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['locationInfo']['locationInfoSelectAll']['locationInfoSelectAll'] = 'Select All';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['locationInfo']['Location']['Location'] = 'Location Name';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['locationInfo']['LabeledRack']['LabeledRack'] = 'Labeled Rack With Position';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['leftSection']['locationInfo']['Floor']['Floor'] = 'Floor';
@@ -248,7 +246,7 @@ $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFea
 
 
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['graphTypes']['graphTypes'] = 'View Graphs';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['graphTypes']['graphTypesSelectAll']['graphTypesSelectAll'] = 'Select All Graph Types';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['graphTypes']['graphTypesSelectAll']['graphTypesSelectAll'] = 'Select All';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['graphTypes']['Ping']['Ping'] = 'Ping';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['graphTypes']['Ping']['description'] = 'Enable if you want clients to have access to the "Ping" section in the client area.';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['graphTypes']['Status']['Status'] = 'Status';
@@ -261,7 +259,7 @@ $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFea
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['graphTypes']['PollerDuration']['description'] = 'Enable if you want clients to have access to the "Poller Duration" section in the client area.';
 
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['serverActions'] = 'Server Actions';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['serverActionsSelectAll']['serverActionsSelectAll'] = 'Select All Server Actions';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['serverActionsSelectAll']['serverActionsSelectAll'] = 'Select All';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['RebootServer']['RebootServer'] = 'Reboot Server';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['RebootServer']['description'] = 'Enable if you want clients to have access to the "Reboot Server" section in the client area.';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['BootServer']['BootServer'] = 'Boot Server';
@@ -275,15 +273,15 @@ $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFea
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['AutoLoginLink']['AutoLoginLink'] = 'Auto Login Link';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['AutoLoginLink']['description'] = 'Enable if you want clients to have access to the "Auto Login Link" section in the client area.';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['KVMJavaConsole']['KVMJavaConsole'] = 'KVM Java Console';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['KVMJavaConsole']['description'] = 'Enable if you want clients to have access to the "KVM Java Console" section in the client area.';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['KVMJavaConsole']['description'] = 'Only for Dell and SuperMicro servers';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['noVNCKVMConsole']['noVNCKVMConsole'] = 'noVNC KVM Console';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['noVNCKVMConsole']['description'] = 'Enable if you want clients to have access to the "noVNC KVM Console" section in the client area.';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['serverActions']['noVNCKVMConsole']['description'] = 'Only for American Megatrends, Dell, HP and SuperMicro servers';
 
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['modules'] = 'Modules';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['modulesSelectAll']['modulesSelectAll'] = 'Select All Modules';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['modules'] = 'Extensions';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['modulesSelectAll']['modulesSelectAll'] = 'Select All';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['TrafficStatistics']['TrafficStatistics'] = 'Traffic Statistics';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['TrafficStatistics']['description'] = 'Enable if you want clients to have access to the "Traffic Statistics" section in the client area.';
-$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['DevicesTraffic']['DevicesTraffic'] = 'Devices Traffic';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['DevicesTraffic']['DevicesTraffic'] = 'Device Statistics';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['DevicesTraffic']['description'] = 'Enable if you want clients to have access to the "Devices Traffic" section in the client area.';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['OsInstallation']['OsInstallation'] = 'Rebuild';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['OsInstallation']['description'] = 'Enable if you want clients to have access to the "Os Installation" section in the client area.';
@@ -307,10 +305,24 @@ $lang['serverAA']['productConfig']['mainContainer']['configForm']['serviceNotifi
 
 $lang['serverAA']['productConfig']['mainContainer']['optionsWidget']['optionsWidgetTitle'] = 'Configurable Options';
 $lang['serverAA']['productConfig']['mainContainer']['optionsWidget']['addOptionsButton']['button']['addOptionButtonsTitle'] = 'Create Configurable Options';
+$lang['serverAA']['productConfig']['mainContainer']['optionsWidget']['addOptionsButton']['button']['addOptionPartsButtonsTitle'] = 'Create Configurable Options For Parts';
+$lang['serverAA']['productConfig']['mainContainer']['optionsWidget']['addOptionsButton']['button']['addOptionMetadataButtonsTitle'] = 'Create Configurable Options For Metadata';
 $lang['serverAA']['configOptions']['addOptionsModal']['modal']['addOptionsModalTitle'] = 'Create Configurable Options';
 $lang['serverAA']['configOptions']['addOptionsModal']['baseAcceptButton']['title'] = 'Create';
 $lang['serverAA']['configOptions']['addOptionsModal']['baseCancelButton']['title'] = 'Cancel';
 $lang['serverAA']['configOptions']['addOptionsModal']['addOptionsForm']['configurableOptionsNameInfo'] = 'Below you can choose which configurable options will be generated for this product. Please note that these options are divided into two parts separated by a | sign, where the part on the left indicates the sent variable and the part on the right the friendly name displayed to customers. After generating these options you can edit the friendly part on the right, but not the variable part on the left. More information about configurable options and their editing can be found :configurableOptionsNameUrl:.';
+
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['osInstallationActions']['osInstallationActions'] = 'OS Installation Actions';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['osInstallationActions']['osInstallationActionsSelectAll']['osInstallationActionsSelectAll'] = 'Select All';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['osInstallationActions']['Rebuild']['Rebuild'] = 'Rebuild Server';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['osInstallationActions']['IsoImages']['IsoImages'] = 'ISO Images';
+
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['overviewDatatables']['overviewDatatables'] = 'Overview Tables';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['overviewDatatables']['overviewDatatablesSelectAll']['overviewDatatablesSelectAll'] = 'Select All';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['overviewDatatables']['BlockServerInformationTable']['BlockServerInformationTable'] = "Hide Server Information Table";
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['overviewDatatables']['BlockGeneralInformationTable']['BlockGeneralInformationTable'] = "Hide General Information Table";
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['overviewDatatables']['BlockLocationInformationTable']['BlockLocationInformationTable'] = "Hide Location Table";
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['overviewDatatables']['BlockBandwidthTable']['BlockBandwidthTable'] = "Hide Bandwidth Usage Table";
 
 $lang['serverAA']['servicePageIntegration']['mainContainer']['statusWidget']['statusWidget'] = 'Details';
 $lang['serverAA']['servicePageIntegration']['mainContainer']['statusWidget']['statusWidgetTitle'] = 'Service Actions';
@@ -322,7 +334,7 @@ $lang['serverAA']['servicePageIntegration']['mainContainer']['statusWidget']['bm
 $lang['serverAA']['adminServicesTabFields']['bmcColdResetInstance']['bmcColdResetForm']['confirmBMCColdResetInstance'] = "Are you sure that you want to boot BMC cold reset.";
 $lang['serverAA']['adminServicesTabFields']['bmcColdResetInstance']['baseAcceptButton']['title'] = "Confirm";
 $lang['serverAA']['adminServicesTabFields']['bmcColdResetInstance']['baseCancelButton']['title'] = "Cancel";
-$lang['serverAA']['adminServicesTabFields']['bmcColdResetInstance']['modal']['bmcColdResetInstance'] = 'Bmc Cold Reset';
+$lang['serverAA']['adminServicesTabFields']['bmcColdResetInstance']['modal']['bmcColdResetInstance'] = 'BMC Cold Reset';
 $lang['serverAA']['servicePageIntegration']['mainContainer']['statusWidget']['getRdpFile']['getRdpFileTitle']  = 'Download RDP File';
 $lang['serverAA']['servicePageIntegration']['mainContainer']['statusWidget']['noDataAvalible'] = 'No Instance Details Available';
 $lang['serverAA']['servicePageIntegration']['mainContainer']['graphAndBandwidth']['rangeSelect]']['rangeSelect'] = "Data Range";
@@ -334,8 +346,8 @@ $lang['serverAA']['servicePageIntegration']['mainContainer']['generalInformation
 $lang['serverAA']['servicePageIntegration']['mainContainer']['generalInformationTable']['Expired'] = 'Expired';
 
 
-$lang['serverCA']['home']['mainContainer']['statusWidget']['bmcColdReset']['tooltip'] = 'Bmc Cold Reset';
-$lang['serverCA']['home']['mainContainer']['statusWidget']['bmcColdReset']['bmcColdReset'] = 'Bmc Cold Reset';
+$lang['serverCA']['home']['mainContainer']['statusWidget']['bmcColdReset']['tooltip'] = 'BMC Cold Reset';
+$lang['serverCA']['home']['mainContainer']['statusWidget']['bmcColdReset']['bmcColdReset'] = 'BMC Cold Reset';
 $lang['serverCA']['home']['mainContainer']['statusWidget']['enableRescueMode']['tooltip'] = 'Enable Rescue Mode';
 $lang['serverCA']['home']['mainContainer']['statusWidget']['enableRescueMode']['enableRescueMode'] = 'Enable Rescue Mode';
 $lang['serverCA']['home']['mainContainer']['statusWidget']['kVMJavaConsole']['tooltip'] = 'KVM Java Console';
@@ -424,22 +436,22 @@ $lang['serverAA']['adminServicesTabFields']['startInstance']['baseAcceptButton']
 $lang['serverAA']['adminServicesTabFields']['startInstance']['baseCancelButton']['title'] = 'Cancel';
 
 $lang['serverAA']['adminServicesTabFields']['enableRescueModeInstance']['modal']['enableRescueModeInstance'] = 'Enable Rescue Mode';
-$lang['serverAA']['adminServicesTabFields']['enableRescueModeInstance']['enableRescueModeForm']['confirmEnableRescueModeInstance'] = 'Do you want to enable rescue mode?';
+$lang['serverAA']['adminServicesTabFields']['enableRescueModeInstance']['enableRescueModeForm']['confirmEnableRescueModeInstance'] = 'Are you sure that you want to enable the rescue mode?';
 $lang['serverAA']['adminServicesTabFields']['enableRescueModeInstance']['baseAcceptButton']['title'] = 'Confirm';
 $lang['serverAA']['adminServicesTabFields']['enableRescueModeInstance']['baseCancelButton']['title'] = 'Cancel';
 
 $lang['serverAA']['adminServicesTabFields']['logInToPanelInstance']['modal']['logInToPanelInstance'] = 'Log In To Panel';
-$lang['serverAA']['adminServicesTabFields']['logInToPanelInstance']['logInToPanelForm']['confirmLogInToPanelInstance'] = 'Do you want to be redirected to easyDCIM panel?';
+$lang['serverAA']['adminServicesTabFields']['logInToPanelInstance']['logInToPanelForm']['confirmLogInToPanelInstance'] = 'Are you sure that you want to be redirected to the EasyDCIM panel?';
 $lang['serverAA']['adminServicesTabFields']['logInToPanelInstance']['baseAcceptButton']['title'] = 'Confirm';
 $lang['serverAA']['adminServicesTabFields']['logInToPanelInstance']['baseCancelButton']['title'] = 'Cancel';
 
 $lang['serverAA']['adminServicesTabFields']['kVMJavaConsoleInstance']['modal']['kVMJavaConsoleInstance'] = 'KVM Java Console';
-$lang['serverAA']['adminServicesTabFields']['kVMJavaConsoleInstance']['kVMJavaConsoleForm']['confirmKVMJavaConsoleInstance'] = 'Do you want to lunch KVM Java Console?';
+$lang['serverAA']['adminServicesTabFields']['kVMJavaConsoleInstance']['kVMJavaConsoleForm']['confirmKVMJavaConsoleInstance'] = 'Are you sure that you want to launch the KVM Java Console?';
 $lang['serverAA']['adminServicesTabFields']['kVMJavaConsoleInstance']['baseAcceptButton']['title'] = 'Confirm';
 $lang['serverAA']['adminServicesTabFields']['kVMJavaConsoleInstance']['baseCancelButton']['title'] = 'Cancel';
 
 $lang['serverAA']['adminServicesTabFields']['noVNCKVMConsoleInstance']['modal']['noVNCKVMConsoleInstance'] = 'noVNC KVM Console';
-$lang['serverAA']['adminServicesTabFields']['noVNCKVMConsoleInstance']['noVNCKVMConsoleForm']['confirmNoVNCKVMConsoleInstance'] = 'Do you want to lunch noVNC KVM Console?';
+$lang['serverAA']['adminServicesTabFields']['noVNCKVMConsoleInstance']['noVNCKVMConsoleForm']['confirmNoVNCKVMConsoleInstance'] = 'Are you sure that you want to launch the noVNC KVM Console?';
 $lang['serverAA']['adminServicesTabFields']['noVNCKVMConsoleInstance']['baseAcceptButton']['title'] = 'Confirm';
 $lang['serverAA']['adminServicesTabFields']['noVNCKVMConsoleInstance']['baseCancelButton']['title'] = 'Cancel';
 
@@ -454,6 +466,8 @@ $lang['serverAA']['servicePageIntegration']['mainContainer']['location']['tableF
 $lang['serverAA']['servicePageIntegration']['mainContainer']['location']['noDataAvalible'] = 'No Data Avalible';
 
 $lang['serverAA']['servicePageIntegration']['mainContainer']['serverInformation']['tableTitle'] = 'Server Information';
+$lang['serverAA']['servicePageIntegration']['mainContainer']['serverInformation']['tableHeader']['header'] = '';
+$lang['serverAA']['servicePageIntegration']['mainContainer']['serverInformation']['tableHeader']['value'] = '';
 $lang['serverAA']['servicePageIntegration']['mainContainer']['serverInformation']['tableField']['label'] = 'Label';
 $lang['serverAA']['servicePageIntegration']['mainContainer']['serverInformation']['tableField']['deviceStatus'] = 'Device Status';
 $lang['serverAA']['servicePageIntegration']['mainContainer']['serverInformation']['tableField']['os'] = 'OS';
@@ -741,11 +755,12 @@ $lang['ajaxResponses']['changeHostname'] = "Hostname was updated correctly";
 $lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['osInstalationTable'] = 'Os Instalation';
 $lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['hostInformation'] = 'Host Information';
 $lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['macAddress'] = 'MAC Address';
-$lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['currentOS'] = 'Current OS';
+$lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['currentOS'] = 'Current OS Template';
 $lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['noInfo'] = 'No Info';
-$lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['reinstall'] = 'Reinstall';
-$lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['osIsCurrentlyBeingInstalled'] = 'Os Is Currently Being Installed';
-$lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['actions'] = 'Actions';
+$lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['reinstall'] = 'Rebuild Server';
+$lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['osIsCurrentlyBeingInstalled'] = 'Installation In Progress';
+$lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['actions'] = 'Reinstall OS Template';
+$lang['serverCA']['rebuild']['mainContainer']['osInstalationTable']['table']['cancelInstallation'] = 'Cancel Reinstallation';
 
 $lang['serverCA']['rebuild']['mainContainer']['rebuildButton']['button']['rebuildButton'] = 'Rebuild';
 $lang['serverCA']['rebuild']['mainContainer']['osTemplateTable']['check']['check'] = '';
@@ -809,10 +824,10 @@ $lang['serverCA']['rebuild']['mainContainer']['osTemplateTable']['table']['Descr
 $lang['ajaxResponses']['ServiceStopped'] = 'Stopping the service. It may take a while to complete this process.';
 $lang['ajaxResponses']['ServiceStarted'] = 'Starting the service. It may take a while to complete this process.';
 $lang['ajaxResponses']['logInToPanel']= 'Logging to panel. It may take a while to complete this process.';
-$lang['ajaxResponses']['kVMJavaConsole']= 'Lunching KVM Java Console. It may take a while to complete this process.';
+$lang['ajaxResponses']['kVMJavaConsole']= 'Launching KVM Java Console. It may take a while to complete this process.';
 $lang['ajaxResponses']['enableRescueMode']= 'Enabling Rescue Mode. It may take a while to complete this process.';
 $lang['ajaxResponses']['ServiceBMCColdReset']= 'Service BMC Cold Reset. It may take a while to complete this process.';
-$lang['ajaxResponses']['noVNCKVMConsole']= 'Lunching noVNC KVM Console. It may take a while to complete this process.';
+$lang['ajaxResponses']['noVNCKVMConsole']= 'Launching noVNC KVM Console. It may take a while to complete this process.';
 $lang['ajaxResponses']['dnsRecordCreatedSuccessFully'] = 'DNS record created successfully';
 $lang['ajaxResponses']['RebuildMessage'] = 'Rebuild was successfull';
 
@@ -892,3 +907,6 @@ $lang['serverCA']['home']['resetWindowsPassword']['baseAcceptButton']['title'] =
 $lang['serverCA']['home']['resetWindowsPassword']['baseCancelButton']['title'] = 'Cancel';
 $lang['serverCA']['home']['resetWindowsPassword']['resetPasswordForm']['text']['NewPassword'] = 'New Password';
 $lang['ajaxResponses']['PasswordReseted'] = 'A new password has been generated';
+
+$lang['No'] = 'NO';
+$lang['Yes'] = 'YES';

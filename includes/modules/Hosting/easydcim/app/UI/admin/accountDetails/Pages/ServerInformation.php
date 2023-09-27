@@ -54,7 +54,7 @@ class ServerInformation
      */
     public function getIPAddresses(): string
     {
-        $ipAddresses = implode(',',$this->generalInformations->ip_addresses);
+        $ipAddresses = implode('<br>',$this->generalInformations->ip_addresses);
         return  $ipAddresses != '' ? $ipAddresses :'-';
     }
 
@@ -111,7 +111,7 @@ class ServerInformation
      */
     public function getInstallationStatus(): string
     {
-        return $this->instalationStatus != '' ? $this->instalationStatus :'-';
+        return $this->instalationStatus != '' ? $this->instalationStatus :'';
     }
 
     /**

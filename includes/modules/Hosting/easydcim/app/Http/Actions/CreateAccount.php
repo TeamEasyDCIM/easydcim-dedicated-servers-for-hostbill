@@ -75,7 +75,7 @@ class CreateAccount
     {
         $this->module = $module;
         $this->mailer = $mailer;
-//        $this->checkOrderId();
+        $this->checkOrderId();
         $this->params = $this->module->getAccount();
         $this->serverModel = $serverModel;
         $this->params['clientsdetails'] = $this->module->getClient();

@@ -47,4 +47,23 @@ class Models extends AbstractEasyDCIMAPI
         return $this->api->get()->execut('type');
     }
 
+    /**
+     * EasyDCIM ItemModel - List the Models for Server and Blade type
+     * @documentation https://www.easydcim.com/api/index.html#api-ItemModel-Index
+     * @return JSON object
+     * @throws error
+     */
+    public function listServerModels()
+    {
+        $filters = [
+            'filters' => [
+                'type_id' => [
+                    '4','6'
+                ]
+            ]
+        ];
+
+        return $this->api->get()->execut('model?'. http_build_query($filters));
+    }
+
 }

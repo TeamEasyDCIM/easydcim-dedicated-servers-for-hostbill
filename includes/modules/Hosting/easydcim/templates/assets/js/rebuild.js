@@ -1,3 +1,4 @@
+let popup = false;
 $(document).ready(function (e) {
     $('#rebuildTable').DataTable({
         lengthChange: false,
@@ -9,19 +10,22 @@ $(document).ready(function (e) {
     let currentInstaltionStatus = instalationStatus;
     setInterval(function(a){
         let url = window.location.href;
-        $.ajax({
-            type: "GET",
-            url: url + '&ajax=1&reloadRebuild=1',
-            success: function(data){
-                currentInstaltionStatus = JSON.parse(data).data.installationStatus
-                if (currentInstaltionStatus != a)
-                {
-                    location.reload();
+        if (popup === false)
+        {
+            $.ajax({
+                type: "GET",
+                url: url + '&ajax=1&reloadRebuild=1',
+                success: function(data){
+                    currentInstaltionStatus = JSON.parse(data).data.installationStatus
+                    if (currentInstaltionStatus != a)
+                    {
+                        location.reload();
+                    }
+                },
+                error: function(data) {
                 }
-            },
-            error: function(data) {
-            }
-        });
+            });
+        }
     }, 15000, instalationStatus);
 });
 function getFormData(form){
@@ -58,9 +62,12 @@ function rebuild()
             div.append('<div class="alert alert-info">\n' +
                 '<a class="close">×</a>\n' +
                 ''+message+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = message;
             pntf_opts.type = 'info';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         },
         error: function(data) {
             let error = JSON.parse(data.responseText).data.error;
@@ -70,15 +77,19 @@ function rebuild()
             div.append('<div class="alert alert-error">\n' +
                 '<a class="close">×</a>\n' +
                 ''+error+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = error;
             pntf_opts.type = 'error';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         }
     });
 }
 
 function generateCIModal(e,installationInformation)
 {
+    popup = true;
     const layers = $('#layers');
     layers.append('<div id="confirmationModal" class="lu-modal show lu-modal--info modal--sm modal--zoomIn">\n' +
         '        <div class="lu-modal__dialog">\n' +
@@ -126,9 +137,12 @@ function cancelInstalation()
             div.append('<div class="alert alert-info">\n' +
                 '<a class="close">×</a>\n' +
                 ''+message+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = message;
             pntf_opts.type = 'info';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         },
         error: function(data) {
             let error = JSON.parse(data.responseText).data.error;
@@ -138,9 +152,12 @@ function cancelInstalation()
             div.append('<div class="alert alert-error">\n' +
                 '<a class="close">×</a>\n' +
                 ''+error+'<br></div>')
+            let pntf_opts = {}
             pntf_opts.text = error;
             pntf_opts.type = 'error';
-            new PNotify(pntf_opts);
+            if (typeof PNotify !== 'undefined') {
+                new PNotify(pntf_opts);
+            }
         }
     });
 }
@@ -162,10 +179,12 @@ function generatePassword(e)
 function closeModal()
 {
     $('#confirmationModal').remove();
+    popup = false;
 }
 
 function generateRBModal(e,instaltionInformation,CaTemplates)
 {
+    popup = true;
     generateRebuildModal(instaltionInformation,CaTemplates);
     $('.mgselect2Templates').select2({
         placeholder: "Select a template",
@@ -308,9 +327,4 @@ function generateRebuildModal(instaltionInformation,CaTemplates) {
         '            </div>\n' +
         '        </div>\n' +
         '    </div>');
-}
-
-function loadAddons(e) {
-    console.log($(e));
-    // console.log(templates);
 }

@@ -48,7 +48,7 @@ class widget_devicestraffic extends HostingWidget
      */
     public function clientFunction(&$module) {
         $this->params = $module->getAccount();
-        if ($this->params['options']['TrafficStatistics'] != 'on')
+        if ($this->params['options']['AggregateTraffic'] != 'on' && $this->params['options']['Ping'] != 'on' && $this->params['options']['Status'] != 'on')
         {
             return 'This page is disabled';
         }
@@ -64,6 +64,7 @@ class widget_devicestraffic extends HostingWidget
         $assetsUrl = './includes/modules/Hosting/easydcim/templates/assets';
         $variables = [
             'assetsURL'=>  $assetsUrl,
+            'configuration'=>  $this->params['options'],
         ];
         return array('graph.tpl', $variables);
     }

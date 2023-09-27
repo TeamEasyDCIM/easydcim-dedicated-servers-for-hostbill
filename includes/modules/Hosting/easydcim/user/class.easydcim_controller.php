@@ -16,6 +16,7 @@ class easydcim_controller extends HBController
     public function accountdetails($params)
     {
         $this->serverDetails = $this->module->connection;
+        $params['account']['clientsdetails'] = $this->module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($this->serverDetails,$params['account']);
         $this->api = new EasyDCIM($this->client);
         $this->serverInformation = new ServerInformation($this->api,$this->client);
@@ -23,7 +24,7 @@ class easydcim_controller extends HBController
         $this->locationInformation = new LocationInformation($this->api,$this->client);
         $this->bandwidth = new Bandwidth($this->api);
         $this->graphs = new Graphs($this->api);
-        $this->serviceActions = new ServiceActions($this->api);
+        $this->serviceActions = new ServiceActions($this->api,$this->client);
         if (isset($_GET['changeHostname']))
         {
             $this->serverInformation->changeHostname($_GET['formdata']);

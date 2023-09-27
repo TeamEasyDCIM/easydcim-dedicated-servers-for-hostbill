@@ -3,6 +3,9 @@
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages;
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Users\UserDetails;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Users\UserLoginData;
 
 class ServiceActions
 {
@@ -12,9 +15,15 @@ class ServiceActions
      */
     protected $api;
 
-    public function __construct($api)
+    /**
+     * @var IClient
+     */
+    protected $client;
+
+    public function __construct($api,$client)
     {
         $this->api = $api;
+        $this->client = $client;
     }
 
     public function manageServiceActions($action)
@@ -87,31 +96,76 @@ class ServiceActions
                     ]);
                     break;
                 case "kvmConsole":
-                    $result = $this->api->ipmi->lunchConsole();
-                    if(isset($result->status) && $result->status == 'error')
+                    try {
+                        $result = $this->api->ipmi->lunchConsole();
+                        if(isset($result->status) && $result->status == 'error')
+                        {
+                            header('HTTP/1.1 400 Bad Request');
+                            self::jsonEncode([
+                                'errors'=>$result->message
+                            ]);
+                        }
+                        self::jsonEncode([
+                            'kvmConsole'=>$result,
+                            'success'=>'KVM Java Console Launched Successfully'
+                        ]);
+                    }catch(\Exception $e)
                     {
                         header('HTTP/1.1 400 Bad Request');
                         self::jsonEncode([
-                            'errors'=>$result->message
+                            'errors'=>$e->getMessage()
                         ]);
                     }
-                    self::jsonEncode([
-                        'success'=>'KVM Console Lunched Successfully'
-                    ]);
                     break;
                 case "noVNCConsole":
-                    $result = $this->api->ipmi->getNoVNCConsole();
-                    if(isset($result->status) && $result->status == 'error')
+                    try {
+                        if($this->checkIsIPMIEnable() === false){
+                            throw new \Exception('IPMI is not enabled');
+                        }
+                        $result = $this->api->ipmi->getNoVNCConsole();
+                        if(isset($result->status) && $result->status == 'error')
+                        {
+                            header('HTTP/1.1 400 Bad Request');
+                            self::jsonEncode([
+                                'errors'=>$result->message
+                            ]);
+                        }
+                        self::jsonEncode([
+                            'success'=>'noVNC KVM Console Launched Successfully',
+                            'url'=>$result->url
+                        ]);
+                    }catch (\Exception $e)
                     {
                         header('HTTP/1.1 400 Bad Request');
                         self::jsonEncode([
-                            'errors'=>$result->message
+                            'errors'=>$e->getMessage()
                         ]);
                     }
-                    self::jsonEncode([
-                        'success'=>'No VNC Console Lunched Successfully',
-                        'url'=>$result->url
-                    ]);
+                    break;
+                case "logIntoPanel":
+                    try {
+                        $check = $this->checkUserExists($this->client);
+                        if (!empty($check->user->id))
+                        {
+                            $link = $this->prepareLink($this->client, $check->user->id);
+                        }
+                        else
+                        {
+                            throw new \Exception('Account Not Exist');
+                        }
+
+                        self::jsonEncode([
+                            'success'=>'You have been redirected correctlly',
+                            'url'=>$link->link
+                        ]);
+                    }catch(\Exception $e)
+                    {
+                        header('HTTP/1.1 400 Bad Request');
+                        self::jsonEncode([
+                            'errors'=>$e->getMessage()
+                        ]);
+                    }
+
                     break;
             }
 
@@ -132,5 +186,54 @@ class ServiceActions
             'data'=>$data
         ]));
         die;
+    }
+
+    private function checkIsIPMIEnable(){
+
+        $deviceInformation = $this->api->device->getInformation();
+        $ipmiStatus = $deviceInformation->metadata->{'IPMI Enabled'};
+
+        if($ipmiStatus == 1){
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check is user exists
+     *
+     * @param IClient $client insteandof ClientAdapter
+     */
+    private function checkUserExists(IClient $client)
+    {
+        $userDetails = new UserDetails();
+        $userDetails->setEmail($client->getEmail());
+
+        return $this->api->user->checkIfExists($userDetails);
+    }
+
+    /**
+     * Get Auto Login link to Easy DCIM
+     *
+     * @param IClient $client insteandof ClientAdapter, integer $easyClientID
+     * @param $easyClientID
+     */
+    public function prepareLink(IClient $client, $easyClientID)
+    {
+        $userModel = new UserLoginData();
+        $userModel->setId($easyClientID)
+            ->setEmail($client->getEmail())
+            ->setPath('services/' . $this->getServiceID() . '/summary');
+
+        return $this->api->user->getKeyLogin($userModel);
+    }
+
+    public function getServiceID()
+    {
+        $device = $this->api->device->getInformation();
+
+        return $device->order->service->id;
     }
 }

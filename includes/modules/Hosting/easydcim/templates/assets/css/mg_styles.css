@@ -2,6 +2,9 @@
 {
     width: 50%!important;
 }
+
+#isoImages_wrapper table tbody tr td {word-break: break-word;}
+
 .testmodal{
     position: fixed;
     z-index:1050;
@@ -330,8 +333,7 @@
     height: auto;
 }
 #layers .mg-configurable-options-panel .lu-widget__body .lu-widget__content.config-option-box {
-    padding: 0px 15px 15px 15px;
-    padding-top: 0px;
+    padding: 15px 15px 15px 15px;
 }
 /* End of Configurable Options */
 
