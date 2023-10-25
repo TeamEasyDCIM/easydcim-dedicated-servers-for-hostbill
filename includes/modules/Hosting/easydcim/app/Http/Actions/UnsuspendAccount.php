@@ -4,7 +4,6 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions;
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Emails;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Database\Database;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
@@ -26,7 +25,6 @@ class UnsuspendAccount
      */
     protected $params;
     protected $mailer;
-    protected $db;
 
     public function __construct($module,$mailer)
     {
@@ -35,8 +33,6 @@ class UnsuspendAccount
         $this->params = $this->module->getAccount();
         $this->params['clientsdetails'] = $this->module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($this->module->connection,$this->params);
-        $db = new Database();
-        $this->db = $db->getConnection();
     }
 
     public function execute()
@@ -53,7 +49,6 @@ class UnsuspendAccount
         return [
             'lastModuleAction' => 'UnsuspendAccount'
         ];
-//        return $this->client;
     }
 
     /*
@@ -62,7 +57,7 @@ class UnsuspendAccount
 
     private function sendUnsuspendEmail(IClient $client)
     {
-        $emailTemplates = new EmailNotifications($this->db);
+        $emailTemplates = new EmailNotifications();
         $emails = new Emails($this->mailer);
         $details = [
             'orderid'=>$client->getEasyOrderID(),

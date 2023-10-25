@@ -4,19 +4,16 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Helpers;
 
 use Exception;
 use Illuminate\Support\Collection;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Database\Database;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Devices\Bandwidth;
-use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\InvoicingDate;
 use Carbon\Carbon;
-use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Emails;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\EmailNotifications;
+
+use Illuminate\Database\Capsule\Manager as DB;
 
 class Cron
 {
-    protected $db;
     protected $servers;
     protected $accountsHelper;
     protected $clientsHelper;
@@ -26,8 +23,6 @@ class Cron
     public function __construct($servers,$accountsHelper,$mailer,$clientHelper,$serversHelper)
     {
         $this->mailer = $mailer;
-        $db = new Database();
-        $this->db = $db->getConnection();
         $this->servers = $servers;
         $this->accountsHelper = $accountsHelper;
         $this->clientsHelper = $clientHelper;
@@ -104,7 +99,7 @@ class Cron
      */
     public function getAllEasyProduct()
     {
-        return $this->db->table('hb_modules_configuration')
+        return DB::table('hb_modules_configuration')
             ->join('hb_products_modules','hb_products_modules.module','=','hb_modules_configuration.id')
             ->join('hb_products','hb_products_modules.product_id','=','hb_products.id')
             ->where('hb_modules_configuration.module','=','easydcim')->get();
@@ -119,7 +114,7 @@ class Cron
         $allHostings = [];
         foreach ($this->getAllEasyProduct() as $product)
         {
-            $hostings = $this->db->table('hb_accounts')->where('product_id','=',$product->id)->where('status','=','Active')->get();
+            $hostings = DB::table('hb_accounts')->where('product_id','=',$product->id)->where('status','=','Active')->get();
 
             foreach ($hostings as $hosting)
             {
@@ -194,7 +189,7 @@ class Cron
 
         if (!empty($info->service->related_id)) {
             if($info->service->status == 'aborted') {
-                $this->db->table('hb_accounts')->where('id','=',$hosting->id)->update([
+                DB::table('hb_accounts')->where('id','=',$hosting->id)->update([
                     'status'=>'Pending'
                 ]);
             }
@@ -227,7 +222,7 @@ class Cron
         $info   = $api->order->getOrder();
         if (!empty($info->service->related_id)) {
             if($info->service->status == 'aborted') {
-                $this->db->table('hb_accounts')->where('id','=',$hosting->id)->update([
+                DB::table('hb_accounts')->where('id','=',$hosting->id)->update([
                     'status'=>'Pending'
                 ]);
             } elseif($info->service->status == 'activated') {
@@ -235,7 +230,7 @@ class Cron
                 $extraDetails['option5'] = $info->service->related_id;
                 $device = $api->device->getInformation($info->service->related_id);
                 $extraDetails['option8'] = $device->metadata->{'IP Address'};
-                $this->db->table('hb_accounts')->where('id','=',$hosting->id)->update([
+                DB::table('hb_accounts')->where('id','=',$hosting->id)->update([
                     'extra_details'=>serialize($extraDetails),
                     'status'=>'Active'
                 ]);
@@ -243,7 +238,7 @@ class Cron
                 $server = $this->serversHelper->getServerDetails($account["server_id"]);
                 $clientData = $this->clientsHelper->getClient($account['client_id']);
                 $createTemplateId = $client->getNotificationServerCreate();
-                $emailTemplates = new EmailNotifications($this->db);
+                $emailTemplates = new EmailNotifications();
                 $emails = new Emails($this->mailer);
                 $emails->sendServerCreateEmail($client,$emailTemplates->getTemplate($createTemplateId),$clientData,$account,$server);
             } else {

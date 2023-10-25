@@ -11,7 +11,7 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 
 class easydcim extends HostingModule implements Observer
 {
-    protected $version = '1.3.0';
+    protected $version = '1.3.1';
 
     protected $commands = ['updateOrderInformation'=>'Update Order Information'];
 
@@ -296,7 +296,7 @@ class easydcim extends HostingModule implements Observer
     public function install()
     {
         $addTemplate = function ($name, $subject, $body, $altbody) {
-            return $this->db->exec("INSERT INTO `hb_email_templates` (`id`, `tplname`, `group`, `for`, `language_id`, `subject`, `message`, `altmessage`, `send`, `plain`, `system`, `hidden`) VALUES\r\n                    ('', '" . $name . "', 'Product', 'Admin', 1, '" . $subject . "', '" . $body . "', '" . $altbody . "', 1, 2, 1, 0);");
+            return DB::exec("INSERT INTO `hb_email_templates` (`id`, `tplname`, `group`, `for`, `language_id`, `subject`, `message`, `altmessage`, `send`, `plain`, `system`, `hidden`) VALUES\r\n                    ('', '" . $name . "', 'Product', 'Admin', 1, '" . $subject . "', '" . $body . "', '" . $altbody . "', 1, 2, 1, 0);");
         };
         $addTemplate("EasyDCIM:Account:Suspension", "EasyDCIM Service Suspension", "
             <h1>This is a notification that service has now been suspended. The details of this suspension are below:</h1>
@@ -344,7 +344,7 @@ class easydcim extends HostingModule implements Observer
         if($previous_version=='1.0') {
 
             $addTemplate = function ($name, $subject, $body, $altbody) {
-                return $this->db->exec("INSERT INTO `hb_email_templates` (`id`, `tplname`, `group`, `for`, `language_id`, `subject`, `message`, `altmessage`, `send`, `plain`, `system`, `hidden`) VALUES\r\n                    ('', '" . $name . "', 'Product', 'Admin', 1, '" . $subject . "', '" . $body . "', '" . $altbody . "', 1, 2, 1, 0);");
+                return DB::exec("INSERT INTO `hb_email_templates` (`id`, `tplname`, `group`, `for`, `language_id`, `subject`, `message`, `altmessage`, `send`, `plain`, `system`, `hidden`) VALUES\r\n                    ('', '" . $name . "', 'Product', 'Admin', 1, '" . $subject . "', '" . $body . "', '" . $altbody . "', 1, 2, 1, 0);");
             };
             $addTemplate("EasyDCIM:Account:Suspension", "EasyDCIM Service Suspension", "
             <h1>This is a notification that service has now been suspended. The details of this suspension are below:</h1>

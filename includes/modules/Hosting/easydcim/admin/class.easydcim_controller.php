@@ -1,7 +1,5 @@
 <?php
 
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Database\Database;
-use Illuminate\Database\Connection;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\DefaultOptions;
@@ -17,9 +15,10 @@ use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages\Graphs;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages\ServiceActions;
 use ModulesGarden\Servers\EasyDCIMv2\App\FileReader\Reader;
 
+use Illuminate\Database\Capsule\Manager as DB;
+
 class easydcim_controller extends HBController
 {
-    protected $db;
     protected $hostBillApi;
     protected $serverDetails;
     protected $client;
@@ -42,8 +41,6 @@ class easydcim_controller extends HBController
 
     public function productdetails($params)
     {
-        $db = new Database();
-        $this->db = $db->getConnection();
         $serverId = $this->getServerId($params['id']);
         if ($serverId != null && $serverId != '')
         {
@@ -58,7 +55,7 @@ class easydcim_controller extends HBController
             $this->automationSettings = new AutomationSettings($this->api);
             $this->additionalParts = new AdditionalParts($this->api);
             $this->clientAreaFeatures = new ClientAreaFeatures($this->api);
-            $this->emailNotifications = new EmailNotifications($this->db);
+            $this->emailNotifications = new EmailNotifications();
             if (isset($_GET['createConfigurableOptions']))
             {
                 $this->createConfigurableOptions($params['id']);
@@ -145,8 +142,6 @@ class easydcim_controller extends HBController
             $clientModel = HBLoader::LoadModel("Clients");
             $clientData = $clientModel->getClient($params['account']['client_id']);
             $params['account']['clientsdetails'] = $clientData;
-            $db = new Database();
-            $this->db = $db->getConnection();
             $this->serverDetails = $this->getServerDetails($this->getServerId($params['account']['product_id']));
             $this->client = (new EasyDCIMConfigFactory())->fromParams($this->serverDetails,$params['account']);
             $this->api = new EasyDCIM($this->client);
@@ -213,12 +208,12 @@ class easydcim_controller extends HBController
 
     protected function getServerId($productId)
     {
-        return $this->db->table('hb_products_modules')->where('product_id','=',$productId)->first()->server;
+        return DB::table('hb_products_modules')->where('product_id','=',$productId)->first()->server;
     }
 
     protected function updateProductConfig($config,$pid)
     {
-        $this->db->table('hb_products_modules')->where('product_id','=',$pid)->update([
+        DB::table('hb_products_modules')->where('product_id','=',$pid)->update([
            'options'=>$config
         ]);
     }

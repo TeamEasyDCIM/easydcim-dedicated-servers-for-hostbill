@@ -4,7 +4,6 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions;
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Synchronize;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Database\Database;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
@@ -18,6 +17,8 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Users\UserContaine
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Users\UserDetails;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Emails;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\EmailNotifications;
+
+use Illuminate\Database\Capsule\Manager as DB;
 
 class CreateAccount
 {
@@ -65,7 +66,6 @@ class CreateAccount
      */
     protected $params;
     protected $mailer;
-    protected $db;
     protected $serverModel;
 
     /**
@@ -81,8 +81,6 @@ class CreateAccount
         $this->params['clientsdetails'] = $this->module->getClient();
         $this->params['configoptions'] = $this->module->getAccountConfig();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($this->module->connection,$this->params);
-        $db = new Database();
-        $this->db = $db->getConnection();
     }
 
     public function checkOrderId()
@@ -192,7 +190,7 @@ class CreateAccount
             $device = $synchronize->getDeviceInformation($result->service->related_id);
             $synchronize->saveDedicatedIP($device);
             $createTemplateId = $this->params['options']['CreateServerNotification'];
-            $emailTemplates = new EmailNotifications($this->db);
+            $emailTemplates = new EmailNotifications();
             $mail = new Emails($this->mailer);
             $mail->sendServerCreateEmail($client,$emailTemplates->getTemplate($createTemplateId),$this->params['clientsdetails'],$this->params,$this->serverModel->getServerDetails($this->params["server_id"]));
         }
