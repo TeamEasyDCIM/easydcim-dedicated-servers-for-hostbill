@@ -8,10 +8,11 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\UnsuspendAccount;
 use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\TerminateAccount;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Synchronize;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
+use Illuminate\Database\Capsule\Manager as DB;
 
 class easydcim extends HostingModule implements Observer
 {
-    protected $version = '1.3.1';
+    protected $version = '1.3.2';
 
     protected $commands = ['updateOrderInformation'=>'Update Order Information'];
 
