@@ -298,8 +298,14 @@ class ClientAdapter implements IClient
         $this->parts = $productConfiguration['parts'];
         $this->metadata = $productConfiguration['metadata'];
 
-        $partsOptions = preg_grep('/^\d{1,}_\w{1}/', array_keys($params['config']['configoptions']));
-        $this->configOptParts           = array_intersect_key($params['config']['configoptions'], array_flip($partsOptions));
+        $configOptions = [];
+
+        if (isset($params['config']['configoptions']) && is_array($params['config']['configoptions'])) {
+            $configOptions = $params['config']['configoptions'];
+        }
+
+        $partsOptions = preg_grep('/^\d{1,}_\w{1}/', array_keys($configOptions));
+        $this->configOptParts           = array_intersect_key($configOptions, array_flip($partsOptions));
 
         foreach($this->configOptParts as $key=>$value)
         {
@@ -307,7 +313,7 @@ class ClientAdapter implements IClient
         }
 
         $metadata = [];
-        foreach ($params['config']['configoptions'] as $key => $value) {
+        foreach ($configOptions as $key => $value) {
             if (strpos($key, 'Metadata_') === 0) {
                 if ($value['type'] === 'searchselect')
                 {
