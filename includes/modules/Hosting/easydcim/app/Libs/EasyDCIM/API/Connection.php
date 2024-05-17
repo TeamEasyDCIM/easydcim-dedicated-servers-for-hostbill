@@ -223,6 +223,10 @@ class Connection
             throw new Exception($this->prepareErrorString($response, $httpCode));
         }
 
+        if (str_contains($this->url, '/console')) {
+            return $response;
+        }
+
         return $response->result ?: $response->moduleInfo;
     }
 
