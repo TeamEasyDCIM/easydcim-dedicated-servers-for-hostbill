@@ -1,5 +1,5 @@
 <?php
-require_once 'vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\TestConnection;
 use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\CreateAccount;
@@ -12,7 +12,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 
 class easydcim extends HostingModule implements Observer
 {
-    protected $version = '1.3.4';
+    protected $version = '1.3.5';
 
     protected $commands = ['updateOrderInformation'=>'Update Order Information'];
 

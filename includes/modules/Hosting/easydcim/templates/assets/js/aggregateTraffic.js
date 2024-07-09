@@ -33,7 +33,7 @@ $(document).ready(function () {
                         borderColor: '#62C45E',
                         spanGaps: true,
                         borderWidth: 1.3,
-                        label: 'Traffic IN (GB)',
+                        label: 'Traffic IN (Gb/s)',
                         fill: true,
                         data: dataSet1,
                     },
@@ -42,7 +42,7 @@ $(document).ready(function () {
                         borderColor: '#2BA7FF',
                         spanGaps: true,
                         borderWidth: 1.3,
-                        label: 'Traffic OUT (GB)',
+                        label: 'Traffic OUT (Gb/s)',
                         fill: true,
                         data: dataSet2,
                     },
@@ -51,7 +51,7 @@ $(document).ready(function () {
                         borderColor: '#0C6174',
                         spanGaps: true,
                         borderWidth: 1.3,
-                        label: 'Traffic IN & OUT (GB)',
+                        label: 'Traffic IN & OUT (Gb/s)',
                         fill: true,
                         data:dataSet3,
                     }]
@@ -104,7 +104,7 @@ $(document).ready(function () {
                             ticks: {
                                 // Include a dollar sign in the ticks
                                 callback: function(value, index, ticks) {
-                                    return value +'GB';
+                                    return value +' Gb/s';
                                 }
                             },
                             display: true,

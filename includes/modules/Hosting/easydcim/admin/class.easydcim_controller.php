@@ -254,6 +254,8 @@ class easydcim_controller extends HBController
     {
         $config = $this->getConfiguration();
 
+        $configuration = $this->parseConfig();
+
         foreach ($this->defaultOptions->getLocationList() as $key=>$value)
         {
             $locationItems[] = [
@@ -272,7 +274,7 @@ class easydcim_controller extends HBController
                 "variable_id" => $value->id,
             ];
         }
-        foreach ($this->defaultOptions->getTemplateList($this->parseConfig()->LocationID) as $key=>$value)
+        foreach ($this->defaultOptions->getTemplateList($configuration->LocationID) as $key=>$value)
         {
             $templateItems[] = [
                 "id" => $value->id,
@@ -281,7 +283,7 @@ class easydcim_controller extends HBController
                 "variable_id" => $value->id,
             ];
         }
-        foreach ($this->defaultOptions->getAddonsList(null,$this->parseConfig()->LocationID) as $key=>$value)
+        foreach ($this->defaultOptions->getAddonsList(null,$configuration->LocationID) as $key=>$value)
         {
             if ($value->type == "disklayout")
             {
@@ -293,7 +295,7 @@ class easydcim_controller extends HBController
                 ];
             }
         }
-        foreach ($this->defaultOptions->getAddonsList(null,$this->parseConfig()->LocationID) as $key=>$value)
+        foreach ($this->defaultOptions->getAddonsList(null,$configuration->LocationID) as $key=>$value)
         {
             if ($value->type != "disklayout")
             {
