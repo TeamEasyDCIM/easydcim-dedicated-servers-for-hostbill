@@ -188,17 +188,30 @@ class ServiceActions
         die;
     }
 
+    /**
+     * Checks if IPMI is active for this device
+     * @return bool
+     */
     private function checkIsIPMIEnable(){
 
         $deviceInformation = $this->api->device->getInformation();
-        $ipmiStatus = $deviceInformation->metadata->{'IPMI Enabled'};
+        $requiredProperties = ['IPMI IP Address', 'IPMI Username', 'IPMI Password'];
 
-        if($ipmiStatus == 1){
+        return $this->checkObjectProperties($deviceInformation->metadata, $requiredProperties);
 
-            return true;
+    }
+
+    /**
+     * Checks that the right attributes are in the object
+     * @return bool
+     */
+    protected function checkObjectProperties($object, $requiredProperties) {
+        foreach ($requiredProperties as $property) {
+            if (!property_exists($object, $property)) {
+                return false;
+            }
         }
-
-        return false;
+        return true;
     }
 
     /**
