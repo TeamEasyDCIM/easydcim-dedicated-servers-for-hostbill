@@ -573,9 +573,6 @@ class CreateAccount
      */
     private function getUserRole()
     {
-//        $file = Reader::read(ModuleConstants::getModuleRootDir() . DS . 'app' . DS . 'Config' . DS . 'configuration.json');
-//        $config =  $file->get();
-        return 1;
-//        return ($config->base->userRole) ?: 1;
+        return 2;
     }
 }
