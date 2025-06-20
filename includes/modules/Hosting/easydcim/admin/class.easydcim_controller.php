@@ -174,6 +174,8 @@ class easydcim_controller extends HBController
 
     protected function getServerDetails($serverId):array
     {
+        $serverConfig = [];
+
         foreach ($this->servers as $key=>$value)
         {
             if ($value['id'] == $serverId)
@@ -208,14 +210,19 @@ class easydcim_controller extends HBController
 
     protected function getServerId($productId)
     {
-        return DB::table('hb_products_modules')->where('product_id','=',$productId)->first()->server;
+        return DB::table('hb_products_modules')->where('product_id','=',$productId)->where('module','=',$this->moduleConfiguration()->id)->first()->server;
     }
 
     protected function updateProductConfig($config,$pid)
     {
-        DB::table('hb_products_modules')->where('product_id','=',$pid)->update([
+        DB::table('hb_products_modules')->where('product_id','=',$pid)->where('module','=',$this->moduleConfiguration()->id)->update([
            'options'=>$config
         ]);
+    }
+
+    protected function moduleConfiguration()
+    {
+        return DB::table('hb_modules_configuration')->where('hb_modules_configuration.module','=','easydcim')->first();
     }
 
     protected function parseConfig()
