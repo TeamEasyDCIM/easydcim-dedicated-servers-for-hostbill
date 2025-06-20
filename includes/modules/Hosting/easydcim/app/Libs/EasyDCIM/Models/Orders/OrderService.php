@@ -102,7 +102,7 @@ class OrderService extends Serializer
         unset($info['customFields']);
         foreach ($additionalField as $key => $value)
         {
-            $info[$key] = $value;
+            $info[$key] = $value['value'];
         }
         return $info;
     }
