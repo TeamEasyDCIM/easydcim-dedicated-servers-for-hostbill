@@ -12,7 +12,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 
 class easydcim extends HostingModule implements Observer
 {
-    protected $version = '1.3.9';
+    protected $version = '1.4.0';
 
     protected $commands = ['updateOrderInformation'=>'Update Order Information'];
 
