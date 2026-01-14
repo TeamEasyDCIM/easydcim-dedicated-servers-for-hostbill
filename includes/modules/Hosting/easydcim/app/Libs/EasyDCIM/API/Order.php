@@ -3,6 +3,7 @@
 namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\API;
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Abstracts\AbstractEasyDCIMAPI;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\Filters;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderCreate;
 
 /**
@@ -82,6 +83,16 @@ class Order extends AbstractEasyDCIMAPI
     public function getRelatedServer()
     {
         return $this->api->get()->execut('order/' . $this->params->getEasyOrderID() . '/related/device');
+    }
+
+    public function getOrders(Filters $model = null)
+    {
+        $filters = null;
+        if ($model)
+        {
+            $filters = $model->toArray();
+        }
+        return $this->api->get($filters)->execut('order');
     }
 
 }
