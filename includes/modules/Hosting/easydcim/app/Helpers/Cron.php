@@ -39,7 +39,13 @@ class Cron
             $customFieldsValues = unserialize($hosting->extra_details);
             if ($customFieldsValues['option4'] != '')
             {
-                $server = $this->getServer($hosting->server_id);
+                try {
+                    $server = $this->getServer($hosting->server_id);
+                } catch (Exception $e) {
+                    echo $e->getMessage() . PHP_EOL;
+                    continue;
+                }
+
                 $order['config']['extra_details']['option4'] = $customFieldsValues['option4'];
                 $order['config']['extra_details']['option5'] = $customFieldsValues['option5'];
                 $params = array_merge($server, $order);
@@ -97,7 +103,11 @@ class Cron
 
     public function run()
     {
-        $this->checkServices();
+        try {
+            $this->checkServices();
+        } catch (Exception $ex) {
+            echo 'CRON ERROR: ' . $ex->getMessage() . PHP_EOL;
+        }
     }
 
     public function getAllEasyProduct()
@@ -137,7 +147,6 @@ class Cron
         }
 
         $orderMap = $this->extractOrderIdsByServer($hostings);
-
         if (empty($orderMap)) {
             return;
         }
@@ -159,11 +168,10 @@ class Cron
             }
             catch (Exception $ex)
             {
-                echo $ex->getMessage();
+                echo $ex->getMessage() . PHP_EOL;
             }
         }
     }
-
 
     private function checkFieldsWithOrder($hosting, $order)
     {
@@ -212,7 +220,13 @@ class Cron
                 $extraDetails = unserialize($hosting->extra_details);
                 $extraDetails['option5'] = $order->service->related_id;
 
-                $server = $this->getServer($hosting->server_id);
+                try {
+                    $server = $this->getServer($hosting->server_id);
+                } catch (Exception $ex) {
+                    echo $ex->getMessage() . PHP_EOL;
+                    return;
+                }
+
                 $orderCfg['config']['extra_details']['option4'] = $extraDetails['option4'];
                 $params = array_merge($server, $orderCfg);
                 $client = new ClientAdapter($params);
@@ -272,21 +286,31 @@ class Cron
 
         foreach ($orderMap as $serverId => $orderIds) {
 
-            $server = $this->getServer($serverId);
-            $client = new ClientAdapter($server);
-            $api    = new EasyDCIM($client);
+            try {
+                $server = $this->getServer((int)$serverId);
+                $client = new ClientAdapter($server);
+                $api    = new EasyDCIM($client);
+            } catch (Exception $ex) {
+                echo $ex->getMessage() . PHP_EOL;
+                continue;
+            }
 
             foreach (array_chunk(array_unique($orderIds), $chunkSize) as $chunk) {
 
-                $filters = new Filters();
-                $filters->setIds($chunk);
+                try {
+                    $filters = new Filters();
+                    $filters->setIds($chunk);
 
-                $result = $api->order->getOrders($filters);
+                    $result = $api->order->getOrders($filters);
 
-                if ($result) {
-                    foreach ($result as $order) {
-                        $orders[$order->id] = $order;
+                    if ($result) {
+                        foreach ($result as $order) {
+                            $orders[$order->id] = $order;
+                        }
                     }
+                } catch (Exception $ex) {
+                    echo $ex->getMessage() . PHP_EOL;
+                    continue;
                 }
             }
         }
