@@ -348,7 +348,7 @@ class ClientAdapter implements IClient
      */
     private function prepareHostname($params)
     {
-        return 'http' . (($params['serversecure'] == 'on' || $params['serversecure'] == 1) ? 's' : '') . '://' . ($params['serverhostname']) ?: $params['serverip'];
+        return 'http' . (($params['serversecure'] == 'on' || $params['serversecure'] == 1) ? 's' : '') . '://' . ($params['serverhostname'] ?: $params['serverip']);
     }
 
     private function getProductConfiguration($productID)
