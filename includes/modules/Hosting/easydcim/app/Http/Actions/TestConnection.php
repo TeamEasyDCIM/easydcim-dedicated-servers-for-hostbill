@@ -26,6 +26,11 @@ class TestConnection
         $api = new EasyDCIM($this->client);
         $version = $api->system->getVersion();
 
+        if (isset($version->status) && $version->status === 'error') {
+            $msg = isset($version->message) ? $version->message : 'Unknown API error';
+            throw new \Exception("EasyDCIM API Error: " . $msg);
+        }
+
         if($version>0 && $version->status != 'error')
         {
             return "success";
