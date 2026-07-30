@@ -12,7 +12,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 
 class easydcim extends HostingModule implements Observer
 {
-    protected $version = '1.4.2';
+    protected $version = '1.4.3';
 
     protected $commands = ['updateOrderInformation'=>'Update Order Information'];
 
@@ -90,18 +90,21 @@ class easydcim extends HostingModule implements Observer
     }
 
     public function testConnection() {
+        try {
+            $connection = new TestConnection($this);
 
-        $connection = new TestConnection($this);
-
-        if($connection->execute() == 'success') {
-            $this->addInfo('Connection Successful.');
-            return true;
-        }
-        else {
-            $this->addError('Connection cannot be established!');
+            if($connection->execute() == 'success') {
+                $this->addInfo('Connection Successful.');
+                return true;
+            }
+            else {
+                $this->addError('Connection cannot be established!');
+                return false;
+            }
+        } catch (Exception $e) {
+            $this->addError($e->getMessage());
             return false;
         }
-
     }
 
     public function updateOrderInformation()
