@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__).DS.'vendor/autoload.php';
 
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
+use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages\ServerInformation;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages\GeneralInformation;
@@ -18,12 +18,12 @@ class easydcim_controller extends HBController
         $this->serverDetails = $this->module->connection;
         $params['account']['clientsdetails'] = $this->module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($this->serverDetails,$params['account']);
-        $this->api = new EasyDCIM($this->client);
+        $this->api = ApiClientFactory::fromClient($this->client);
         $this->serverInformation = new ServerInformation($this->api,$this->client);
         $this->generalInformation = new GeneralInformation($this->api,$this->client);
         $this->locationInformation = new LocationInformation($this->api,$this->client);
-        $this->bandwidth = new Bandwidth($this->api);
-        $this->graphs = new Graphs($this->api);
+        $this->bandwidth = new Bandwidth($this->api,$this->client);
+        $this->graphs = new Graphs($this->api,$this->client);
         $this->serviceActions = new ServiceActions($this->api,$this->client);
         if (isset($_GET['changeHostname']))
         {

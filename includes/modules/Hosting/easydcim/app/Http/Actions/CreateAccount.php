@@ -2,26 +2,41 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions;
 
+use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
-use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Synchronize;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderCreate;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderCriteria;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderMetadataContainer;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderPart;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderPartContainer;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Orders\OrderService;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Users\UserContainer;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Users\UserDetails;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Emails;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Synchronize;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\Order\CreateOrderRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\User\CreateUserRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\EmailNotifications;
-
-use Illuminate\Database\Capsule\Manager as DB;
 
 class CreateAccount
 {
+    /**
+     * Part type IDs as EasyDCIM knows them, and the size key each one expects
+     * inside the order criteria.
+     */
+    private const PART_TYPE_IDS = [
+        'HDD' => 8,
+        'SSD' => 9,
+        'RAM' => 10,
+        'CPU' => 11,
+    ];
+
+    private const PART_SIZE_KEYS = [
+        8  => 'hdd.size',
+        9  => 'ssd.size',
+        10 => 'ram.size',
+        11 => 'cpu.cores',
+    ];
+
+    /**
+     * Configurable options the module consumes itself; they must not be passed
+     * through to EasyDCIM as service custom fields.
+     */
     private $disabledOptions = [
         'model',
         'Model',
@@ -52,6 +67,7 @@ class CreateAccount
         'monthly_traffic_limit',
         'additional_ips'
     ];
+
     /**
      * @var
      */
@@ -61,17 +77,20 @@ class CreateAccount
      * @var ClientAdapter
      */
     protected $client;
+
     /**
      * @var
      */
     protected $params;
+
     protected $mailer;
+
     protected $serverModel;
 
     /**
      * @param $module
      */
-    public function __construct($module,$mailer,$serverModel)
+    public function __construct($module, $mailer, $serverModel)
     {
         $this->module = $module;
         $this->mailer = $mailer;
@@ -80,7 +99,7 @@ class CreateAccount
         $this->serverModel = $serverModel;
         $this->params['clientsdetails'] = $this->module->getClient();
         $this->params['configoptions'] = $this->module->getAccountConfig();
-        $this->client = (new EasyDCIMConfigFactory())->fromParams($this->module->connection,$this->params);
+        $this->client = (new EasyDCIMConfigFactory())->fromParams($this->module->connection, $this->params);
     }
 
     public function checkOrderId()
@@ -97,108 +116,133 @@ class CreateAccount
      */
     public function execute(): ?array
     {
-        $orderData = $this->addOrder($this->client);
-        return $orderData;
+        return $this->addOrder($this->client);
     }
 
     /**
-     * Create new order
-     * Save custom fields Order ID, server ID
+     * Place the EasyDCIM order and record what came back.
      *
      * $param $client insteandof ClientAdapter
-     *
      */
     private function addOrder(IClient $client)
     {
-        $clientID = $this->getClientID($client);
-        $parts = $this->getParts($client);
-        $metadata = $this->getMetadata($client);
+        $api = ApiClientFactory::fromClient($client);
 
-        $criteriaModel = new OrderCriteria();
-        $criteriaModel->setModel($client->getModelID())
-            ->setLocation($client->getLocationID())
-            ->setRequirePdu($client->getBaseFeatures()['requirePdu'])
-            ->setRequireSwitch($client->getBaseFeatures()['requireSwitch'])
-            ->setRequireParts($this->checkPartIsActive($client))
-            ->setRequireMetadata($this->checkMetadataIsActive($client))
-            ->setParts($parts)
-            ->setMetadata($metadata);
+        $clientID = $this->getClientID($api, $client);
 
+        $request = new CreateOrderRequest(
+            module: 'Server',
+            client: (int) $clientID,
+            autoAccept: (bool) $client->getBaseFeatures()['autoAccept'],
+            criteria: $this->buildCriteria($client),
+            service: $this->buildService($client)
+        );
 
-        try
+        $result = $api->admin()->orders()->create($request);
+
+        $error   = '';
+        $orderId = $result->data?->id ?: 0;
+
+        if ($result->success === false)
         {
+            $error = $result->hasErrors() ? $result->getErrorsSummary() : '';
 
-            $templateID = $client->getOsTemplate();
-        }
-        catch (\Exception $ex)
-        {
-            $templateID = $client->getOsTemplate();
-        }
-
-
-
-        $serviceModel = new OrderService();
-        $serviceModel->setHostname($client->getDomain())
-            ->setTemplate($templateID)
-            ->setUsername($client->getUsername())
-            ->setPassword($client->getPassword())
-            ->setRootPassword($client->getRootPassword())
-            ->setMonthlyTrafficLimit($client->getBandwidth())
-            ->setAccessLevel($client->getAcccessLevel())
-            ->setCustomFields($this->getCustomInformation());
-
-
-
-        if(!empty($client->getAdditionalIPAddress()) || $client->getAdditionalIPAddress() != 0){
-            $serviceModel->setAdditionalIps($this->getAdditionalIP($client))
-                ->setAdditionalIpsNumber($client->getAdditionalIPAddress());
-        }
-
-
-        $createModel = new OrderCreate();
-        $createModel->setModule('Server')
-            ->setClient($clientID)
-            ->setAutoAccept($client->getBaseFeatures()['autoAccept'])
-            ->setCriteria($criteriaModel)
-            ->setService($serviceModel);
-        $api    = new EasyDCIM($client);
-        $error = "";
-        $orderId = 0;
-
-        $result = $api->order->create($createModel);
-
-        if ($result->status == 'error')
-        {
-            $error = implode("\n",$result->errors);
-            if ($error == '')
+            if ($error === '')
             {
-                $error = $result->message;
+                $error = (string) $result->message;
             }
-            $orderId = $result->order->id;
         }
 
-        $this->module->updateDetail('OrderID',$orderId);
-        $this->module->updateDetail('LastModuleAction','CreateAccount');
+        $this->module->updateDetail('OrderID', $orderId);
+        $this->module->updateDetail('LastModuleAction', 'CreateAccount');
 
-        if($error != '') {
+        if ($error != '')
+        {
             throw new \Exception(ucfirst($error));
         }
-        if (!empty($result->service->related_id))
+
+        $service = $result->data?->service;
+
+        // The EasyDCIM service ID is what every client-scoped v3 endpoint keys
+        // off, so store it alongside the order and device IDs.
+        if (!empty($service?->id))
         {
-            $this->module->updateDetail('ServerID',$result->service->related_id);
-            $synchronize = new Synchronize($client,$this->module,$this->mailer);
-            $device = $synchronize->getDeviceInformation($result->service->related_id);
+            $this->module->updateDetail('EasyServiceID', $service->id);
+        }
+
+        if (!empty($service?->related_id))
+        {
+            $this->module->updateDetail('ServerID', $service->related_id);
+
+            $synchronize = new Synchronize($client, $this->module, $this->mailer);
+            $device = $synchronize->getDeviceInformation($service->related_id);
             $synchronize->saveDedicatedIP($device);
+
             $createTemplateId = $this->params['options']['CreateServerNotification'];
             $emailTemplates = new EmailNotifications();
             $mail = new Emails($this->mailer);
-            $mail->sendServerCreateEmail($client,$emailTemplates->getTemplate($createTemplateId),$this->params['clientsdetails'],$this->params,$this->serverModel->getServerDetails($this->params["server_id"]));
+            $mail->sendServerCreateEmail(
+                $client,
+                $emailTemplates->getTemplate($createTemplateId),
+                $this->params['clientsdetails'],
+                $this->params,
+                $this->serverModel->getServerDetails($this->params["server_id"])
+            );
         }
+
         return [
-            'orderId'=>isset($result)?$result->id:$orderId,
-            'serverId'=>!empty($result->service->related_id)?$result->service->related_id:'',
-            'lastModuleAction'=>'CreateAccount',
+            'orderId'          => $orderId,
+            'serverId'         => !empty($service?->related_id) ? $service->related_id : '',
+            'lastModuleAction' => 'CreateAccount',
         ];
+    }
+
+    /**
+     * Order criteria - what EasyDCIM should look for when picking a device.
+     */
+    private function buildCriteria(IClient $client): array
+    {
+        return [
+            'model'            => $client->getModelID(),
+            'location'         => $client->getLocationID(),
+            'require_pdu'      => $client->getBaseFeatures()['requirePdu'],
+            'require_switch'   => $client->getBaseFeatures()['requireSwitch'],
+            'require_parts'    => $this->checkPartIsActive($client),
+            'require_metadata' => $this->checkMetadataIsActive($client),
+            'parts'            => $this->getParts($client),
+            'metadata'         => $this->getMetadata($client),
+        ];
+    }
+
+    /**
+     * Order service - how the picked device should be provisioned.
+     */
+    private function buildService(IClient $client): array
+    {
+        $service = [
+            'hostname'              => $client->getDomain(),
+            'template'              => $client->getOsTemplate(),
+            'username'              => $client->getUsername(),
+            'password'              => $client->getPassword(),
+            'root_password'         => $client->getRootPassword(),
+            'monthly_traffic_limit' => $client->getBandwidth(),
+            'access_level'          => $client->getAcccessLevel(),
+        ];
+
+        $additionalIps = $client->getAdditionalIPAddress();
+
+        if (!empty($additionalIps) || $additionalIps != 0)
+        {
+            $service['additional_ips'] = $this->getAdditionalIP($client);
+            $service['additional_ips_number'] = $additionalIps;
+        }
+
+        foreach ($this->getCustomInformation() as $key => $value)
+        {
+            $service[$key] = $value['value'];
+        }
+
+        return $service;
     }
 
     /**
@@ -234,53 +278,52 @@ class CreateAccount
     }
 
     /**
-     * Get Container of metadata
+     * Metadata criteria, keyed by field ID: [id => ['value' => ...]]
      *
      * $param $client insteandof ClientAdapter
-     *
      */
-    private function getMetadata(IClient $client)
+    private function getMetadata(IClient $client): array
     {
-        $metadataContainer = new OrderMetadataContainer();
+        $result = [];
 
         $metadata = $client->getMetadata();
         $confMetadata = $client->getConfigMetadata();
 
         if (!empty($metadata))
         {
-            foreach ($metadata as $key=>$value)
+            foreach ($metadata as $key => $value)
             {
                 $metadataValue = $confMetadata['Metadata_' . $key] ?? $value;
-                $metadataContainer->set($key,$metadataValue);
+                $result[$key] = ['value' => $metadataValue];
             }
-        }else{
-            foreach ($confMetadata as $key=>$value)
-            {
-                $arr = explode("_", $key);
-                $id = $arr[1];
-                $metadataContainer->set($id,$value);
-            }
+
+            return $result;
         }
 
-        return $metadataContainer->getAll();
+        foreach ($confMetadata as $key => $value)
+        {
+            $arr = explode("_", $key);
+            $id = $arr[1];
+            $result[$id] = ['value' => $value];
+        }
+
+        return $result;
     }
 
     /**
-     * Get Container of parts
+     * Part criteria, keyed by part type ID:
+     * [8 => ['model' => [...], 'hdd.size' => [...]], ...]
      *
      * $param $client insteandof ClientAdapter
-     *
-     * @return $hddModel insteandof OrderPart
-     *
      */
-    private function getParts(IClient $client)
+    private function getParts(IClient $client): array
     {
-        $partContainer = new OrderPartContainer();
-
-        $hdd = [];
-        $ssd = [];
-        $ram = [];
-        $cpu = [];
+        $collected = [
+            8  => [],
+            9  => [],
+            10 => [],
+            11 => [],
+        ];
 
         $parts = $client->getParts();
         $confParts = $client->getConfigOptParts();
@@ -293,80 +336,74 @@ class CreateAccount
                 $modelId = $det[1];
 
                 /**
-                 * One model parts with metadata value. Example: 8:6 . Value: 4096|4 GB
+                 * One model parts with metadata value. Example: 8_6 . Value: 4096|4 GB
                  */
-                if(is_numeric($modelId)) {
-                    switch ($typeId) {
-                        case 8: $hdd[] = [$det[1] => $value]; break;
-                        case 9: $ssd[] = [$det[1] => $value]; break;
-                        case 10: $ram[] = [$det[1] => $value]; break;
-                        case 11: $cpu[] = [$det[1] => $value]; break;
+                if (is_numeric($modelId)) {
+                    if (isset($collected[$typeId])) {
+                        $collected[$typeId][] = [$modelId => $value];
                     }
                 }
 
                 /**
-                 * CO with multiple models. Example: 8:models.
-                 * Value: 9|1TB MODEL 1 or 9:4096|1TB MODEL 1 with 4096 metadata value
+                 * CO with multiple models. Example: 8_models.
+                 * Value: 9|1TB MODEL 1 or 9_4096|1TB MODEL 1 with 4096 metadata value
                  */
-                if($modelId == 'models') {
+                if ($modelId == 'models' && isset($collected[$typeId])) {
                     if (strpos($value, '_') !== false) {
-                        $det = explode('_', $value);
-
-                        $modelId = (int) $det[0];
-                        $metadataValue = (int) $det[1];
-
-                        switch ($typeId) {
-                            case 8: $hdd[] = [$modelId => $metadataValue]; break;
-                            case 9: $ssd[] = [$modelId => $metadataValue]; break;
-                            case 10: $ram[] = [$modelId => $metadataValue]; break;
-                            case 11: $cpu[] = [$modelId => $metadataValue]; break;
-                        }
+                        $parsed = explode('_', $value);
+                        $collected[$typeId][] = [(int) $parsed[0] => (int) $parsed[1]];
                     } else {
-                        switch ($typeId) {
-                            case 8: $hdd[] = [$value => '']; break;
-                            case 9: $ssd[] = [$value => '']; break;
-                            case 10: $ram[] = [$value => '']; break;
-                            case 11: $cpu[] = [$value => '']; break;
-                        }
+                        $collected[$typeId][] = [$value => ''];
                     }
                 }
             }
-        }else{
+        }
+        else
+        {
             foreach ($parts['type'] as $key => $type) {
-                switch ($type) {
-                    case 'HDD': $partType = 8; break;
-                    case 'SSD': $partType = 9; break;
-                    case 'RAM': $partType = 10; break;
-                    case 'CPU': $partType = 11; break;
+                $partType = self::PART_TYPE_IDS[$type] ?? null;
+
+                if ($partType === null) {
+                    continue;
                 }
+
                 $size = $confParts[$partType . "_" . $parts['model'][$key]] ?? $parts['size'][$key];
 
-                switch ($type) {
-                    case 'HDD': $hdd[] = [$parts['model'][$key] => $size]; break;
-                    case 'SSD': $ssd[] = [$parts['model'][$key] => $size]; break;
-                    case 'RAM': $ram[] = [$parts['model'][$key] => $size]; break;
-                    case 'CPU': $cpu[] = [$parts['model'][$key] => $size]; break;
-                }
+                $collected[$partType][] = [$parts['model'][$key] => $size];
             }
         }
 
-        if(!empty($hdd)) {
-            $partContainer->setHdd($this->getHddModel($hdd));
+        $criteriaParts = [];
+
+        foreach ($collected as $typeId => $models) {
+            if (empty($models)) {
+                continue;
+            }
+
+            $criteriaParts[$typeId] = $this->buildPartCriteria($typeId, $models);
         }
 
-        if(!empty($ssd)) {
-            $partContainer->setSsd($this->getSsdModel($ssd));
+        return $criteriaParts;
+    }
+
+    /**
+     * Flatten [[modelId => size], ...] into the parallel arrays EasyDCIM wants.
+     */
+    private function buildPartCriteria(int $typeId, array $models): array
+    {
+        $modelIds = [];
+        $sizes = [];
+
+        foreach ($models as $model) {
+            $modelId = array_keys($model)[0];
+            $modelIds[] = $modelId;
+            $sizes[] = $model[$modelId];
         }
 
-        if(!empty($ram)) {
-            $partContainer->setRam($this->getRamModel($ram));
-        }
-
-        if(!empty($cpu)) {
-            $partContainer->setCpu($this->getCpuModel($cpu));
-        }
-
-        return $partContainer;
+        return [
+            'model'                       => $modelIds,
+            self::PART_SIZE_KEYS[$typeId] => $sizes,
+        ];
     }
 
     /*
@@ -432,137 +469,57 @@ class CreateAccount
     }
 
     /**
-     * Get HDD Part Model
-     *
-     * $param $details array
-     *
-     * @return $hddModel insteandof OrderPart
-     *
-     */
-    private function getHddModel($details)
-    {
-        $hddModel = new OrderPart();
-        $hddModel->setPartType('hdd.size')
-            ->setModels($details);
-
-        return $hddModel;
-    }
-
-    /**
-     * Get SSD Part Model
-     *
-     * $param $details array
-     *
-     * @return $hddModel insteandof OrderPart
-     *
-     */
-    private function getSsdModel($details)
-    {
-        $hddModel = new OrderPart();
-        $hddModel->setPartType('ssd.size')
-            ->setModels($details);
-
-        return $hddModel;
-    }
-
-    /**
-     * Get RAM Part Model
-     *
-     * $param $details array
-     *
-     * @return $hddModel insteandof OrderPart
-     *
-     */
-    private function getRamModel($details)
-    {
-        $hddModel = new OrderPart();
-        $hddModel->setPartType('ram.size')
-            ->setModels($details);
-
-        return $hddModel;
-    }
-
-    /**
-     * Get CPU Part Model
-     *
-     * $param $details array
-     *
-     * @return $hddModel insteandof OrderPart
-     *
-     */
-    private function getCpuModel($details)
-    {
-        $hddModel = new OrderPart();
-        $hddModel->setPartType('cpu.cores')
-            ->setModels($details);
-
-        return $hddModel;
-    }
-
-    /**
-     * Get Client ID
+     * Get the EasyDCIM user ID to place the order for, creating the user first
+     * if EasyDCIM does not know this email address yet.
      *
      * $param $client insteandof ClientAdapter
      * $return integer
-     *
      */
-    private function getClientID(IClient $client)
+    private function getClientID(EasyDCIMClient $api, IClient $client)
     {
-        $check = $this->checkUserExists($client);
-        if ($check->count == 1)
+        $existing = $api->admin()->users()->fetchByEmail($client->getEmail());
+
+        if (!empty($existing->data?->id))
         {
-            return $check->user->id;
+            return $existing->data->id;
         }
-        $newUser = $this->createClient($client);
-        return $newUser->id;
-    }
 
-    /**
-     * Check user exsists on Easy DCIM
-     *
-     * $param $client insteandof ClientAdapter
-     * $return JSON object
-     *
-     */
-    private function checkUserExists(IClient $client)
-    {
-        $userDetails = new UserDetails();
-        $userDetails->setEmail($client->getEmail());
-
-        $api = new EasyDCIM($client);
-        return $api->user->checkIfExists($userDetails);
+        return $this->createClient($api, $client);
     }
 
     /**
      * Create new EASY DCIM user
      *
      * $param $client insteandof ClientAdapter
-     * $return JSON object
-     *
+     * $return integer
      */
-    private function createClient(IClient $client)
+    private function createClient(EasyDCIMClient $api, IClient $client)
     {
+        $request = new CreateUserRequest(
+            email: $client->getEmail(),
+            password: $client->getPassword(),
+            username: $client->getEmail(),
+            firstname: $client->getFirstName(),
+            lastname: $client->getLastName(),
+            address1: $client->getAddress1(),
+            address2: $client->getAddress2(),
+            city: $client->getCity(),
+            state: $client->getState(),
+            postcode: $client->getPostCode(),
+            countryCode: $client->getCountryCode(),
+            role: $this->getUserRole()
+        );
 
-        $userDetails = new UserDetails();
-        $userDetails->setUsername($client->getEmail())
-            ->setFirstname($client->getFirstName())
-            ->setLastname($client->getLastName())
-            ->setEmail($client->getEmail())
-            ->setPassword($client->getPassword())
-            ->setPasswordConfirmation($client->getPassword())
-            ->setCity($client->getCity())
-            ->setAddress1($client->getAddress1())
-            ->setAddress2($client->getAddress2())
-            ->setState($client->getState())
-            ->setCountryCode($client->getCountryCode())
-            ->setPostcode($client->getPostCode());
+        $response = $api->admin()->users()->create($request);
 
-        $createUser = new UserContainer();
-        $createUser->setData($userDetails)
-            ->setRole($this->getUserRole());
+        if ($response->success === false || empty($response->data?->id))
+        {
+            $message = $response->hasErrors() ? $response->getErrorsSummary() : (string) $response->message;
 
-        $api = new EasyDCIM($client);
-        return $api->user->create($createUser);
+            throw new \Exception('Failed to create the EasyDCIM user. ' . $message);
+        }
+
+        return $response->data->id;
     }
 
     /**

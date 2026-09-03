@@ -2,74 +2,84 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions;
 
+use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Emails;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\EmailNotifications;
 
-use Illuminate\Database\Capsule\Manager as DB;
-
 class SuspendAccount
 {
-    /**
-     * @var
-     */
     protected $module;
 
-    /**
-     * @var ClientAdapter
-     */
     protected $client;
-    /**
-     * @var
-     */
+
     protected $params;
+
     protected $mailer;
 
-    public function __construct($module,$mailer)
+    public function __construct($module, $mailer)
     {
         $this->module = $module;
         $this->mailer = $mailer;
         $this->params = $this->module->getAccount();
         $this->params['clientsdetails'] = $this->module->getClient();
-        $this->client = (new EasyDCIMConfigFactory())->fromParams($this->module->connection,$this->params);
+        $this->client = (new EasyDCIMConfigFactory())->fromParams($this->module->connection, $this->params);
     }
 
+    /**
+     * Either notify the administrators or run the suspension against EasyDCIM,
+     * depending on how the product is configured.
+     */
     public function execute()
     {
-        if ($this->client->getSuspendAction() === 1)
-        {
+        if ($this->client->getSuspendAction() === 1) {
             $this->sendSuspendEmail($this->client);
+
+            return ['lastModuleAction' => 'SuspendAccount'];
         }
-        else
-        {
-            $api = new EasyDCIM($this->client);
-            $api->order->suspend();
+
+        $orderId = $this->client->getEasyOrderID();
+
+        if (empty($orderId)) {
+            throw new \Exception('Order ID is empty.');
         }
-        return [
-            'lastModuleAction' => 'SuspendAccount'
-        ];
+
+        $api = ApiClientFactory::fromClient($this->client);
+
+        $response = $api->admin()->orders()->suspendService($orderId);
+
+        if ($response->success === false) {
+            throw new \Exception($response->message ?: 'Failed to suspend the service in EasyDCIM.');
+        }
+
+        return ['lastModuleAction' => 'SuspendAccount'];
     }
 
-    /*
-     * Send suspension Email to admin
+    /**
+     * Send the configured notification to the selected administrators.
      */
-
     private function sendSuspendEmail(IClient $client)
     {
         $emailTemplates = new EmailNotifications();
         $emails = new Emails($this->mailer);
+
         $details = [
-            'orderid'=>$client->getEasyOrderID(),
-            'serverid'=>$client->getEasyServerID(),
-            'accountid'=>$client->getServiceID(),
+            'orderid'   => $client->getEasyOrderID(),
+            'serverid'  => $client->getEasyServerID(),
+            'accountid' => $client->getServiceID(),
         ];
+
         $clientData = [
-          'firstname'=>$client->getFirstName(),
-          'lastname'=>$client->getLastName(),
+            'firstname' => $client->getFirstName(),
+            'lastname'  => $client->getLastName(),
         ];
-        $emails->sendEmailForSelectedAdmins($emailTemplates->getTemplate($client->getSuspendActionTemplate()),$details,$clientData,$emailTemplates->getAdminEmail($client->getAdminis()));
+
+        $emails->sendEmailForSelectedAdmins(
+            $emailTemplates->getTemplate($client->getSuspendActionTemplate()),
+            $details,
+            $clientData,
+            $emailTemplates->getAdminEmail($client->getAdminis())
+        );
     }
 }

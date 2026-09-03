@@ -1,7 +1,8 @@
 <?php
 
+use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\DefaultOptions;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\AutomationSettings;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\AdditionalParts;
@@ -50,7 +51,7 @@ class easydcim_controller extends HBController
             $this->serverDetails = $this->getServerDetails($this->getServerId($params['id']));
             $this->configuration = $this->module->getOptions()['simple'];
             $this->client = (new EasyDCIMConfigFactory())->fromParams($this->serverDetails);
-            $this->api = new EasyDCIM($this->client);
+            $this->api = ApiClientFactory::fromClient($this->client);
             $this->defaultOptions = new DefaultOptions($this->api);
             $this->automationSettings = new AutomationSettings($this->api);
             $this->additionalParts = new AdditionalParts($this->api);
@@ -74,7 +75,7 @@ class easydcim_controller extends HBController
             }
             if (isset($_GET['metadataType']))
             {
-                self::jsonEncode(['fieldData'=>$this->api->system->showField($_GET['metadataType'])]);
+                self::jsonEncode(['fieldData'=>$this->api->admin()->fields()->show($_GET['metadataType'])->data]);
             }
             if (isset($_GET['partTypeName']) && isset($_GET['partTypeId']))
             {
@@ -144,12 +145,12 @@ class easydcim_controller extends HBController
             $params['account']['clientsdetails'] = $clientData;
             $this->serverDetails = $this->getServerDetails($this->getServerId($params['account']['product_id']));
             $this->client = (new EasyDCIMConfigFactory())->fromParams($this->serverDetails,$params['account']);
-            $this->api = new EasyDCIM($this->client);
+            $this->api = ApiClientFactory::fromClient($this->client);
             $this->serverInformation = new ServerInformation($this->api,$this->client);
             $this->generalInformation = new GeneralInformation($this->api,$this->client);
             $this->locationInformation = new LocationInformation($this->api,$this->client);
-            $this->bandwidth = new Bandwidth($this->api);
-            $this->graphs = new Graphs($this->api);
+            $this->bandwidth = new Bandwidth($this->api,$this->client);
+            $this->graphs = new Graphs($this->api,$this->client);
             $this->serviceActions = new ServiceActions($this->api,$this->client);
 
             if (isset($_GET['graphs']))
@@ -198,9 +199,16 @@ class easydcim_controller extends HBController
         $metadata = [];
         foreach ($metadataSettings as $key=>$value)
         {
-            $field = $this->api->system->showField($key);
-            $field->settingsValue = $value;
-            $metadata[] = $field;
+            $field = $this->api->admin()->fields()->show($key)->data;
+
+            if ($field === null)
+            {
+                continue;
+            }
+
+            $fieldData = $field->toArray();
+            $fieldData['settingsValue'] = $value;
+            $metadata[] = $fieldData;
         }
 
         self::jsonEncode([
@@ -418,7 +426,7 @@ class easydcim_controller extends HBController
         self::jsonEncode(['success'=>"Configurable Part Option Created Successfully"]);
     }
 
-    protected function createConfigurableOptionsForMetadata($productId,$metadataId,EasyDCIM $api)
+    protected function createConfigurableOptionsForMetadata($productId,$metadataId,EasyDCIMClient $api)
     {
         if($metadataId === '' || $metadataId === 'default')
         {
@@ -426,7 +434,13 @@ class easydcim_controller extends HBController
             self::jsonEncode(['error'=>"You have to choose a metadata type"]);
         }
 
-        $metadata = $api->system->showField($metadataId);
+        $metadata = $api->admin()->fields()->show($metadataId)->data;
+
+        if ($metadata === null)
+        {
+            header('HTTP/1.1 400 Bad Request');
+            self::jsonEncode(['error'=>"The selected metadata field does not exist"]);
+        }
         if ($metadata->element === 'dropdown')
         {
             foreach ($metadata->options as $key=>$option) {

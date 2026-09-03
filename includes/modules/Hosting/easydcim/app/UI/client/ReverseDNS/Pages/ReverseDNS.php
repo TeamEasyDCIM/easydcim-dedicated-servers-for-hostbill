@@ -2,152 +2,168 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\client\ReverseDNS\Pages;
 
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\DNS\AddRecord;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\DNS\DataContainer;
+use ModulesGarden\Servers\EasyDCIMv2\App\Api\ServiceContext;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Dns\CreateRdnsRecordRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Dns\ListRdnsRecordsRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Dns\UpdateRdnsRecordRequest;
 
 class ReverseDNS
 {
     /**
-     * @var EasyDCIM
+     * @var EasyDCIMClient
      */
     protected $api;
 
-    public function __construct($api)
+    /**
+     * Reverse DNS has no admin endpoint in API v3 - every call is
+     * service-scoped and made on behalf of the account's owner.
+     *
+     * @var ServiceContext
+     */
+    protected $context;
+
+    public function __construct($api, ServiceContext $context)
     {
         $this->api = $api;
+        $this->context = $context;
     }
 
-    private function getDeviceInformation()
+    public function getIPAddresses(): array
     {
-        return $this->api->device->getInformation();
-    }
+        $data = [];
 
-    /**
-     * @return array
-     */
-    public function getIPAddresses():array
-    {
-        $device = $this->getDeviceInformation();
-        if (isset($device->ip_addresses))
+        $deviceId = $this->context->deviceId();
+
+        if ($deviceId === null)
         {
-            $ipAddresses = $device->ip_addresses;
+            return $data;
+        }
+
+        $device = $this->api->admin()->devices()->show($deviceId)->data;
+
+        if (!empty($device?->ipList))
+        {
+            $ipAddresses = $device->ipList;
         }
         else
         {
-            $additional  = explode(',', $device->metadata->{'Additional IP Addresses'});
-            $primary     = [$device->metadata->{'IP Address'}];
-            $ipAddresses = array_merge($primary, $additional);
+            $metadata = (array) ($device?->metadata ?? []);
+            $additional = explode(',', (string) ($metadata['Additional IP Addresses'] ?? ''));
+            $primary = [$metadata['IP Address'] ?? ''];
+            $ipAddresses = array_filter(array_merge($primary, $additional));
         }
+
         foreach ($ipAddresses as $value)
         {
-            $data[] =[
+            $data[] = [
                 'ipAddresses'=>$value
             ];
         }
-        return empty($data) ? [] : $data;
+
+        return $data;
     }
 
     public function getDNS()
     {
-        $data    = [];
-        $records = $this->getAllrDNSRecords();
-        foreach ($records->rdns as $key => $value)
+        $data = [];
+
+        foreach ($this->getAllrDNSRecords() as $value)
         {
             $data[] = [
-                'id'=>$value->id,
-                'ipAddress'=>$value->ip,
-                'hostname'=>$value->from,
-                'created'=>$value->created_at,
+                'id'        => $value->id,
+                'ipAddress' => $value->ip,
+                'hostname'  => $value->from,
+                'created'   => $value->createdAt,
             ];
         }
 
-        return empty($data) ? [] : $data;
+        return $data;
     }
 
-    protected function getAllrDNSRecords()
+    /**
+     * @return array<\ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Client\Dns\RdnsRecordData>
+     */
+    protected function getAllrDNSRecords(): array
     {
-        return $this->api->dnsManager->getRecords();
+        try {
+            return $this->api->client()->dnsManagement()->listAllRdnsRecords(
+                $this->context->requireServiceId(),
+                new ListRdnsRecordsRequest()
+            );
+        } catch (\Exception $exc) {
+            return [];
+        }
     }
 
     public function create($data)
     {
         try
         {
-            if (!empty($data['reverseDNSMask']))
+            $serviceId = $this->context->requireServiceId();
+            $hostname = $data['reverseDNSHostname'];
+            $ttl = (int) ($data['reverseDNSTTL'] ?: 3600);
+
+            if (empty($data['reverseDNSMask']))
             {
-                $mask = filter_var($this->formData['reverseDNSMask'], FILTER_SANITIZE_NUMBER_INT);
-                $pool = $this->createIpv4Pool($data['reverseDNSIpAddress'],$mask);
-                $createdRecords = [];
-                foreach ($pool as $value)
-                {
-                    $rDNSModel     = new AddRecord();
-                    $rDNSModel->setIp($value)
-                        ->setRdata($data['reverseDNSHostname'])
-                        ->setTtl($data['reverseDNSTTL']);
-                    $dataContainer = new DataContainer();
-                    $dataContainer->setData($rDNSModel);
+                $result = $this->api->client()->dnsManagement()->createRdnsRecord(
+                    $serviceId,
+                    new CreateRdnsRecordRequest(ip: $data['reverseDNSIpAddress'], rdata: $hostname, ttl: $ttl)
+                );
 
-                    $result = $this->api->dnsManager->createRecord($dataContainer);
-                    if (isset($result->status) && $result->status == 'error')
-                    {
-                        foreach ($createdRecords as $record)
-                        {
-                            $this->api->dnsManager->deleteRecord($record['id']);
-                        }
-                        if (isset($response->errors->rdata[0]))
-                        {
-                            header('HTTP/1.1 400 Bad Request');
-
-                            self::jsonEncode([
-                                'error'=>$response->errors->rdata[0] ?: "Record cannot be added"
-                            ]);
-                        }else{
-                            header('HTTP/1.1 400 Bad Request');
-
-                            self::jsonEncode([
-                                'error'=>$result->message ?: "Record cannot be added"
-                            ]);
-                        }
-                    }else
-                    {
-                        $createdRecords[] = [
-                            'id'=>end($response->rdns)->id
-                        ];
-
-                    }
-                }
-                self::jsonEncode([
-                    'message'=>'Records added successfully'
-                ]);
-            }else
-            {
-                $rDNSModel     = new AddRecord();
-                $rDNSModel->setIp($data['reverseDNSIpAddress'])
-                    ->setRdata($data['reverseDNSHostname'])
-                    ->setTtl($data['reverseDNSTTL']);
-                $dataContainer = new DataContainer();
-                $dataContainer->setData($rDNSModel);
-
-                $result = $this->api->dnsManager->createRecord($dataContainer);
-                if (isset($result->status) && $result->status == 'error')
+                if ($result->success === false)
                 {
                     header('HTTP/1.1 400 Bad Request');
-
                     self::jsonEncode([
                         'error'=>$result->message != '' ? $result->message : "Record cannot be added"
                     ]);
-                }else
-                {
-                    self::jsonEncode([
-                        'message'=>'Record added successfully'
-                    ]);
                 }
+
+                self::jsonEncode([
+                    'message'=>'Record added successfully'
+                ]);
             }
 
+            $mask = filter_var($data['reverseDNSMask'], FILTER_SANITIZE_NUMBER_INT);
+            $pool = $this->createIpv4Pool($data['reverseDNSIpAddress'], $mask);
+            $createdRecords = [];
+
+            foreach ($pool as $value)
+            {
+                $result = $this->api->client()->dnsManagement()->createRdnsRecord(
+                    $serviceId,
+                    new CreateRdnsRecordRequest(ip: $value, rdata: $hostname, ttl: $ttl)
+                );
+
+                if ($result->success === false)
+                {
+                    // Roll the partial pool back so a failed batch leaves nothing behind.
+                    foreach ($createdRecords as $recordId)
+                    {
+                        $this->api->client()->dnsManagement()->deleteRdnsRecord($serviceId, $recordId);
+                    }
+
+                    $errors = $result->getErrors();
+
+                    header('HTTP/1.1 400 Bad Request');
+                    self::jsonEncode([
+                        'error'=> $errors['rdata'][0] ?? ($result->message ?: "Record cannot be added")
+                    ]);
+                }
+
+                $createdRecords[] = $this->findRecordIdByIp($serviceId, $value);
+            }
+
+            self::jsonEncode([
+                'message'=>'Records added successfully'
+            ]);
         }
         catch (\Exception $exc)
         {
+            header('HTTP/1.1 400 Bad Request');
+            self::jsonEncode([
+                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be added"
+            ]);
         }
     }
 
@@ -155,29 +171,30 @@ class ReverseDNS
     {
         try
         {
-            $rDNSModel     = new AddRecord();
-            $rDNSModel->setRdata($data['hostname']);
+            $result = $this->api->client()->dnsManagement()->updateRdnsRecord(
+                $this->context->requireServiceId(),
+                $data['editId'],
+                new UpdateRdnsRecordRequest(rdata: $data['hostname'])
+            );
 
-            $dataContainer = new DataContainer();
-            $dataContainer->setData($rDNSModel);
-
-            $result = $this->api->dnsManager->updateRecord($data['editId'],$dataContainer);
-            if (isset($result->status) && $result->status == 'error')
+            if ($result->success === false)
             {
                 header('HTTP/1.1 400 Bad Request');
-
                 self::jsonEncode([
                     'error'=>$result->message != '' ? $result->message : "Record cannot be edited"
                 ]);
-            }else
-            {
-                self::jsonEncode([
-                    'message'=>'Record edited successfully'
-                ]);
             }
+
+            self::jsonEncode([
+                'message'=>'Record edited successfully'
+            ]);
         }
         catch (\Exception $exc)
         {
+            header('HTTP/1.1 400 Bad Request');
+            self::jsonEncode([
+                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be edited"
+            ]);
         }
     }
 
@@ -185,61 +202,83 @@ class ReverseDNS
     {
         try
         {
-            $result =  $this->api->dnsManager->deleteRecord($data['deleteId']);
-            if (isset($result->status) && $result->status == 'error')
+            $result = $this->api->client()->dnsManagement()->deleteRdnsRecord(
+                $this->context->requireServiceId(),
+                $data['deleteId']
+            );
+
+            if ($result->success === false)
             {
                 header('HTTP/1.1 400 Bad Request');
-
                 self::jsonEncode([
                     'error'=>$result->message != '' ? $result->message : "Record cannot be deleted"
                 ]);
-            }else
-            {
-                self::jsonEncode([
-                    'message'=>'Record deleted successfully'
-                ]);
             }
+
+            self::jsonEncode([
+                'message'=>'Record deleted successfully'
+            ]);
         }
         catch (\Exception $exc)
         {
+            header('HTTP/1.1 400 Bad Request');
+            self::jsonEncode([
+                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be deleted"
+            ]);
         }
+    }
+
+    /**
+     * v3 create returns no record body, so the new record is located by its IP
+     * in order to be able to roll a partial pool back.
+     */
+    private function findRecordIdByIp(int $serviceId, string $ip)
+    {
+        foreach ($this->getAllrDNSRecords() as $record)
+        {
+            if ($record->ip === $ip)
+            {
+                return $record->id;
+            }
+        }
+
+        return null;
     }
 
     private function createIpv4Pool($ipPool, $mask)
     {
         $pool   = [];
         $ip_enc = ip2long($ipPool);
+
         //convert last (32-$mask) bits to zeroes
         $curr_ip         = $ip_enc | pow(2, (32 - $mask)) - pow(2, (32 - $mask));
-        $ips             = [];
         $ip_nmask        = self::translateBitmaskToNetmask((int)$mask);
         $ip_address_long = $ip_enc;
         $ip_nmask_long   = ip2long($ip_nmask);
-        //caculate network address
-        $ip_net = $ip_address_long & $ip_nmask_long;
-        //caculate first usable address
-        $ip_host_first = ((~$ip_nmask_long) & $ip_address_long);
-        $ip_first      = ($ip_address_long ^ $ip_host_first) + 1;
+
         //caculate last usable address
         $ip_broadcast_invert = ~$ip_nmask_long;
         $ip_last             = ($ip_address_long | $ip_broadcast_invert) - 1;
-        //caculate broadcast address
-        $ip_last       = ($ip_address_long | $ip_broadcast_invert) - 1;
-        $ip_last_short = long2ip($ip_last);
-        $totalHost     = (float)pow(2, (32 - $mask));
+        $ip_last_short       = long2ip($ip_last);
+
+        $totalHost = (float)pow(2, (32 - $mask));
+
         if ($totalHost > 10000)
         {
             throw new \Exception(sprintf("Subnet %s/%s is too large. You are tring to add %s addresses.", $ipPool, $mask, $totalHost));
         }
+
         for ($pos = 0; $pos < pow(2, (32 - $mask)); ++$pos)
         {
             $ip     = long2ip((float)$curr_ip + $pos);
             $pool[] = $ip;
+
             if ($ip == $ip_last_short)
             {
                 break;
             }
         }
+
         return $pool;
     }
 
@@ -284,9 +323,6 @@ class ReverseDNS
         return isset($maskMap[$bitmask]) ? $maskMap[$bitmask] : $bitmask;
     }
 
-    /**
-     * @param array $data
-     */
     public static function jsonEncode(array $data)
     {
         ob_clean();

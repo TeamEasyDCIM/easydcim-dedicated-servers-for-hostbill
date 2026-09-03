@@ -2,12 +2,13 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections;
 
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\Field\ListFieldsRequest;
 
 class ClientAreaFeatures
 {
     /**
-     * @var EasyDCIM
+     * @var EasyDCIMClient
      */
     protected $api;
 
@@ -16,35 +17,27 @@ class ClientAreaFeatures
         $this->api = $api;
     }
 
-    public function getOsTemplates($locationId = null){
-        try {
-            $templateList = $this->api->os->getTemplateList();
-            if (!empty($locationId)) {
-                $provisioningServerId = $this->api->os->getOsTemplateForLocation($locationId)->id;
+    /**
+     * OS templates offered to clients, optionally narrowed to one location.
+     *
+     * @return array<\ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Admin\OsInstallation\OsTemplateData>
+     */
+    public function getOsTemplates($locationId = null)
+    {
+        return (new DefaultOptions($this->api))->getTemplateList($locationId);
+    }
 
-                $templateList = array_values(array_filter($templateList, function($tpl) use ($provisioningServerId) {
-                    // Match direct server_id
-                    if (isset($tpl->server_id) && (int)$tpl->server_id === (int)$provisioningServerId) {
-                        return true;
-                    }
-                    // Or any related server in "servers" array (pivot)
-                    if (isset($tpl->servers) && is_array($tpl->servers)) {
-                        foreach ($tpl->servers as $srv) {
-                            if (isset($srv->id) && (int)$srv->id === (int)$provisioningServerId) {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                }));
-            }
-            return $templateList;
+    /**
+     * Metadata fields, used to pick which ones the client area shows.
+     *
+     * @return array<\ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Admin\Field\FieldData>
+     */
+    public function getFields()
+    {
+        try {
+            return $this->api->admin()->fields()->listAll(new ListFieldsRequest());
         } catch (\Exception $ex) {
             return [];
         }
-    }
-
-    public function getFields(){
-        return $this->api->system->getFields();
     }
 }

@@ -2,38 +2,31 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages;
 
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
 use ModulesGarden\Servers\EasyDCIMv2\App\FileReader\Reader;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Admin\Device\DeviceData;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 
 class LocationInformation
 {
     /**
-     * @var EasyDCIM
+     * @var EasyDCIMClient
      */
     protected $api;
 
     /**
-     * @var ClientAdapter
+     * @var IClient
      */
     protected $client;
 
     /**
-     * @var array
+     * @var DeviceData|null
      */
-    protected $locationInformations = [];
+    protected $locationInformations = null;
 
-    /**
-     * @var string
-     */
-    protected $instalationStatus = [];
-
-    /**
-     * @var array
-     */
     protected $configuration = [];
 
-    public function __construct($api,$client)
+    public function __construct($api, $client)
     {
         $this->api = $api;
         $this->client = $client;
@@ -43,89 +36,89 @@ class LocationInformation
 
     public function getDeviceDetails()
     {
-        $this->locationInformations = $this->api->device->getInformation();
+        $deviceId = $this->client->getEasyServerID();
+
+        if (empty($deviceId))
+        {
+            return;
+        }
+
+        $this->locationInformations = $this->api->admin()->devices()->show($deviceId)->data;
     }
 
-    /**
-     * @return string
-     */
     public function getLocationName(): string
     {
-        return $this->locationInformations->location->name != '' ? $this->locationInformations->location->name : '-';
+        return $this->locationInformations?->location?->name ?: '-';
     }
 
-    /**
-     * @return string
-     */
     public function getAddress(): string
     {
-        return $this->locationInformations->location->address != '' ? $this->locationInformations->location->address :'-';
+        return $this->locationInformations?->location?->address ?: '-';
     }
 
-    /**
-     * @return string
-     */
     public function getPhoneNumber(): string
     {
-        return $this->locationInformations->location->phone != '' ? $this->locationInformations->location->phone :'-';
+        return $this->locationInformations?->location?->phone ?: '-';
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
-        return $this->locationInformations->location->description != '' ? $this->locationInformations->location->description :'-';
+        return $this->locationInformations?->location?->description ?: '-';
     }
 
-    /**
-     * @return string
-     */
     public function getRackWithPosition(): string
     {
-        return $this->locationInformations->labeledRackWithPosition != '' ? $this->locationInformations->labeledRackWithPosition :'-';
+        return $this->locationInformations?->labeledRackWithPosition ?: '-';
     }
 
-    /**
-     * @return string
-     */
     public function getFloor(): string
     {
-        return $this->locationInformations->rack->floor_id != '' ? $this->locationInformations->rack->floor_id :'-';
+        return $this->locationInformations?->rack?->floorId ? (string) $this->locationInformations->rack->floorId : '-';
     }
 
-    /**
-     * @return string
-     */
     public function getRackName(): string
     {
-        return $this->locationInformations->rack->name != '' ? $this->locationInformations->rack->name :'-';
+        return $this->locationInformations?->rack?->name ?: '-';
     }
 
-    /**
-     * @return string
-     */
-    public function getRackLink():string
+    public function getRackLink(): string
     {
-        return $this->client->getServerHostname().$this->configuration['easyDCIM']['racksPath'].$this->locationInformations->rack->id.$this->configuration['easyDCIM']['endPath'] ?? '-';
+        $rackId = $this->locationInformations?->rack?->id;
+
+        if (empty($rackId))
+        {
+            return '-';
+        }
+
+        return $this->client->getServerHostname()
+            . $this->configuration['easyDCIM']['racksPath']
+            . $rackId
+            . $this->configuration['easyDCIM']['endPath'];
     }
 
-    /**
-     * @return string
-     */
-    public function getLocationLink():string
+    public function getLocationLink(): string
     {
-        return $this->client->getServerHostname().$this->configuration['easyDCIM']['locationPath'].$this->locationInformations->location->id.$this->configuration['easyDCIM']['endPath'] ?? '-';
+        $locationId = $this->locationInformations?->location?->id;
+
+        if (empty($locationId))
+        {
+            return '-';
+        }
+
+        return $this->client->getServerHostname()
+            . $this->configuration['easyDCIM']['locationPath']
+            . $locationId
+            . $this->configuration['easyDCIM']['endPath'];
     }
 
     private function getPath()
     {
-        return dirname(__DIR__,5) . DS . 'app' . DS . 'Config' . DS . 'configuration.json';
+        return dirname(__DIR__, 5) . DS . 'app' . DS . 'Config' . DS . 'configuration.json';
     }
 
     private function getConfiguration()
     {
         $file = Reader::read($this->getPath());
-        $this->configuration =  $file->get();
+        $this->configuration = $file->get();
     }
 }

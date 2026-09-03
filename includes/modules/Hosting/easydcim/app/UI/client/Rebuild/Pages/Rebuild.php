@@ -2,66 +2,82 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\client\Rebuild\Pages;
 
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\SystemLogo;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Os\Configuration;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Os\InstallParams;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\OsInstallation\InstallOsRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\DefaultOptions;
 
 class Rebuild
 {
     /**
-     * @var EasyDCIM
+     * @var EasyDCIMClient
      */
     protected $api;
-    protected $params;
-    protected $addons;
 
-    public function __construct($api,$params)
+    /**
+     * @var IClient
+     */
+    protected $client;
+
+    protected $params;
+
+    /**
+     * @var array<\ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Admin\OsInstallation\OsAddonData>
+     */
+    protected $addons = [];
+
+    /**
+     * @var DefaultOptions
+     */
+    protected $options;
+
+    public function __construct($api, $client, $params)
     {
         $this->api = $api;
+        $this->client = $client;
         $this->params = $params;
+        $this->options = new DefaultOptions($api);
     }
 
     public function prepareData()
     {
+        $data = [];
         $caTemplates = $this->params['options']['caTemplates'];
-        foreach($caTemplates as $key=>$value)
+
+        foreach ($caTemplates as $value)
         {
-            $values = explode('_',$value);
+            $values = explode('_', $value);
             $this->addons = $this->getAddons($values[1]);
+
             $data[] = [
-                'id'=>$values[1],
-                'Description'=>$values[0],
-                'extras'=>$this->getExtras(),
-                'diskLayout'=>$this->getDiskLayout(),
+                'id'          => $values[1],
+                'Description' => $values[0],
+                'extras'      => $this->getExtras(),
+                'diskLayout'  => $this->getDiskLayout(),
             ];
         }
+
         return $data;
     }
 
     public function getDataForModal($templateId)
     {
         $this->addons = $this->getAddons($templateId);
+
         self::jsonEncode([
-            'extras'=>$this->getExtras(),
-            'diskLayout'=>$this->getDiskLayout(),
-            'username'=>$this->params['username'],
+            'extras'     => $this->getExtras(),
+            'diskLayout' => $this->getDiskLayout(),
+            'username'   => $this->params['username'],
         ]);
     }
 
+    /**
+     * Addons the location's provisioning server offers for one OS template.
+     */
     protected function getAddons($templateId)
     {
-        $provisioningServerId = $this->api->os->getOsTemplateForLocation($this->params['options']['LocationID'])->id;
-
-        $model = new InstallParams();
-        $model->setFilter([
-            'server_id' => $provisioningServerId,
-            'template_id' => $templateId,
-        ]);
-        $configuration = new Configuration();
-        $configuration->setConfiguration($model);
-        $response = $this->api->os->getAddonList($configuration);
-        return $response;
+        return $this->options->getAddonsList($templateId, $this->params['options']['LocationID']);
     }
 
     protected function getExtras()
@@ -76,6 +92,7 @@ class Rebuild
                 ];
             }
         }
+
         return $options;
     }
 
@@ -91,12 +108,10 @@ class Rebuild
                 ];
             }
         }
+
         return $options;
     }
 
-    /**
-     * @param array $data
-     */
     public static function jsonEncode(array $data)
     {
         ob_clean();
@@ -108,75 +123,80 @@ class Rebuild
 
     public function installOS($data)
     {
-        $install    = new InstallParams();
-        $install->setTemplate($data['templateCaId']);
-        $install->setHostname($data['rebuildHostname']);
-        $install->setUsername($data['rebuildUsername']);
-        $install->setPassword($data['rebuildPassword']);
-        $install->setRootPassword($data['rebuildRootSSHPassword']);
-        if (isset($data['rebuildDiskLayout']))
-        {
-            $install->setDiskAddon($data['rebuildDiskLayout']);
-        }
-        if (isset($data['rebuildExtras']))
-        {
-            $install->setDiskAddon($data['rebuildExtras']);
-        }
+        $deviceId = $this->client->getEasyServerID();
 
-        $configurtation = new Configuration();
-        $configurtation->setConfiguration($install);
-        $result = $this->api->os->install($configurtation);
-        if (isset($result->status) && $result->status == 'error')
+        $request = new InstallOsRequest(
+            template: (int) $data['templateCaId'],
+            hostname: $data['rebuildHostname'] ?? null,
+            username: $data['rebuildUsername'] ?? null,
+            password: $data['rebuildPassword'] ?? null,
+            rootPassword: $data['rebuildRootSSHPassword'] ?? null,
+            // v2 sent both the disk layout and the extras as "disk_addon", so
+            // the extras silently replaced the layout. They are distinct here.
+            diskAddon: isset($data['rebuildDiskLayout']) && $data['rebuildDiskLayout'] !== ''
+                ? (int) $data['rebuildDiskLayout']
+                : null,
+            extras: isset($data['rebuildExtras']) && $data['rebuildExtras'] !== ''
+                ? array_values((array) $data['rebuildExtras'])
+                : null
+        );
+
+        $result = $this->api->admin()->osInstallation()->installOs($deviceId, $request);
+
+        if ($result->success === false)
         {
             header('HTTP/1.1 400 Bad Request');
-
             self::jsonEncode([
                 'error'=>$result->message
             ]);
-        }else
-        {
-            self::jsonEncode([
-                'message'=>$result
-            ]);
         }
+
+        self::jsonEncode([
+            'message'=>$result->message
+        ]);
     }
 
     public function cancelInstall()
     {
-        $result = $this->api->os->cancelInstal();
-        if (isset($result->status) && $result->status == 'error')
+        $result = $this->api->admin()->osInstallation()->cancelOsInstallation($this->client->getEasyServerID());
+
+        if ($result->success === false)
         {
             header('HTTP/1.1 400 Bad Request');
-
             self::jsonEncode([
                 'error'=>$result->message
             ]);
-        }else
-        {
-            self::jsonEncode([
-                'message'=>"Installation was canceled correctlly"
-            ]);
         }
+
+        self::jsonEncode([
+            'message'=>"Installation was canceled correctlly"
+        ]);
     }
 
     public function getOsInstallInformation()
     {
-        $device = $this->api->device->getInformation();
-        $response = $this->api->os->installInformation();
-        $instalationStatus = $response->status;
+        $deviceId = $this->client->getEasyServerID();
 
-        $path = SystemLogo::getLogo($device->metadata->OS);
+        $device = $this->api->admin()->devices()->show($deviceId)->data;
+        $metadata = (array) ($device?->metadata ?? []);
+
+        // v3 reports the provisioning state as a message rather than a status.
+        $installation = $this->api->admin()->osInstallation()->getOsInstallationInfo($deviceId);
+        $instalationStatus = (string) ($installation->data?->message ?? '');
+
+        $currentOs = $metadata['OS'] ?? '';
+
         return [
-          'hostInformation'=>$device->metadata->{'IP Address'},
-          'hostname'=>$device->metadata->{'Hostname'},
-          'currentOS'=>$device->metadata->OS,
-          'osIsCurrentlyBeingInstalled'=>$device->os_installation == '0' ? 'NO' : 'YES',
-          'username'=>$this->params['username'],
-          'sshPassword'=>$device->metadata->{'SSH Password'},
-          'sshRootPassword'=>$device->metadata->{'SSH Root Password'},
-          'macAddress'=>$device->metadata->{'MAC Address'},
-          'path'=>$path,
-          'installationStatus'=>$instalationStatus == '' ? 'No Installation' : $instalationStatus,
+            'hostInformation'             => $metadata['IP Address'] ?? '',
+            'hostname'                    => $metadata['Hostname'] ?? '',
+            'currentOS'                   => $currentOs,
+            'osIsCurrentlyBeingInstalled' => empty($device?->osInstallation) ? 'NO' : 'YES',
+            'username'                    => $this->params['username'],
+            'sshPassword'                 => $metadata['SSH Password'] ?? '',
+            'sshRootPassword'             => $metadata['SSH Root Password'] ?? '',
+            'macAddress'                  => $metadata['MAC Address'] ?? '',
+            'path'                        => SystemLogo::getLogo($currentOs),
+            'installationStatus'          => $instalationStatus == '' ? 'No Installation' : $instalationStatus,
         ];
     }
 }

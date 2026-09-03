@@ -2,16 +2,20 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages;
 
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\Device\DevicePowerActionRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Admin\Device\DeviceData;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Users\UserDetails;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Users\UserLoginData;
 
 class ServiceActions
 {
+    /**
+     * Metadata EasyDCIM must hold before a noVNC session can be opened.
+     */
+    protected const IPMI_METADATA = ['IPMI IP Address', 'IPMI Username', 'IPMI Password'];
 
     /**
-     * @var EasyDCIM
+     * @var EasyDCIMClient
      */
     protected $api;
 
@@ -20,7 +24,7 @@ class ServiceActions
      */
     protected $client;
 
-    public function __construct($api,$client)
+    public function __construct($api, $client)
     {
         $this->api = $api;
         $this->client = $client;
@@ -29,156 +33,112 @@ class ServiceActions
     public function manageServiceActions($action)
     {
         try {
+            $deviceId = $this->client->getEasyServerID();
+
             switch ($action) {
                 case "boot":
-                    $result = $this->api->device->powerOn();
-                    if(isset($result->status) && $result->status == 'error')
-                    {
-                        header('HTTP/1.1 400 Bad Request');
-                        self::jsonEncode([
-                            'errors'=>$result->message
-                        ]);
-                    }
-                    self::jsonEncode([
-                        'success'=>'Server Was Boot Successfully'
-                    ]);
+                    $this->powerAction($deviceId, 'boot', 'Server Was Boot Successfully');
                     break;
+
                 case "shutdown":
-                    $result = $this->api->device->powerOff();
-                    if(isset($result->status) && $result->status == 'error')
-                    {
-                        header('HTTP/1.1 400 Bad Request');
-                        self::jsonEncode([
-                            'errors'=>$result->message
-                        ]);
-                    }
-                    self::jsonEncode([
-                        'success'=>'Server Was Shutdown Successfully'
-                    ]);
+                    $this->powerAction($deviceId, 'shutdown', 'Server Was Shutdown Successfully');
                     break;
+
                 case "reboot":
-                    $result = $this->api->device->reboot();
-                    if(isset($result->status) && $result->status == 'error')
-                    {
-                        header('HTTP/1.1 400 Bad Request');
-                        self::jsonEncode([
-                            'errors'=>$result->message
-                        ]);
-                    }
-                    self::jsonEncode([
-                        'success'=>'Server Was Reboot Successfully'
-                    ]);
+                    $this->powerAction($deviceId, 'reboot', 'Server Was Reboot Successfully');
                     break;
+
                 case "bmcColdReset":
-                    $result = $this->api->ipmi->coldReset();
-                    if(isset($result->status) && $result->status == 'error')
-                    {
-                        header('HTTP/1.1 400 Bad Request');
-                        self::jsonEncode([
-                            'errors'=>$result->message
-                        ]);
+                    $result = $this->api->admin()->ipmi()->bmcColdReset($deviceId);
+
+                    if ($result->success === false) {
+                        $this->fail($result->message);
                     }
-                    self::jsonEncode([
-                        'success'=>'BMC Cold Reset Successfull'
-                    ]);
+
+                    self::jsonEncode(['success' => 'BMC Cold Reset Successfull']);
                     break;
+
                 case "enableRescueMode":
-                    $result = $this->api->device->changeRescueModeStatus('enable');
-                    if(isset($result->status) && $result->status == 'error')
-                    {
-                        header('HTTP/1.1 400 Bad Request');
-                        self::jsonEncode([
-                            'errors'=>$result->message
-                        ]);
+                    $result = $this->api->admin()->osInstallation()->enableRescueMode($deviceId);
+
+                    if ($result->success === false) {
+                        $this->fail($result->message);
                     }
-                    self::jsonEncode([
-                        'success'=>'Enable Rescue Mode Successfull'
-                    ]);
+
+                    self::jsonEncode(['success' => 'Enable Rescue Mode Successfull']);
                     break;
+
                 case "kvmConsole":
-                    try {
-                        $result = $this->api->ipmi->lunchConsole();
-                        if(isset($result->status) && $result->status == 'error')
-                        {
-                            header('HTTP/1.1 400 Bad Request');
-                            self::jsonEncode([
-                                'errors'=>$result->message
-                            ]);
-                        }
-                        self::jsonEncode([
-                            'kvmConsole'=>$result,
-                            'success'=>'KVM Java Console Launched Successfully'
-                        ]);
-                    }catch(\Exception $e)
-                    {
-                        header('HTTP/1.1 400 Bad Request');
-                        self::jsonEncode([
-                            'errors'=>$e->getMessage()
-                        ]);
-                    }
+                    // API v3 exposes no Java/JNLP console launcher; noVNC replaces it.
+                    $this->fail('The Java KVM console is not available over EasyDCIM API v3. Use the noVNC console instead.');
                     break;
+
                 case "noVNCConsole":
                     try {
-                        if($this->checkIsIPMIEnable() === false){
+                        if ($this->checkIsIPMIEnable($deviceId) === false) {
                             throw new \Exception('IPMI is not enabled');
                         }
-                        $result = $this->api->ipmi->getNoVNCConsole();
-                        if(isset($result->status) && $result->status == 'error')
-                        {
-                            header('HTTP/1.1 400 Bad Request');
-                            self::jsonEncode([
-                                'errors'=>$result->message
-                            ]);
+
+                        $result = $this->api->admin()->ipmi()->startNoVncSession($deviceId);
+
+                        if ($result->success === false) {
+                            $this->fail($result->message);
                         }
+
                         self::jsonEncode([
-                            'success'=>'noVNC KVM Console Launched Successfully',
-                            'url'=>$result->url
+                            'success' => 'noVNC KVM Console Launched Successfully',
+                            'url'     => $result->data?->url,
                         ]);
-                    }catch (\Exception $e)
-                    {
-                        header('HTTP/1.1 400 Bad Request');
-                        self::jsonEncode([
-                            'errors'=>$e->getMessage()
-                        ]);
+                    } catch (\Exception $e) {
+                        $this->fail($e->getMessage());
                     }
                     break;
+
                 case "logIntoPanel":
                     try {
-                        $check = $this->checkUserExists($this->client);
-                        if (!empty($check->user->id))
-                        {
-                            $link = $this->prepareLink($this->client, $check->user->id);
-                        }
-                        else
-                        {
-                            throw new \Exception('Account Not Exist');
+                        // Client-scoped call: the API client already impersonates
+                        // the account's owner, so the link is issued for them.
+                        $result = $this->api->client()->users()->getAutoLoginLink();
+
+                        if ($result->success === false || empty($result->data?->link)) {
+                            throw new \Exception($result->message ?: 'Account Not Exist');
                         }
 
                         self::jsonEncode([
-                            'success'=>'You have been redirected correctlly',
-                            'url'=>$link->link
+                            'success' => 'You have been redirected correctlly',
+                            'url'     => $result->data->link,
                         ]);
-                    }catch(\Exception $e)
-                    {
-                        header('HTTP/1.1 400 Bad Request');
-                        self::jsonEncode([
-                            'errors'=>$e->getMessage()
-                        ]);
+                    } catch (\Exception $e) {
+                        $this->fail($e->getMessage());
                     }
-
                     break;
             }
-
-
-
         } catch (\RuntimeException $e) {
         }
+
         return '';
     }
 
+    protected function powerAction($deviceId, string $action, string $successMessage): void
+    {
+        $result = $this->api->admin()->devices()->powerAction($deviceId, new DevicePowerActionRequest($action));
+
+        if ($result->success === false) {
+            $this->fail($result->message);
+        }
+
+        self::jsonEncode(['success' => $successMessage]);
+    }
+
     /**
-     * @param array $data
+     * Answer the AJAX caller with an error and stop.
      */
+    protected function fail(?string $message): void
+    {
+        header('HTTP/1.1 400 Bad Request');
+        self::jsonEncode(['errors' => $message ?: 'The action could not be completed.']);
+    }
+
     public static function jsonEncode(array $data)
     {
         ob_clean();
@@ -188,65 +148,21 @@ class ServiceActions
         die;
     }
 
-    /**
-     * Checks if IPMI is active for this device
-     * @return bool
-     */
-    private function checkIsIPMIEnable(){
+    private function checkIsIPMIEnable($deviceId): bool
+    {
+        $device = $this->api->admin()->devices()->show($deviceId)->data;
 
-        $deviceInformation = $this->api->device->getInformation();
-        $requiredProperties = ['IPMI IP Address', 'IPMI Username', 'IPMI Password'];
-
-        return $this->checkObjectProperties($deviceInformation->metadata, $requiredProperties);
-
+        return $this->checkMetadataPresent($device, self::IPMI_METADATA);
     }
 
-    /**
-     * Checks that the right attributes are in the object
-     * @return bool
-     */
-    protected function checkObjectProperties($object, $requiredProperties) {
+    protected function checkMetadataPresent(?DeviceData $device, array $requiredProperties): bool
+    {
         foreach ($requiredProperties as $property) {
-            if (!property_exists($object, $property)) {
+            if (empty($device?->metadata[$property] ?? null)) {
                 return false;
             }
         }
+
         return true;
-    }
-
-    /**
-     * Check is user exists
-     *
-     * @param IClient $client insteandof ClientAdapter
-     */
-    private function checkUserExists(IClient $client)
-    {
-        $userDetails = new UserDetails();
-        $userDetails->setEmail($client->getEmail());
-
-        return $this->api->user->checkIfExists($userDetails);
-    }
-
-    /**
-     * Get Auto Login link to Easy DCIM
-     *
-     * @param IClient $client insteandof ClientAdapter, integer $easyClientID
-     * @param $easyClientID
-     */
-    public function prepareLink(IClient $client, $easyClientID)
-    {
-        $userModel = new UserLoginData();
-        $userModel->setId($easyClientID)
-            ->setEmail($client->getEmail())
-            ->setPath('services/' . $this->getServiceID() . '/summary');
-
-        return $this->api->user->getKeyLogin($userModel);
-    }
-
-    public function getServiceID()
-    {
-        $device = $this->api->device->getInformation();
-
-        return $device->order->service->id;
     }
 }

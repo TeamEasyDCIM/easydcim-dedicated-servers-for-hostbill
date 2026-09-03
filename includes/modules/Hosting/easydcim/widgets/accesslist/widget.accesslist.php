@@ -4,7 +4,7 @@ require_once dirname(__DIR__,2).DS.'vendor/autoload.php';
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\client\AccessList\Pages\AccessList;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
+use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 
 class widget_accesslist extends HostingWidget {
@@ -53,7 +53,7 @@ class widget_accesslist extends HostingWidget {
         }
         $this->params['clientsdetails'] = $module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($module->connection,$this->params);
-        $this->api = new EasyDCIM($this->client);
+        $this->api = ApiClientFactory::fromClient($this->client);
         $this->accessList = new AccessList($this->api,$this->client->getEasyServerID());
         $assetsUrl = './includes/modules/Hosting/easydcim/templates/assets';
         $variables = [

@@ -3,43 +3,60 @@
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages;
 
 use Carbon\Carbon;
-//use Carbon\CarbonImmutable;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Devices\Graph;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Graph\ExportGraphRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 
 class Graphs
 {
     /**
-     * @var EasyDCIM
+     * What EasyDCIM calls the thing the graph is drawn for.
+     */
+    protected const TARGET_DEVICE = 'device';
+
+    /**
+     * @var EasyDCIMClient
      */
     protected $api;
 
-    public function __construct($api)
+    /**
+     * @var IClient
+     */
+    protected $client;
+
+    public function __construct($api, $client)
     {
         $this->api = $api;
+        $this->client = $client;
     }
 
     public function manageEasyDCIMGraphs($getParams)
     {
         try {
+            $deviceId = $this->client->getEasyServerID();
+
+            if (empty($deviceId)) {
+                self::jsonEncode(['labels' => [], 'datasets' => []]);
+            }
 
             $dates = $this->getStartAndEndDateTimestamps($getParams['interval']);
-            $graphModel = new Graph();
-            $graphModel->setType($getParams['graphs']);
-            $graphModel->setExport(1);
-            $graphModel->setStart($dates['start']);
-            $graphModel->setEnd($dates['end']);
-            $graphData = $this->api->device->renderSpecifiedGraphs($graphModel);
-            $unit = $this->getDateUnitForLabels($graphData->labels);
-            $graphData->unit = $unit;
-            self::jsonEncode((array)$graphData);
+
+            $graphData = $this->api->admin()->graphs()->export($deviceId, new ExportGraphRequest(
+                type: $getParams['graphs'],
+                target: self::TARGET_DEVICE,
+                start: (string) $dates['start'],
+                end: (string) $dates['end'],
+                raw: false
+            ));
+
+            $data = $graphData->toArray();
+            $data['unit'] = $this->getDateUnitForLabels((array) $graphData->labels);
+
+            self::jsonEncode($data);
         } catch (\RuntimeException $e) {
         }
     }
 
-    /**
-     * @param array $data
-     */
     public static function jsonEncode(array $data)
     {
         ob_clean();
@@ -49,19 +66,16 @@ class Graphs
         die;
     }
 
-    /**
-     * Generate date unit for labels
-     *
-     * @param array $labels
-     * @return string
-     */
     protected function getDateUnitForLabels(array $labels): string
     {
         $unit = 'day';
 
+        if (empty($labels)) {
+            return $unit;
+        }
+
         $startDate = new Carbon(reset($labels));
         $endDate = new Carbon(end($labels));
-
         $diffHours = $startDate->diffInHours($endDate);
 
         if($diffHours > 0 && $diffHours <= 48) {
@@ -79,57 +93,56 @@ class Graphs
         return $unit;
     }
 
+    /**
+     * Start/end timestamps for a named interval.
+     *
+     * Carbon mutates in place, so each bound is taken from its own copy of
+     * "now" - v2 chained both off one instance, which made the end of every
+     * "yesterday"-style range land a day before its start.
+     */
     private function getStartAndEndDateTimestamps($interval): array
     {
-        $dates = [];
+        $now = Carbon::now();
 
         switch ($interval)
         {
             case 'yd':
-                $date = Carbon::now();
-                $start = $date->startOfDay()->subDay()->timestamp;
-                $end = $date->endOfDay()->subDay()->timestamp;
+                $start = $now->copy()->subDay()->startOfDay()->timestamp;
+                $end = $now->copy()->subDay()->endOfDay()->timestamp;
                 break;
             case 'tw':
-                $now = Carbon::now();
-                $start = $now->startOfWeek()->timestamp;
-                $end = $now->endOfWeek()->timestamp;
+                $start = $now->copy()->startOfWeek()->timestamp;
+                $end = $now->copy()->endOfWeek()->timestamp;
                 break;
             case 'lw':
-                $date = Carbon::now();
-                $start = $date->startOfWeek()->subWeek()->timestamp;
-                $end = $date->endOfWeek()->subWeek()->timestamp;
+                $start = $now->copy()->subWeek()->startOfWeek()->timestamp;
+                $end = $now->copy()->subWeek()->endOfWeek()->timestamp;
                 break;
             case 'tm':
-                $now = Carbon::now();
-                $start = $now->startOfMonth()->timestamp;
-                $end = $now->endOfMonth()->timestamp;
+                $start = $now->copy()->startOfMonth()->timestamp;
+                $end = $now->copy()->endOfMonth()->timestamp;
                 break;
             case 'lm':
-                $date = Carbon::now();
-                $start = $date->startOfMonth()->subMonth()->timestamp;
-                $end = $date->endOfMonth()->subMonth()->timestamp;
+                $start = $now->copy()->subMonth()->startOfMonth()->timestamp;
+                $end = $now->copy()->subMonth()->endOfMonth()->timestamp;
                 break;
             case 'ty':
-                $now = Carbon::now();
-                $start = $now->startOfYear()->timestamp;
-                $end = $now->endOfYear()->timestamp;
+                $start = $now->copy()->startOfYear()->timestamp;
+                $end = $now->copy()->endOfYear()->timestamp;
                 break;
             case 'ly':
-                $now = Carbon::now();
-                $start = $now->startOfYear()->subYear()->timestamp;
-                $end = $now->endOfYear()->subYear()->timestamp;
+                $start = $now->copy()->subYear()->startOfYear()->timestamp;
+                $end = $now->copy()->subYear()->endOfYear()->timestamp;
                 break;
             default:
-                $now = Carbon::now();
-                $start = $now->startOfDay()->timestamp;
-                $end = $now->endOfDay()->timestamp;
+                $start = $now->copy()->startOfDay()->timestamp;
+                $end = $now->copy()->endOfDay()->timestamp;
                 break;
         }
-        $dates = [
-            'start'=>$start,
-            'end'=>$end
+
+        return [
+            'start' => $start,
+            'end'   => $end
         ];
-        return $dates;
     }
 }

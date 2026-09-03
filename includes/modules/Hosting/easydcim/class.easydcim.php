@@ -70,6 +70,12 @@ class easydcim extends HostingModule implements Observer
             'value' => '',
             'type'=> 'input',
             'default'=>false
+        ),
+        'option9' =>array (
+            'name'=> 'EasyDCIM Service ID',
+            'value' => '',
+            'type'=> 'input',
+            'default'=>false
         )
     );
 
@@ -170,6 +176,9 @@ class easydcim extends HostingModule implements Observer
             case 'DedicatedIP':
                 $this->details['option8']['value'] = $value;
                 break;
+            case 'EasyServiceID':
+                $this->details['option9']['value'] = $value;
+                break;
         }
         $acc = HBLoader::LoadModel("Accounts");
         $acc->updateExtraDetails($this->account_details['id'], $this->getDetails());
@@ -192,6 +201,8 @@ class easydcim extends HostingModule implements Observer
                 return $this->details['option6']['value'];
             case 'DedicatedIP':
                 return $this->details['option8']['value'];
+            case 'EasyServiceID':
+                return $this->details['option9']['value'];
         }
     }
 
@@ -249,6 +260,7 @@ class easydcim extends HostingModule implements Observer
             $terminateData = $terminate->execute();
             $this->details['option6']['value'] = $terminateData['lastModuleAction'];
             $this->details['option5']['value'] = '';
+            $this->details['option9']['value'] = '';
             $this->addInfo('Account has been Terminated.');
             return true;
         }catch(Exception $exception)

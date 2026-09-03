@@ -4,7 +4,7 @@ require_once dirname(__DIR__,2).DS.'vendor/autoload.php';
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
+use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\client\IsoImages\Pages\IsoImages;
 
 class widget_isoimages extends HostingWidget
@@ -56,7 +56,7 @@ class widget_isoimages extends HostingWidget
         $this->params['clientsdetails'] = $module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($module->connection,$this->params);
         $this->client->getEasyServerID();
-        $this->api = new EasyDCIM($this->client);
+        $this->api = ApiClientFactory::fromClient($this->client);
         $this->isoImages = new IsoImages($this->api,$this->client);
         if (isset($_GET['createIsoImage']))
         {

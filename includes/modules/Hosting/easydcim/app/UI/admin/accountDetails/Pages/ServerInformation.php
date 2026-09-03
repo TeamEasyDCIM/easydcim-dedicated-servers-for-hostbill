@@ -3,38 +3,36 @@
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages;
 
 use ModulesGarden\Servers\EasyDCIMv2\App\FileReader\Reader;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Devices\Metadata;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\Device\AssignMetadataRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Admin\Device\DeviceData;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 
 class ServerInformation
 {
     /**
-     * @var EasyDCIM
+     * @var EasyDCIMClient
      */
     protected $api;
 
     /**
-     * @var ClientAdapter
+     * @var IClient
      */
     protected $client;
 
     /**
-     * @var array
+     * @var DeviceData|null
      */
-    protected $generalInformations = [];
+    protected $generalInformations = null;
 
     /**
-     * @var string
+     * Human-readable OS installation state, empty when nothing is running.
      */
-    protected $instalationStatus = [];
+    protected $instalationStatus = '';
 
-    /**
-     * @var array
-     */
     protected $configuration = [];
 
-    public function __construct($api,$client)
+    public function __construct($api, $client)
     {
         $this->api = $api;
         $this->client = $client;
@@ -44,158 +42,158 @@ class ServerInformation
 
     public function getDeviceDetails()
     {
-        $this->generalInformations = $this->api->device->getInformation();
-        $response = $this->api->os->installInformation();
-        $this->instalationStatus = $response->status;
+        $deviceId = $this->client->getEasyServerID();
+
+        if (empty($deviceId))
+        {
+            return;
+        }
+
+        $this->generalInformations = $this->api->admin()->devices()->show($deviceId)->data;
+
+        // API v3 reports the provisioning state as a message; there is no
+        // separate status field the way v2 had one.
+        $response = $this->api->admin()->osInstallation()->getOsInstallationInfo($deviceId);
+        $this->instalationStatus = (string) ($response->data?->message ?? '');
     }
 
-    /**
-     * @return string
-     */
     public function getIPAddresses(): string
     {
-        $ipAddresses = implode('<br>',$this->generalInformations->ip_addresses);
-        return  $ipAddresses != '' ? $ipAddresses :'-';
+        $ipAddresses = implode('<br>', (array) ($this->generalInformations?->ipList ?? []));
+
+        return $ipAddresses != '' ? $ipAddresses : '-';
     }
 
-    /**
-     * @return string
-     */
     public function getServiceStatus(): string
     {
-        return $this->generalInformations->service_status != '' ? ucfirst($this->generalInformations->service_status) :'-';
+        return $this->generalInformations?->serviceStatus ? ucfirst($this->generalInformations->serviceStatus) : '-';
     }
 
-    /**
-     * @return string
-     */
     public function getDeviceStatus(): string
     {
-        return $this->generalInformations->device_status != '' ? ucfirst($this->generalInformations->device_status) :'-';
+        return $this->generalInformations?->deviceStatus ? ucfirst($this->generalInformations->deviceStatus) : '-';
     }
 
-    /**
-     * @return string
-     */
     public function getLabel(): string
     {
-        return $this->generalInformations->label != '' ? $this->generalInformations->label :'-';
+        return $this->generalInformations?->label ?: '-';
     }
 
-    /**
-     * @return string
-     */
     public function getHostname(): string
     {
-        return $this->generalInformations->metadata->{'Hostname'} != '' ? $this->generalInformations->metadata->{'Hostname'} :'-';
+        return $this->getMetadataValue('Hostname') ?: '-';
     }
 
-    /**
-     * @return string
-     */
     public function getMacAddress(): string
     {
-        return $this->generalInformations->metadata->{'MAC Address'} != '' ? $this->generalInformations->metadata->{'MAC Address'} :'-';
+        return $this->getMetadataValue('MAC Address') ?: '-';
     }
 
-    /**
-     * @return string
-     */
     public function getCurrentOS(): string
     {
-        return $this->generalInformations->metadata->{'OS'} != '' ? $this->generalInformations->metadata->{'OS'} :'-';
+        return $this->getMetadataValue('OS') ?: '-';
     }
 
-    /**
-     * @return string
-     */
     public function getInstallationStatus(): string
     {
-        return $this->instalationStatus != '' ? $this->instalationStatus :'';
+        return $this->instalationStatus;
     }
 
-    /**
-     * @return string
-     */
     public function getServerID(): string
     {
-        return $this->generalInformations->id != '' ? $this->generalInformations->id :'-';
+        return $this->generalInformations?->id ? (string) $this->generalInformations->id : '-';
+    }
+
+    public function getServerLink(): string
+    {
+        return $this->client->getServerHostname()
+            . $this->configuration['easyDCIM']['serverPath']
+            . $this->getServerID()
+            . $this->configuration['easyDCIM']['endPath'];
     }
 
     /**
-     * @return string
+     * Metadata rows the product is configured to surface.
      */
-    public function getServerLink():string
-    {
-        return $this->client->getServerHostname().$this->configuration['easyDCIM']['serverPath'].$this->generalInformations->id.$this->configuration['easyDCIM']['endPath'];
-    }
-
     public function getMetadata($productSettings)
     {
         $caMetadata = $productSettings['options']['caMetadata'];
         $data = [];
-        foreach($caMetadata as $key=>$value)
+
+        foreach ($caMetadata as $key => $value)
         {
-            if ($value == "IP Address" && $productSettings['options']['IPAddresses'] == 'on' || $value == "MAC Address" && $productSettings['options']['MacAddress'] == 'on')
+            if ($value == "IP Address" && $productSettings['options']['IPAddresses'] == 'on'
+                || $value == "MAC Address" && $productSettings['options']['MacAddress'] == 'on')
             {
+                continue;
             }
-            elseif($value == "SSH Password" || $value == "SSH Root Password"){
+
+            if ($value == "SSH Password" || $value == "SSH Root Password")
+            {
                 $data[] = [
-                    'header'=>$value,
-                    'value'=>$this->generalInformations->metadata->{$value},
+                    'header' => $value,
+                    'value'  => $this->getMetadataValue($value),
                 ];
+
+                continue;
             }
-            else{
-                $data[] = [
-                    'header'=>$value,
-                    'value'=>$this->generalInformations->metadata->{$value} == ''? '-':$this->generalInformations->metadata->{$value},
-                ];
-            }
+
+            $data[] = [
+                'header' => $value,
+                'value'  => $this->getMetadataValue($value) ?: '-',
+            ];
         }
+
         return $data;
+    }
+
+    /**
+     * API v3 returns device metadata as a plain array keyed by field label.
+     */
+    protected function getMetadataValue(string $key): string
+    {
+        return (string) ($this->generalInformations?->metadata[$key] ?? '');
     }
 
     public function changeHostname($data)
     {
-        $metadataModel = new Metadata();
-        $metadataModel->setSlug('hostname')
-            ->setValue($data['changeHostname']);
-        $result = $this->api->device->assignMetadata($metadataModel);
-        if (isset($result->status) && $result->status == 'error')
+        $deviceId = $this->client->getEasyServerID();
+
+        $result = $this->api->admin()->devices()->assignMetadata(
+            $deviceId,
+            new AssignMetadataRequest(slug: 'hostname', value: (string) $data['changeHostname'])
+        );
+
+        if ($result->success === false)
         {
             header('HTTP/1.1 400 Bad Request');
-
             self::jsonEncode([
-                'error'=>$result->message
-            ]);
-        }else
-        {
-            self::jsonEncode([
-                'message'=>'Hostname has been changed successfully.'
+                'error' => $result->message
             ]);
         }
+
+        self::jsonEncode([
+            'message' => 'Hostname has been changed successfully.'
+        ]);
     }
 
-    /**
-     * @param array $data
-     */
     public static function jsonEncode(array $data)
     {
         ob_clean();
         echo(json_encode([
-            'data'=>$data
+            'data' => $data
         ]));
         die;
     }
 
     private function getPath()
     {
-        return dirname(__DIR__,5) . DS . 'app' . DS . 'Config' . DS . 'configuration.json';
+        return dirname(__DIR__, 5) . DS . 'app' . DS . 'Config' . DS . 'configuration.json';
     }
 
     private function getConfiguration()
     {
         $file = Reader::read($this->getPath());
-        $this->configuration =  $file->get();
+        $this->configuration = $file->get();
     }
 }

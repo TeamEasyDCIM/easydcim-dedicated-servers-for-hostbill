@@ -2,13 +2,14 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections;
 
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Models\ListWithType;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\ItemModel\ListItemModelsRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\ItemType\ListItemTypesRequest;
 
 class AdditionalParts
 {
     /**
-     * @var EasyDCIM
+     * @var EasyDCIMClient
      */
     protected $api;
 
@@ -17,7 +18,8 @@ class AdditionalParts
         $this->api = $api;
     }
 
-    public function getTypes($type) {
+    public function getTypes($type)
+    {
         if ($type != '')
         {
             self::jsonEncode($this->getOptions($type));
@@ -38,15 +40,37 @@ class AdditionalParts
         }
     }
 
-    protected function getOptions($type) {
-        $options = [];
-        $model = new ListWithType();
-        $model->setType($type);
+    /**
+     * Item models of one part type, as select2 key/value pairs.
+     *
+     * The page sends the type either as an ID (the part rows) or as a name
+     * such as "HDD" (the configurable-option modal), so both are accepted.
+     */
+    protected function getOptions($type)
+    {
+        $typeId = $this->resolveTypeId($type);
 
-        foreach ($this->api->models->listModelsWithType($model) as $value) {
+        if ($typeId === null)
+        {
+            return [];
+        }
+
+        $options = [];
+
+        try {
+            $models = $this->api->admin()->itemModels()->listAll(new ListItemModelsRequest(
+                searchTerm: (string) $typeId,
+                searchOp: 'eq',
+                searchFields: 'type_id'
+            ));
+        } catch (\Exception $ex) {
+            return [];
+        }
+
+        foreach ($models as $model) {
             $options[] = [
-                'key' => $value->id,
-                'value' => $value->name
+                'key'   => $model->id,
+                'value' => $model->name
             ];
         }
 
@@ -54,11 +78,32 @@ class AdditionalParts
     }
 
     /**
-     * @param array $data
+     * @param int|string $type an item type ID or its name
      */
+    protected function resolveTypeId($type): ?int
+    {
+        if (is_numeric($type))
+        {
+            return (int) $type;
+        }
+
+        try {
+            $types = $this->api->admin()->itemTypes()->listAll(new ListItemTypesRequest(
+                searchTerm: (string) $type,
+                searchOp: 'eq',
+                searchFields: 'name'
+            ));
+        } catch (\Exception $ex) {
+            return null;
+        }
+
+        $first = reset($types);
+
+        return $first ? (int) $first->id : null;
+    }
+
     public static function jsonEncode(array $data)
     {
-
         ob_clean();
         echo(json_encode([
             'data'=>$data

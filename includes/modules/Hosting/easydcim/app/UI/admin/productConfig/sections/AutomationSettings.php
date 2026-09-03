@@ -2,12 +2,13 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections;
 
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\ServiceAccessLevel\ListServiceAccessLevelsRequest;
 
 class AutomationSettings
 {
     /**
-     * @var EasyDCIM
+     * @var EasyDCIMClient
      */
     protected $api;
 
@@ -16,7 +17,15 @@ class AutomationSettings
         $this->api = $api;
     }
 
-    public function getAccessLevelList(){
-        return $this->api->service->getAccessLevelList();
+    /**
+     * @return array<\ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Admin\ServiceAccessLevel\ServiceAccessLevelData>
+     */
+    public function getAccessLevelList()
+    {
+        try {
+            return $this->api->admin()->accessLevels()->listAll(new ListServiceAccessLevelsRequest());
+        } catch (\Exception $ex) {
+            return [];
+        }
     }
 }

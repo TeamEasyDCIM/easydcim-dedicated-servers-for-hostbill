@@ -2,17 +2,13 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions;
 
+use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
 
 class TestConnection
 {
     protected $module;
 
-    /**
-     * @var ClientAdapter
-     */
     protected $client;
 
     public function __construct($module)
@@ -21,22 +17,24 @@ class TestConnection
         $this->client = (new EasyDCIMConfigFactory())->fromParams($this->module->connection);
     }
 
-    public function execute():string
+    /**
+     * Probe the API v3 health-check endpoint.
+     *
+     * Reaching it at all proves the base URL resolves and the bearer token is
+     * accepted, which is what "test connection" needs to establish.
+     */
+    public function execute(): string
     {
-        $api = new EasyDCIM($this->client);
-        $version = $api->system->getVersion();
+        $api = ApiClientFactory::fromClient($this->client);
 
-        if (isset($version->status) && $version->status === 'error') {
-            $msg = isset($version->message) ? $version->message : 'Unknown API error';
-            throw new \Exception("EasyDCIM API Error: " . $msg);
+        $response = $api->admin()->system()->healthCheck();
+
+        if (($response['success'] ?? false) === true) {
+            return 'success';
         }
 
-        if($version>0 && $version->status != 'error')
-        {
-            return "success";
-        }else
-        {
-            return 'error';
-        }
+        $message = $response['message'] ?? 'Unknown API error';
+
+        throw new \Exception('EasyDCIM API Error: ' . $message);
     }
 }

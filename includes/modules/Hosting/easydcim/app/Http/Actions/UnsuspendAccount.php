@@ -2,72 +2,84 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions;
 
+use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Emails;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\EmailNotifications;
 
 class UnsuspendAccount
 {
-    /**
-     * @var
-     */
     protected $module;
 
-    /**
-     * @var ClientAdapter
-     */
     protected $client;
-    /**
-     * @var
-     */
+
     protected $params;
+
     protected $mailer;
 
-    public function __construct($module,$mailer)
+    public function __construct($module, $mailer)
     {
         $this->module = $module;
         $this->mailer = $mailer;
         $this->params = $this->module->getAccount();
         $this->params['clientsdetails'] = $this->module->getClient();
-        $this->client = (new EasyDCIMConfigFactory())->fromParams($this->module->connection,$this->params);
+        $this->client = (new EasyDCIMConfigFactory())->fromParams($this->module->connection, $this->params);
     }
 
+    /**
+     * Either notify the administrators or run the unsuspension against EasyDCIM,
+     * depending on how the product is configured.
+     */
     public function execute()
     {
-        if ($this->client->getUnsuspendAction() === 1)
-        {
+        if ($this->client->getUnsuspendAction() === 1) {
             $this->sendUnsuspendEmail($this->client);
+
+            return ['lastModuleAction' => 'UnsuspendAccount'];
         }
-        else
-        {
-            $api = new EasyDCIM($this->client);
-            $api->order->unsuspend();
+
+        $orderId = $this->client->getEasyOrderID();
+
+        if (empty($orderId)) {
+            throw new \Exception('Order ID is empty.');
         }
-        return [
-            'lastModuleAction' => 'UnsuspendAccount'
-        ];
+
+        $api = ApiClientFactory::fromClient($this->client);
+
+        $response = $api->admin()->orders()->unsuspendService($orderId);
+
+        if ($response->success === false) {
+            throw new \Exception($response->message ?: 'Failed to unsuspend the service in EasyDCIM.');
+        }
+
+        return ['lastModuleAction' => 'UnsuspendAccount'];
     }
 
-    /*
-     * Send suspension Email to admin
+    /**
+     * Send the configured notification to the selected administrators.
      */
-
     private function sendUnsuspendEmail(IClient $client)
     {
         $emailTemplates = new EmailNotifications();
         $emails = new Emails($this->mailer);
+
         $details = [
-            'orderid'=>$client->getEasyOrderID(),
-            'serverid'=>$client->getEasyServerID(),
-            'accountid'=>$client->getServiceID(),
+            'orderid'   => $client->getEasyOrderID(),
+            'serverid'  => $client->getEasyServerID(),
+            'accountid' => $client->getServiceID(),
         ];
+
         $clientData = [
-            'firstname'=>$client->getFirstName(),
-            'lastname'=>$client->getLastName(),
+            'firstname' => $client->getFirstName(),
+            'lastname'  => $client->getLastName(),
         ];
-        $emails->sendEmailForSelectedAdmins($emailTemplates->getTemplate($client->getUnsuspendActionTemplate()),$details,$clientData,$emailTemplates->getAdminEmail($client->getAdminis()));
+
+        $emails->sendEmailForSelectedAdmins(
+            $emailTemplates->getTemplate($client->getUnsuspendActionTemplate()),
+            $details,
+            $clientData,
+            $emailTemplates->getAdminEmail($client->getAdminis())
+        );
     }
 }

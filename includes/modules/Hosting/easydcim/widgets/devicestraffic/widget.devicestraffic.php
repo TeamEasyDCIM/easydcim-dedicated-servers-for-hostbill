@@ -3,7 +3,7 @@
 require_once dirname(__DIR__,2).DS.'vendor/autoload.php';
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
+use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages\Graphs;
 
@@ -55,8 +55,8 @@ class widget_devicestraffic extends HostingWidget
         $this->params['clientsdetails'] = $module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($module->connection,$this->params);
         $this->client->getEasyServerID();
-        $this->api = new EasyDCIM($this->client);
-        $this->graphs = new Graphs($this->api);
+        $this->api = ApiClientFactory::fromClient($this->client);
+        $this->graphs = new Graphs($this->api,$this->client);
         if (isset($_GET['graphs']))
         {
             $this->graphs->manageEasyDCIMGraphs($_GET);

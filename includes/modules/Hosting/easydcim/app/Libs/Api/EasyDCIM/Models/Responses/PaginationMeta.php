@@ -1,0 +1,65 @@
+<?php
+
+
+
+namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses;
+
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
+
+class PaginationMeta
+{
+    /**
+     * @param array<array{url: string|null, label: string, page: int|null, active: bool}> $links
+     */
+    public function __construct(
+        public ?int $currentPage,
+        public ?int $from,
+        public ?int $lastPage,
+        public ?array $links,
+        public ?string $path,
+        public ?int $perPage,
+        public ?int $to,
+        public ?int $total,
+        public ?string $sortBy = null,
+        public ?string $sortDir = null,
+    ) {}
+
+    /**
+     * @param array<string, mixed> $data
+     * @return self
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            currentPage: Arr::get($data, 'current_page', 1),
+            from: Arr::get($data, 'from'),
+            lastPage: Arr::get($data, 'last_page', 1),
+            links: Arr::get($data, 'links', []),
+            path: Arr::get($data, 'path', ''),
+            perPage: Arr::get($data, 'per_page', 15),
+            to: Arr::get($data, 'to'),
+            total: Arr::get($data, 'total', 0),
+            sortBy: Arr::get($data, 'sort_by'),
+            sortDir: Arr::get($data, 'sort_dir'),
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return array_filter([
+            'current_page' => $this->currentPage,
+            'from' => $this->from,
+            'last_page' => $this->lastPage,
+            'links' => $this->links,
+            'path' => $this->path,
+            'per_page' => $this->perPage,
+            'to' => $this->to,
+            'total' => $this->total,
+            'sort_by' => $this->sortBy,
+            'sort_dir' => $this->sortDir,
+        ], fn($value) => $value !== null);
+    }
+}

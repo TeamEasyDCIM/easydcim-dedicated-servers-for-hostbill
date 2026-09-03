@@ -1,10 +1,12 @@
 <?php
+
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\client\IsoImages\Pages;
 
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\EasyDCIM;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Os\DataContainer;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Models\Os\IsoImagesRecord;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\OsInstallation\CreateIsoImageRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\OsInstallation\ListIsoImagesRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\OsInstallation\UpdateIsoImageRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 
 class IsoImages
 {
@@ -14,14 +16,15 @@ class IsoImages
     public const STATUS_DEFAULT = 'lu-label--default';
 
     /**
-     * @var EasyDCIM
+     * @var EasyDCIMClient
      */
     protected $api;
 
     /**
-     * @var ClientAdapter
+     * @var IClient
      */
     protected $client;
+
     protected static $statusMap = [
         '1'=>'Waiting',
         '2'=>'Started',
@@ -29,19 +32,32 @@ class IsoImages
         '4'=>'Error',
     ];
 
-    public function __construct($api,$client)
+    public function __construct($api, $client)
     {
         $this->api = $api;
         $this->client = $client;
     }
 
+    /**
+     * ISO images the account's owner has registered.
+     *
+     * API v3 scopes ISO images to the user rather than to a device, so the list
+     * is whatever the impersonated user owns.
+     */
     public function getIsoImages()
     {
-        foreach ($this->api->os->getIsoImagesForDevice($this->client->getEasyServerID()) as $isoImage)
+        $data = [];
+
+        try {
+            $isoImages = $this->api->client()->osInstallation()->listAllIsoImages(new ListIsoImagesRequest());
+        } catch (\Exception $ex) {
+            return $data;
+        }
+
+        foreach ($isoImages as $isoImage)
         {
-            $progress = 0;
-            $isoData = unserialize($isoImage->data);
-            $status = self::$statusMap[$isoImage->status];
+            $status = self::$statusMap[(string) $isoImage->status] ?? 'Waiting';
+
             switch ($status)
             {
                 case 'Finished':
@@ -49,7 +65,6 @@ class IsoImages
                     break;
                 case 'Started':
                     $colorStatus = self::STATUS_WARNING;
-                    $progress = intval($isoData['downloadedBytes']/$isoData['downloadTotal']*100);
                     break;
                 case 'Error':
                     $colorStatus = self::STATUS_DANGER;
@@ -64,15 +79,17 @@ class IsoImages
                 'id' => base64_encode(json_encode([
                     'id'=>$isoImage->id,
                     'name'=>$isoImage->name,
-                    'iso_url'=>$isoImage->iso_url,
+                    'iso_url'=>$isoImage->isoUrl,
                 ])),
                 'Id' => $isoImage->id,
                 'name' => $isoImage->name,
-                'iso_url' => $isoImage->iso_url,
+                'iso_url' => $isoImage->isoUrl,
                 'status' => $status,
-                'data' => $isoData,
+                // v3 reports a download status message, not byte counters, so
+                // there is no percentage to drive a progress bar with.
+                'data' => ['message' => $isoImage->download?->message ?? ''],
                 'colorStatus' => $colorStatus,
-                'progress' => $progress,
+                'progress' => 0,
             ];
         }
 
@@ -90,36 +107,28 @@ class IsoImages
     {
         try
         {
-            $isoImagesRecord     = new IsoImagesRecord();
-            $isoImagesRecord->setName($data['name']);
-            $isoImagesRecord->setIsoUrl($data['iso_url']);
-            $isoImagesRecord->setDeviceId($this->client->getEasyServerID());
+            $result = $this->api->client()->osInstallation()->createIsoImage(new CreateIsoImageRequest(
+                name: (string) $data['name'],
+                isoUrl: (string) $data['iso_url']
+            ));
 
-            $dataContainer = new DataContainer();
-            $dataContainer->setData($isoImagesRecord);
-
-            $result = $this->api->os->createIsoImage($dataContainer);
-            if (isset($result->status) && $result->status == 'error')
+            if ($result->success === false)
             {
                 header('HTTP/1.1 400 Bad Request');
-
                 self::jsonEncode([
                     'error'=>$result->message != '' ? $result->message : "Record cannot be added"
                 ]);
-            }else
-            {
-                self::jsonEncode([
-                    'message'=>'Record added successfully'
-                ]);
             }
 
+            self::jsonEncode([
+                'message'=>'Record added successfully'
+            ]);
         }
         catch (\Exception $exc)
         {
             header('HTTP/1.1 400 Bad Request');
-
             self::jsonEncode([
-                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be deleted"
+                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be added"
             ]);
         }
     }
@@ -128,34 +137,28 @@ class IsoImages
     {
         try
         {
-            $isoImagesRecord     = new IsoImagesRecord();
-            $isoImagesRecord->setName($data['name']);
-            $isoImagesRecord->setDeviceId($this->client->getEasyServerID());
+            $result = $this->api->client()->osInstallation()->updateIsoImage(
+                $data['updateId'],
+                new UpdateIsoImageRequest(name: (string) $data['name'])
+            );
 
-            $dataContainer = new DataContainer();
-            $dataContainer->setData($isoImagesRecord);
-
-            $result = $this->api->os->updateIsoImage($dataContainer,$data['updateId']);
-            if (isset($result->status) && $result->status == 'error')
+            if ($result->success === false)
             {
                 header('HTTP/1.1 400 Bad Request');
-
                 self::jsonEncode([
                     'error'=>$result->message != '' ? $result->message : "Record cannot be edited"
                 ]);
-            }else
-            {
-                self::jsonEncode([
-                    'message'=>'Record edited successfully'
-                ]);
             }
+
+            self::jsonEncode([
+                'message'=>'Record edited successfully'
+            ]);
         }
         catch (\Exception $exc)
         {
             header('HTTP/1.1 400 Bad Request');
-
             self::jsonEncode([
-                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be deleted"
+                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be edited"
             ]);
         }
     }
@@ -164,34 +167,29 @@ class IsoImages
     {
         try
         {
-            $result = $this->api->os->deleteIsoImage($data['deleteId']);
-            if (isset($result->status) && $result->status == 'error')
+            $result = $this->api->client()->osInstallation()->deleteIsoImage($data['deleteId']);
+
+            if ($result->success === false)
             {
                 header('HTTP/1.1 400 Bad Request');
-
                 self::jsonEncode([
                     'error'=>$result->message != '' ? $result->message : "Record cannot be deleted"
                 ]);
-            }else
-            {
-                self::jsonEncode([
-                    'message'=>'Record deleted successfully'
-                ]);
             }
+
+            self::jsonEncode([
+                'message'=>'Record deleted successfully'
+            ]);
         }
         catch (\Exception $exc)
         {
             header('HTTP/1.1 400 Bad Request');
-
             self::jsonEncode([
                 'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be deleted"
             ]);
         }
     }
 
-    /**
-     * @param array $data
-     */
     public static function jsonEncode(array $data)
     {
         ob_clean();
