@@ -115,6 +115,7 @@ class easydcim_controller extends HBController
             $this->template->assign('templateList',$this->defaultOptions->getTemplateList($config->LocationID));
             $this->template->assign('addonsList',$this->defaultOptions->getAddonsList($config->OsTemplateID,$config->LocationID));
             $this->template->assign('accessLevelList',$this->automationSettings->getAccessLevelList());
+            $this->template->assign('orderActionsList',$this->automationSettings->getAllOrderActions());
             $this->template->assign('caTemplateList',$this->defaultOptions->getTemplateList($config->LocationID));
             $this->template->assign('metadataList',$this->clientAreaFeatures->getFields());
             $this->template->assign('adminList',$this->emailNotifications->getAdmins());

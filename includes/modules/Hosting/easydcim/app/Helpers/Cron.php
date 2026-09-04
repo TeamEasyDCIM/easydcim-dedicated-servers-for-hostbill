@@ -22,6 +22,11 @@ class Cron
      */
     private const ORDER_CHUNK_SIZE = 100;
 
+    /**
+     * Activation condition values, matching the product option.
+     */
+    private const ACTIVATION_FULL = 'full';
+
     protected $servers;
 
     protected $accountsHelper;
@@ -288,13 +293,6 @@ class Cron
             throw new Exception('Waiting, service status: ' . $service->status);
         }
 
-        $extraDetails = unserialize($hosting->extra_details);
-        $extraDetails['option5'] = $service->related_id;
-
-        if (!empty($service->id)) {
-            $extraDetails['option9'] = $service->id;
-        }
-
         try {
             $server = $this->getServer($hosting->server_id);
         } catch (Exception $ex) {
@@ -302,12 +300,27 @@ class Cron
             return;
         }
 
-        $orderCfg['config']['extra_details']['option4'] = $extraDetails['option4'];
+        $orderCfg['config']['extra_details']['option4'] = unserialize($hosting->extra_details)['option4'];
         $params = array_merge($server, $orderCfg);
         $client = new ClientAdapter($params);
         $api    = ApiClientFactory::fromClient($client);
 
         $device = $api->admin()->devices()->show($service->related_id)->data;
+
+        // "Full" activation waits for the OS install to finish before the
+        // service is handed to the client.
+        if ($this->getActivationCondition($hosting) === self::ACTIVATION_FULL
+            && (string) ($device?->osInstallation ?? '') !== '1') {
+            throw new Exception('Waiting for the OS installation to finish.');
+        }
+
+        $extraDetails = unserialize($hosting->extra_details);
+        $extraDetails['option5'] = $service->related_id;
+
+        if (!empty($service->id)) {
+            $extraDetails['option9'] = $service->id;
+        }
+
         $extraDetails['option8'] = $device?->metadata['IP Address'] ?? '';
 
         DB::table('hb_accounts')->where('id','=',$hosting->id)->update([
@@ -328,6 +341,33 @@ class Cron
             $account,
             $serverDetails
         );
+    }
+
+    /**
+     * The product's service activation condition.
+     */
+    private function getActivationCondition($hosting): string
+    {
+        $row = DB::table('hb_products_modules')
+            ->join('hb_modules_configuration', 'hb_products_modules.module', '=', 'hb_modules_configuration.id')
+            ->where('hb_modules_configuration.module', '=', 'easydcim')
+            ->where('hb_products_modules.product_id', '=', $hosting->product_id)
+            ->select('hb_products_modules.options')
+            ->first();
+
+        if (empty($row)) {
+            return '';
+        }
+
+        $options = @unserialize($row->options);
+
+        if (!is_array($options)) {
+            return '';
+        }
+
+        $value = $options['serviceActivationCondition'] ?? '';
+
+        return (string) (is_array($value) ? ($value['value'] ?? '') : $value);
     }
 
     private function extractOrderIdsByServer(array $hostings): array

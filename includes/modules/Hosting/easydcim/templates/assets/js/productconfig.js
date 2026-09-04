@@ -859,3 +859,15 @@ function metadataRowToAppend(metadata)
     }
 
 }
+
+/**
+ * Order actions only make sense when the feature is on, so the selects follow
+ * the toggle rather than sitting there inert.
+ */
+function toggleOrderActions(event) {
+    var row = document.getElementById('orderActionsRow');
+
+    if (row) {
+        row.style.display = event.target.checked ? '' : 'none';
+    }
+}

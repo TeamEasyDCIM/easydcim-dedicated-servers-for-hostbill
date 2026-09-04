@@ -233,6 +233,82 @@
                                 </div>
                             </label></div>
                         <div class="lu-form-check lu-m-b-2x"><label><span class="lu-form-text">
+                                {$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.OrderActions.OrderActions}<i
+                                        data-title="{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.OrderActions.description}"
+                                        data-toggle="lu-tooltip"
+                                        class="lu-i-c-2x lu-zmdi lu-zmdi-help-outline lu-form-tooltip-helper lu-tooltip drop-target"><span class="tooltiptext">{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.OrderActions.description}</span></i></span>
+                                <div class="lu-switch"><input type="checkbox" name="options[OrderActions]"
+                                                              {if $moduleConfiguration->OrderActions == 'on'}checked{/if}
+                                                              onchange="toggleOrderActions(event)"
+                                                              class="lu-switch__checkbox"> <span
+                                            class="lu-switch__container"><span class="lu-switch__handle"></span></span>
+                                </div>
+                            </label></div>
+                        <div id="orderActionsRow" {if $moduleConfiguration->OrderActions != 'on'}style="display:none;"{/if}>
+                            {foreach from=$orderActionsList key=event item=actions}
+                                <div class="lu-form-group">
+                                    <label class="lu-form-label">
+                                        {$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.OrderActions.events[$event]}
+                                    </label>
+                                    <select multiple="multiple" name="options[{$event|capitalize}Actions][]"
+                                            id="{$event}Actions" class="mg-select2" tabindex="-1">
+                                        {foreach from=$actions key=actionKey item=actionLabel}
+                                            <option value="{$actionKey}"
+                                                    {if $actionKey|in_array:$moduleConfiguration->{$event|capitalize}Actions}selected{/if}>{$actionLabel}</option>
+                                        {/foreach}
+                                    </select>
+                                    <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>
+                                </div>
+                            {/foreach}
+                            <div class="lu-form-group">
+                                <label class="lu-form-label">
+                                    {$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.InCaseOfError.InCaseOfError}<i
+                                            data-title="{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.InCaseOfError.description}"
+                                            data-toggle="lu-tooltip"
+                                            class="lu-i-c-2x lu-zmdi lu-zmdi-help-outline lu-form-tooltip-helper lu-tooltip drop-target"><span class="tooltiptext">{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.InCaseOfError.description}</span></i>
+                                </label>
+                                <select name="options[InCaseOfError]" class="lu-form-control">
+                                    <option value="continue" {if $moduleConfiguration->InCaseOfError != 'abort'}selected{/if}>{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.InCaseOfError.continue}</option>
+                                    <option value="abort" {if $moduleConfiguration->InCaseOfError == 'abort'}selected{/if}>{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.InCaseOfError.abort}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="lu-form-check lu-m-b-2x"><label><span class="lu-form-text">
+                                {$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.SyncOsTemplates.SyncOsTemplates}<i
+                                        data-title="{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.SyncOsTemplates.description}"
+                                        data-toggle="lu-tooltip"
+                                        class="lu-i-c-2x lu-zmdi lu-zmdi-help-outline lu-form-tooltip-helper lu-tooltip drop-target"><span class="tooltiptext">{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.SyncOsTemplates.description}</span></i></span>
+                                <div class="lu-switch"><input type="checkbox" name="options[SyncOsTemplates]"
+                                                              {if $moduleConfiguration->SyncOsTemplates == 'on'}checked{/if}
+                                                              class="lu-switch__checkbox"> <span
+                                            class="lu-switch__container"><span class="lu-switch__handle"></span></span>
+                                </div>
+                            </label></div>
+                        <div class="lu-form-group">
+                            <label class="lu-form-label">
+                                {$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.serviceActivationCondition.serviceActivationCondition}<i
+                                        data-title="{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.serviceActivationCondition.description}"
+                                        data-toggle="lu-tooltip"
+                                        class="lu-i-c-2x lu-zmdi lu-zmdi-help-outline lu-form-tooltip-helper lu-tooltip drop-target"><span class="tooltiptext">{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.serviceActivationCondition.description}</span></i>
+                            </label>
+                            <select name="options[serviceActivationCondition]" class="lu-form-control">
+                                <option value="default" {if $moduleConfiguration->serviceActivationCondition != 'full'}selected{/if}>{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.serviceActivationCondition.default}</option>
+                                <option value="full" {if $moduleConfiguration->serviceActivationCondition == 'full'}selected{/if}>{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.serviceActivationCondition.full}</option>
+                            </select>
+                        </div>
+                        <div class="lu-form-group">
+                            <label class="lu-form-label">
+                                {$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.AdditionalIPAllocationMode.AdditionalIPAllocationMode}<i
+                                        data-title="{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.AdditionalIPAllocationMode.description}"
+                                        data-toggle="lu-tooltip"
+                                        class="lu-i-c-2x lu-zmdi lu-zmdi-help-outline lu-form-tooltip-helper lu-tooltip drop-target"><span class="tooltiptext">{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.AdditionalIPAllocationMode.description}</span></i>
+                            </label>
+                            <select name="options[AdditionalIPAllocationMode]" class="lu-form-control">
+                                <option value="subnet_mask" {if $moduleConfiguration->AdditionalIPAllocationMode != 'individual'}selected{/if}>{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.AdditionalIPAllocationMode.subnetMask}</option>
+                                <option value="individual" {if $moduleConfiguration->AdditionalIPAllocationMode == 'individual'}selected{/if}>{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.AdditionalIPAllocationMode.individual}</option>
+                            </select>
+                        </div>
+                        <div class="lu-form-check lu-m-b-2x"><label><span class="lu-form-text">
                                 {$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.EnableStockControl.EnableStockControl}<i
                                         data-title="{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.EnableStockControl.description}"
                                         data-toggle="lu-tooltip"

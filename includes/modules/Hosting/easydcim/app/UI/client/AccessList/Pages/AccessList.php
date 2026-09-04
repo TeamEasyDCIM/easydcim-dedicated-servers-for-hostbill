@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\client\AccessList\Pages;
 
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ExtensionChecker;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\PasswordManagement\ListAccessDetailsRequest;
 
@@ -49,6 +50,10 @@ class AccessList
      */
     protected function getAccessList(): array
     {
+        if (!ExtensionChecker::isPasswordManagerActive($this->api)) {
+            return [];
+        }
+
         try {
             $details = $this->api->client()->passwordManagement()->listAllAccessDetails(new ListAccessDetailsRequest());
         } catch (\Exception $ex) {

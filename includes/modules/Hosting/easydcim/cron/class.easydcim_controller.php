@@ -3,6 +3,7 @@
 require_once dirname(__DIR__).DS.'vendor/autoload.php';
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Cron;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\OsTemplatesSync;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\StockControl;
 
 class easydcim_controller extends HBController
@@ -75,9 +76,13 @@ class easydcim_controller extends HBController
         }
     }
     function call_Daily(){
-        // Keep product availability in step with what EasyDCIM can provision.
         $servers = $this->servers_helper->findServersBy('module','easydcim');
+
+        // Keep product availability in step with what EasyDCIM can provision.
         (new StockControl($servers))->run();
+
+        // Pick up OS templates, disk layouts and extras added in EasyDCIM.
+        (new OsTemplatesSync($servers, HBLoader::LoadModel("ConfigFields")))->run();
     }
     function call_Weekly(){
 

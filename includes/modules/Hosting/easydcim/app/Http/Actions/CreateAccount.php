@@ -5,6 +5,7 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Emails;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\OrderActions;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\SshPublicKey;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Synchronize;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
@@ -27,6 +28,14 @@ class CreateAccount
         'RAM' => 10,
         'CPU' => 11,
     ];
+
+    /**
+     * How extra IP addresses are allocated, and the product option that picks.
+     */
+    private const ALLOCATION_MODE_OPTION = 'AdditionalIPAllocationMode';
+    private const ALLOCATION_INDIVIDUAL = 'individual';
+    private const ALLOCATION_SUBNET_MASK = 'subnet_mask';
+    private const MAX_INDIVIDUAL_IPS = 1024;
 
     private const PART_SIZE_KEYS = [
         8  => 'hdd.size',
@@ -139,7 +148,8 @@ class CreateAccount
             client: (int) $clientID,
             autoAccept: (bool) $client->getBaseFeatures()['autoAccept'],
             criteria: $this->buildCriteria($client),
-            service: $this->buildService($api, $client)
+            service: $this->buildService($api, $client),
+            actions: (new OrderActions($this->params['options'] ?? []))->build()
         );
 
         $result = $api->admin()->orders()->create($request);
@@ -233,13 +243,7 @@ class CreateAccount
             'access_level'          => $client->getAcccessLevel(),
         ];
 
-        $additionalIps = $client->getAdditionalIPAddress();
-
-        if (!empty($additionalIps) || $additionalIps != 0)
-        {
-            $service['additional_ips'] = $this->getAdditionalIP($client);
-            $service['additional_ips_number'] = $additionalIps;
-        }
+        $service = array_merge($service, $this->getAdditionalIps($client));
 
         foreach ($this->getCustomInformation() as $key => $value)
         {
@@ -317,35 +321,62 @@ class CreateAccount
     }
 
     /**
-     * Calculate number of IP addresses
+     * How the extra IP addresses should be handed out.
      *
-     * $param $client insteandof ClientAdapter
+     * `subnet_mask` gives the client a whole subnet wide enough for the
+     * requested count; `individual` hands out exactly that many addresses.
      *
-     * @return string
-     *
+     * @return array{additional_ips_mode?: string, additional_ips?: string|int}
      */
-    private function getAdditionalIP(IClient $client)
+    private function getAdditionalIps(IClient $client): array
     {
-        $additionalIP = $client->getAdditionalIPAddress();
-        if ($additionalIP == 1)
+        $count = (int) $client->getAdditionalIPAddress();
+
+        if ($count <= 0)
+        {
+            return [];
+        }
+
+        if (($this->params['options'][self::ALLOCATION_MODE_OPTION] ?? '') === self::ALLOCATION_INDIVIDUAL)
+        {
+            return [
+                'additional_ips_mode' => self::ALLOCATION_INDIVIDUAL,
+                'additional_ips'      => min($count, self::MAX_INDIVIDUAL_IPS),
+            ];
+        }
+
+        return [
+            'additional_ips_mode' => self::ALLOCATION_SUBNET_MASK,
+            'additional_ips'      => $this->calculateAdditionalIpsCidr($count),
+        ];
+    }
+
+    /**
+     * The smallest CIDR mask with room for `$count` usable addresses.
+     */
+    private function calculateAdditionalIpsCidr(int $count): string
+    {
+        if ($count == 1)
         {
             return '/30';
         }
+
         $hosts = [];
-        $mask  = null;
+
         for ($i = 1; $i <= 30; $i++)
         {
             $hosts[$i] = (1 << (32 - $i)) - 2;
         }
+
         for ($i = 30; $i >= 0; $i--)
         {
-            if ($hosts[$i] >= $additionalIP)
+            if ($hosts[$i] >= $count)
             {
-                $mask = $i;
-                break;
+                return '/' . $i;
             }
         }
-        return '/' . $mask;
+
+        return '/24';
     }
 
     /**
