@@ -221,6 +221,28 @@
                                 {/foreach}
                             </select>
                         </div>
+                        <div class="lu-form-check lu-m-b-2x"><label><span class="lu-form-text">
+                                {$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.PowerUsage.PowerUsage}<i
+                                        data-title="{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.PowerUsage.description}"
+                                        data-toggle="lu-tooltip"
+                                        class="lu-i-c-2x lu-zmdi lu-zmdi-help-outline lu-form-tooltip-helper lu-tooltip drop-target"><span class="tooltiptext">{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.PowerUsage.description}</span></i></span>
+                                <div class="lu-switch"><input type="checkbox" name="options[PowerUsage]"
+                                                              {if $moduleConfiguration->PowerUsage == 'on'}checked{/if}
+                                                              class="lu-switch__checkbox"> <span
+                                            class="lu-switch__container"><span class="lu-switch__handle"></span></span>
+                                </div>
+                            </label></div>
+                        <div class="lu-form-check lu-m-b-2x"><label><span class="lu-form-text">
+                                {$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.EnableStockControl.EnableStockControl}<i
+                                        data-title="{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.EnableStockControl.description}"
+                                        data-toggle="lu-tooltip"
+                                        class="lu-i-c-2x lu-zmdi lu-zmdi-help-outline lu-form-tooltip-helper lu-tooltip drop-target"><span class="tooltiptext">{$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.EnableStockControl.description}</span></i></span>
+                                <div class="lu-switch"><input type="checkbox" name="options[EnableStockControl]"
+                                                              {if $moduleConfiguration->EnableStockControl == 'on'}checked{/if}
+                                                              class="lu-switch__checkbox"> <span
+                                            class="lu-switch__container"><span class="lu-switch__handle"></span></span>
+                                </div>
+                            </label></div>
                     </div>
                 </div>
             </div>
@@ -872,6 +894,26 @@
                                                     <div class="lu-switch"><input type="checkbox"
                                                                                   name="options[PasswordManagement]"
                                                                                   {if $moduleConfiguration->PasswordManagement == 'on'}checked{/if}
+                                                                                  onchange="checkOptionUnderSection(event)"
+                                                                                  class="lu-switch__checkbox"> <span
+                                                                class="lu-switch__container"><span class="lu-switch__handle"></span></span>
+                                                    </div>
+                                                </label></div>
+                                            <div class="lu-form-check lu-m-b-2x"><label><span class="lu-form-text">
+            {$lang.serverAA.productConfig.mainContainer.configForm.clientAreaFeaturesSection.rightSection.modules.SshKeys.SshKeys}</span>
+                                                    <div class="lu-switch"><input type="checkbox"
+                                                                                  name="options[SshKeys]"
+                                                                                  {if $moduleConfiguration->SshKeys == 'on'}checked{/if}
+                                                                                  onchange="checkOptionUnderSection(event)"
+                                                                                  class="lu-switch__checkbox"> <span
+                                                                class="lu-switch__container"><span class="lu-switch__handle"></span></span>
+                                                    </div>
+                                                </label></div>
+                                            <div class="lu-form-check lu-m-b-2x"><label><span class="lu-form-text">
+            {$lang.serverAA.productConfig.mainContainer.configForm.clientAreaFeaturesSection.rightSection.modules.Sensors.Sensors}</span>
+                                                    <div class="lu-switch"><input type="checkbox"
+                                                                                  name="options[Sensors]"
+                                                                                  {if $moduleConfiguration->Sensors == 'on'}checked{/if}
                                                                                   onchange="checkOptionUnderSection(event)"
                                                                                   class="lu-switch__checkbox"> <span
                                                                 class="lu-switch__container"><span class="lu-switch__handle"></span></span>

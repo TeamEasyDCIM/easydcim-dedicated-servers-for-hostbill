@@ -287,6 +287,14 @@ $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFea
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['OsInstallation']['description'] = 'Enable if you want clients to have access to the "Os Installation" section in the client area.';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['DNSManager']['DNSManager'] = 'DNS Management';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['DNSManager']['description'] = 'Enable if you want clients to have access to the "DNS Manager" section in the client area.';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['easyDCIMAutomationSettings']['igRow']['PowerUsage']['PowerUsage'] = 'Meter Power Usage';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['easyDCIMAutomationSettings']['igRow']['PowerUsage']['description'] = 'Collect the average power draw of each server so it can be billed through the "Power Usage" metered variable. The device must be connected to a PDU in EasyDCIM.';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['easyDCIMAutomationSettings']['igRow']['EnableStockControl']['EnableStockControl'] = 'Enable Stock Control';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['easyDCIMAutomationSettings']['igRow']['EnableStockControl']['description'] = 'Keep the product\'s available stock in step with the number of devices in EasyDCIM that match this product\'s order criteria.';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['SshKeys']['SshKeys'] = 'SSH Keys';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['SshKeys']['description'] = 'Enable if you want clients to have access to the "SSH Keys" section in the client area.';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['Sensors']['Sensors'] = 'Sensors';
+$lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['Sensors']['description'] = 'Enable if you want clients to have access to the "Sensors" section in the client area.';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['PasswordManagement']['PasswordManagement'] = 'Password Management';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['modules']['PasswordManagement']['description'] = 'Enable if you want clients to have access to the "Password Management" section in the client area.';
 
@@ -809,6 +817,37 @@ $lang['serverCA']['reverseDNS']['updateGroupModal']['updateForm']['ipAddress']['
 $lang['serverCA']['reverseDNS']['updateGroupModal']['updateForm']['hostname']['hostname'] = 'Hostname';
 $lang['serverCA']['reverseDNS']['updateGroupModal']['baseAcceptButton']['title'] = 'Update';
 $lang['serverCA']['reverseDNS']['updateGroupModal']['baseCancelButton']['title'] = 'Cancel';
+
+$lang['serverCA']['sshKeys']['mainContainer']['sshKeysTable']['sshKeysTable'] = 'SSH Keys';
+$lang['serverCA']['sshKeys']['mainContainer']['sshKeysTable']['table']['name'] = 'Name';
+$lang['serverCA']['sshKeys']['mainContainer']['sshKeysTable']['table']['fingerprint'] = 'Fingerprint';
+$lang['serverCA']['sshKeys']['mainContainer']['sshKeysTable']['table']['default'] = 'Default';
+$lang['serverCA']['sshKeys']['mainContainer']['sshKeysTable']['table']['created'] = 'Created';
+$lang['serverCA']['sshKeys']['mainContainer']['sshKeysTable']['createButton']['button']['createButton'] = 'Add SSH Key';
+$lang['serverCA']['sshKeys']['mainContainer']['sshKeysTable']['updateButton']['button']['updateButton'] = 'Update';
+$lang['serverCA']['sshKeys']['mainContainer']['sshKeysTable']['deleteButton']['button']['deleteButton'] = 'Delete';
+$lang['serverCA']['sshKeys']['mainContainer']['sshKeysTable']['defaultButton']['button']['defaultButton'] = 'Set As Default';
+$lang['serverCA']['sshKeys']['default'] = 'Default';
+$lang['serverCA']['sshKeys']['createModal']['createForm']['name']['name'] = 'Name';
+$lang['serverCA']['sshKeys']['createModal']['createForm']['sshKey']['sshKey'] = 'SSH Public Key';
+$lang['serverCA']['sshKeys']['createModal']['createForm']['default']['default'] = 'Set as default';
+$lang['serverCA']['sshKeys']['createModal']['modal']['createModal'] = 'Add SSH Key';
+$lang['serverCA']['sshKeys']['updateModal']['modal']['updateModal'] = 'Update SSH Key';
+$lang['serverCA']['sshKeys']['deleteModal']['modal']['deleteModal'] = 'Delete SSH Key';
+$lang['serverCA']['sshKeys']['deleteModal']['deleteForm']['confirmDelete'] = 'Are you sure that you want to delete this SSH key? This process cannot be undone.';
+$lang['serverCA']['sshKeys']['invalidKey'] = 'This value must be a valid SSH public key in OpenSSH format.';
+
+$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['sensorsTable'] = 'Sensors';
+$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['name'] = 'Name';
+$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['type'] = 'Type';
+$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['class'] = 'Class';
+$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['reading'] = 'Reading';
+$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['lastPolled'] = 'Last Polled';
+$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['graphButton']['button']['graphButton'] = 'View Graph';
+$lang['serverCA']['sensors']['graphModal']['modal']['graphModal'] = 'Sensor Readings';
+$lang['serverCA']['sensors']['graphModal']['interval']['interval'] = 'Interval';
+
+
 
 $lang['serverCA']['reverseDNS']['createRuleModal']['modal']['createRuleModal'] = 'Create DNS Record';
 $lang['serverCA']['reverseDNS']['createRuleModal']['createForm']['reverseDNSIpAddress']['reverseDNSIpAddress'] = 'IP Address';

@@ -8,6 +8,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\Device\GetDeviceBandwidthRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\Device\GetDevicePowerUsageRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\Order\ListOrdersRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Admin\Order\OrderData;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
@@ -93,6 +94,12 @@ class Cron
                     '95TH_PERC'     => $bandwidth->perc95th,
                     '95TH_PERC_IN'  => $bandwidth->perc95thIn,
                     '95TH_PERC_OUT' => $bandwidth->perc95thOut,
+                    'POWER_USAGE'   => $this->getPowerUsageValue(
+                        $order['config']['extra_details']['option5'],
+                        $startDate,
+                        $endDate,
+                        $client
+                    ),
                 ];
             }
         }
@@ -122,6 +129,38 @@ class Cron
             echo 'API Error: ' . $ex->getMessage();
 
             return null;
+        }
+    }
+
+    /**
+     * Average power draw over the billing period, metered like bandwidth.
+     *
+     * Only collected when the product opts in - EasyDCIM needs a PDU for the
+     * device to report anything, so asking for every service would be waste.
+     */
+    private function getPowerUsageValue($serverID, $startDate, $endDate, $client)
+    {
+        if (empty($serverID) || $client->getPowerUsageAction() != 'on')
+        {
+            return 0;
+        }
+
+        try
+        {
+            $api = ApiClientFactory::fromClient($client);
+
+            $response = $api->admin()->devices()->getPowerUsage($serverID, new GetDevicePowerUsageRequest(
+                startDate: $startDate,
+                endDate: $endDate
+            ));
+
+            return $response->data?->avgTotalUsage ?? 0;
+        }
+        catch (Exception $ex)
+        {
+            echo 'API Error: ' . $ex->getMessage();
+
+            return 0;
         }
     }
 

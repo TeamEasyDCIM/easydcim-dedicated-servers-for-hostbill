@@ -6,13 +6,14 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\CreateAccount;
 use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\SuspendAccount;
 use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\UnsuspendAccount;
 use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\TerminateAccount;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ClientSync;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Synchronize;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use Illuminate\Database\Capsule\Manager as DB;
 
 class easydcim extends HostingModule implements Observer
 {
-    protected $version = '1.4.3';
+    protected $version = '2.0.0';
 
     protected $commands = ['updateOrderInformation'=>'Update Order Information'];
 
@@ -278,6 +279,23 @@ class easydcim extends HostingModule implements Observer
     function after_cronrun($details) {
     }
 
+    /**
+     * Mirror a HostBill client detail change onto their EasyDCIM user.
+     *
+     * HostBill hands over both versions of the record; the previous email is
+     * what finds the user, since the edit may be the email change itself.
+     */
+    function after_clientedit($details) {
+        try {
+            $serverModel = HBLoader::LoadModel("Servers");
+            $servers = $serverModel->findServersBy('module', 'easydcim');
+
+            (new ClientSync($servers))->handle((array) $details);
+        } catch (Exception $e) {
+            // Never let a sync failure block the client edit itself.
+        }
+    }
+
     function before_displayadminheader($details) {
     }
 
@@ -356,7 +374,44 @@ class easydcim extends HostingModule implements Observer
         return true;
     }
 
+    /**
+     * Module upgrade.
+     *
+     * HostBill compares versions as integers - `(int) $stored !== (int) $this->version`
+     * in hbf/core/class.module.php - so this fires on 1.x -> 2.0.0 and runs once,
+     * guarded by HostBill's own module_upgrade_lock.
+     *
+     * 2.0.0 moved the module from EasyDCIM API v2 to API v3. The two APIs
+     * authenticate differently: v2 took a custom `apikey` header, v3 uses
+     * Laravel Sanctum bearer tokens. **Every EasyDCIM server record must be
+     * given an API v3 token before provisioning will work again** - that is an
+     * administrator action this module cannot perform for them, so it is only
+     * announced here.
+     *
+     * Deliberately not migrated:
+     *
+     * - `hb_accounts.extra_details` is left untouched. 2.0.0 adds `option9`
+     *   (the EasyDCIM service ID), but ServiceContext resolves it from the
+     *   stored order the first time a service-scoped call needs it and saves it
+     *   through HostBill's own updateExtraDetails(). Rewriting the serialised
+     *   blob here would risk every existing service for no gain.
+     * - `billing/metered.yml` needs no registration; HostBill re-reads the file
+     *   on demand (BillingModel_Metered::getAvailableVariables), so the new
+     *   `powerUsage` variable appears as soon as the files are in place.
+     * - The new product options all default to off, so existing products keep
+     *   their current behaviour until an administrator opts in.
+     */
     public function upgrade($previous_version) {
+        if (version_compare($previous_version, '2.0.0', '<')) {
+            error_log(
+                '[EasyDCIM] Module upgraded from ' . $previous_version . ' to ' . $this->version . '. '
+                . 'This release talks to EasyDCIM API v3, which uses bearer tokens instead of the v2 API key. '
+                . 'Update the password field of every EasyDCIM server in HostBill with an API v3 token, '
+                . 'then use "Test Connection" to confirm it. '
+                . 'New opt-in options: SSH Keys, Sensors, Meter Power Usage and Enable Stock Control.'
+            );
+        }
+
         if($previous_version=='1.0') {
 
             $addTemplate = function ($name, $subject, $body, $altbody) {

@@ -194,6 +194,7 @@ function generateRBModal(e,instaltionInformation,CaTemplates)
         let rebuildForm = $('#rebuildForm');
         let extrasDiv = $('#extrasDiv');
         let diskLayoutDiv = $('#diskLayoutDiv');
+        let sshKeysDiv = $('#sshKeysDiv');
         if (extrasDiv.length != 0)
         {
             extrasDiv.remove();
@@ -201,6 +202,10 @@ function generateRBModal(e,instaltionInformation,CaTemplates)
         if (diskLayoutDiv.length != 0)
         {
             diskLayoutDiv.remove();
+        }
+        if (sshKeysDiv.length != 0)
+        {
+            sshKeysDiv.remove();
         }
         $( CaTemplates ).each(function( index,value ) {
             if (value.id == selectedTemplateId)
@@ -244,6 +249,20 @@ function generateRBModal(e,instaltionInformation,CaTemplates)
                     // $("#extrasSelect").select2({
                     //     data:[{id:0,text:'enhancement'},{id:1,text:'bug'},{id:2,text:'duplicate'},{id:3,text:'invalid'},{id:4,text:'wontfix'}]
                     // });
+                }
+                if (typeof value.sshKeys !== 'undefined' && value.sshKeys.length != 0)
+                {
+                    let sshKeys = '';
+
+                    $( value.sshKeys ).each(function( index,value ) {
+                        sshKeys += '<option value="'+value.key+'"'+(value.default ? ' selected' : '')+'>'+value.value+'</option>';
+                    });
+
+                    let divForSshKeys = '<div id="sshKeysDiv" class="lu-form-group"><label class="lu-form-label text-black">SSH Keys </label> <select id="sshKeysSelect" multiple="multiple" name="rebuildSshKeys" \n' +
+                        '    class="lu-form-control">'+sshKeys+'</select>\n' +
+                        '    <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>\n' +
+                        '</div>';
+                    rebuildForm.append(divForSshKeys);
                 }
             }
         });

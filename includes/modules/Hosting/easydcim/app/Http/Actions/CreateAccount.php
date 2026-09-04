@@ -5,10 +5,12 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Emails;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\SshPublicKey;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Synchronize;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\Order\CreateOrderRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\User\CreateUserRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\SshKey\CreateSshKeyRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Adapters\ClientAdapter;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\EmailNotifications;
@@ -65,7 +67,9 @@ class CreateAccount
         'username',
         'password',
         'monthly_traffic_limit',
-        'additional_ips'
+        'additional_ips',
+        'sshPublicKey',
+        'ssh_public_key'
     ];
 
     /**
@@ -135,7 +139,7 @@ class CreateAccount
             client: (int) $clientID,
             autoAccept: (bool) $client->getBaseFeatures()['autoAccept'],
             criteria: $this->buildCriteria($client),
-            service: $this->buildService($client)
+            service: $this->buildService($api, $client)
         );
 
         $result = $api->admin()->orders()->create($request);
@@ -217,7 +221,7 @@ class CreateAccount
     /**
      * Order service - how the picked device should be provisioned.
      */
-    private function buildService(IClient $client): array
+    private function buildService(EasyDCIMClient $api, IClient $client): array
     {
         $service = [
             'hostname'              => $client->getDomain(),
@@ -242,7 +246,74 @@ class CreateAccount
             $service[$key] = $value['value'];
         }
 
+        $sshKeys = $this->getOrderSshKeys($api);
+
+        if (!empty($sshKeys))
+        {
+            $service['ssh_keys'] = $sshKeys;
+        }
+
         return $service;
+    }
+
+    /**
+     * SSH key IDs to install on the new server.
+     *
+     * A `sshPublicKey` configurable option lets the client hand over a key at
+     * order time. An ID is used as-is; a key body is registered against the
+     * EasyDCIM user first, since the order only accepts IDs.
+     *
+     * @return array<int>
+     */
+    private function getOrderSshKeys(EasyDCIMClient $api): array
+    {
+        $options = $this->params['configoptions'] ?? [];
+
+        $value = '';
+
+        foreach (['sshPublicKey', 'ssh_public_key'] as $name)
+        {
+            if (!empty($options[$name]['value']))
+            {
+                $value = trim((string) $options[$name]['value']);
+                break;
+            }
+        }
+
+        if ($value === '')
+        {
+            return [];
+        }
+
+        if (is_numeric($value))
+        {
+            return [(int) $value];
+        }
+
+        if (!SshPublicKey::isValid($value))
+        {
+            return [];
+        }
+
+        try
+        {
+            $response = $api->client()->sshKeys()->create(new CreateSshKeyRequest(
+                name: 'HostBill Order Key ' . date('Y-m-d H:i:s'),
+                sshKey: $value
+            ));
+
+            if ($response->success !== false && !empty($response->data?->id))
+            {
+                return [(int) $response->data->id];
+            }
+        }
+        catch (\Exception $e)
+        {
+            // A rejected key must not stop provisioning; the server is created
+            // without it and the client can add it from the SSH Keys page.
+        }
+
+        return [];
     }
 
     /**

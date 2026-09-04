@@ -30,3 +30,8 @@ variables:
     scheme: peak
     unit_name: Mbps
     description: Billing for 95th Percentile
+  powerUsage:
+    name: Power Usage
+    scheme: peak
+    unit_name: Amps
+    description: Billing for Average Power Usage

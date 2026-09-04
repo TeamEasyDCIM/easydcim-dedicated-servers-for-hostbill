@@ -7,6 +7,7 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\OsInstallation\InstallOsRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\DefaultOptions;
+use ModulesGarden\Servers\EasyDCIMv2\App\UI\client\SshKeys\Pages\SshKeys;
 
 class Rebuild
 {
@@ -32,12 +33,18 @@ class Rebuild
      */
     protected $options;
 
+    /**
+     * @var SshKeys
+     */
+    protected $sshKeys;
+
     public function __construct($api, $client, $params)
     {
         $this->api = $api;
         $this->client = $client;
         $this->params = $params;
         $this->options = new DefaultOptions($api);
+        $this->sshKeys = new SshKeys($api);
     }
 
     public function prepareData()
@@ -55,6 +62,7 @@ class Rebuild
                 'Description' => $values[0],
                 'extras'      => $this->getExtras(),
                 'diskLayout'  => $this->getDiskLayout(),
+                'sshKeys'     => $this->getSshKeyOptions(),
             ];
         }
 
@@ -68,6 +76,7 @@ class Rebuild
         self::jsonEncode([
             'extras'     => $this->getExtras(),
             'diskLayout' => $this->getDiskLayout(),
+            'sshKeys'    => $this->getSshKeyOptions(),
             'username'   => $this->params['username'],
         ]);
     }
@@ -94,6 +103,21 @@ class Rebuild
         }
 
         return $options;
+    }
+
+    /**
+     * The client's SSH keys, offered so a rebuild can install them.
+     *
+     * Empty when the product does not expose the SSH Keys section, so a
+     * disabled feature cannot be reached through the rebuild form either.
+     */
+    protected function getSshKeyOptions()
+    {
+        if (($this->params['options']['SshKeys'] ?? '') != 'on') {
+            return [];
+        }
+
+        return $this->sshKeys->getOptions();
     }
 
     protected function getDiskLayout()
@@ -138,7 +162,8 @@ class Rebuild
                 : null,
             extras: isset($data['rebuildExtras']) && $data['rebuildExtras'] !== ''
                 ? array_values((array) $data['rebuildExtras'])
-                : null
+                : null,
+            sshKeys: $this->getSelectedSshKeys($data)
         );
 
         $result = $this->api->admin()->osInstallation()->installOs($deviceId, $request);
@@ -154,6 +179,24 @@ class Rebuild
         self::jsonEncode([
             'message'=>$result->message
         ]);
+    }
+
+    /**
+     * SSH key IDs the client picked in the rebuild form.
+     */
+    protected function getSelectedSshKeys($data): ?array
+    {
+        if (($this->params['options']['SshKeys'] ?? '') != 'on') {
+            return null;
+        }
+
+        if (!isset($data['rebuildSshKeys']) || $data['rebuildSshKeys'] === '') {
+            return null;
+        }
+
+        $keys = array_values(array_filter(array_map('intval', (array) $data['rebuildSshKeys'])));
+
+        return !empty($keys) ? $keys : null;
     }
 
     public function cancelInstall()

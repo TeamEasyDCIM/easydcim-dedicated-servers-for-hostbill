@@ -334,6 +334,7 @@ class ClientAdapter implements IClient
         $this->terminateActiontemplate = $productConfiguration['TerminateTemplate'];
         $this->adminis                 = $productConfiguration['adminID'];
         $this->trafficAction           = $productConfiguration['TrafficStatistics'];
+        $this->powerUsageAction        = $productConfiguration['PowerUsage'];
         /*
          * Custom Fields Group;
          */
