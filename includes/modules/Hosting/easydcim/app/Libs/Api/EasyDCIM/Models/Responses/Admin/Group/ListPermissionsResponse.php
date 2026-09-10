@@ -13,7 +13,7 @@ class ListPermissionsResponse extends BaseResponse
     /** @var array<PermissionData> */
     public array $data = [];
 
-    public static function fromArray(array $response): static
+    public static function fromArray(array $response)
     {
         $instance = parent::fromArray($response);
         $items = (array) (Arr::get($response, 'data') ?? []);

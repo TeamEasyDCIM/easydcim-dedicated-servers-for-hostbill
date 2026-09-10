@@ -32,7 +32,7 @@ class ItemModelsEndpoint extends AbstractEndpoint
      */
     public function list(?ListItemModelsRequest $request = null): ListItemModelsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('', $params);
         return ListItemModelsResponse::fromArray($response);
     }
@@ -53,13 +53,13 @@ class ItemModelsEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListItemModelsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->list($request);
@@ -79,7 +79,7 @@ class ItemModelsEndpoint extends AbstractEndpoint
      * @return ShowItemModelResponse
      * @throws EasyDCIMException
      */
-    public function show(int|string $id): ShowItemModelResponse
+    public function show($id): ShowItemModelResponse
     {
         $response = $this->get((string) $id);
         return ShowItemModelResponse::fromArray($response);
@@ -106,7 +106,7 @@ class ItemModelsEndpoint extends AbstractEndpoint
      * @return ShowItemModelResponse
      * @throws EasyDCIMException
      */
-    public function update(int|string $id, UpdateItemModelRequest $request): ShowItemModelResponse
+    public function update($id, UpdateItemModelRequest $request): ShowItemModelResponse
     {
         $response = $this->put((string) $id, $request->toArray());
         return ShowItemModelResponse::fromArray($response);
@@ -119,7 +119,7 @@ class ItemModelsEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function destroy(int|string $id): SuccessResponse
+    public function destroy($id): SuccessResponse
     {
         $response = $this->delete((string) $id);
         return SuccessResponse::fromArray($response);

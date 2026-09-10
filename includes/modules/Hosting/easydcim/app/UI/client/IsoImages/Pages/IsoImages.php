@@ -87,7 +87,7 @@ class IsoImages
                 'status' => $status,
                 // v3 reports a download status message, not byte counters, so
                 // there is no percentage to drive a progress bar with.
-                'data' => ['message' => $isoImage->download?->message ?? ''],
+                'data' => ['message' => ($isoImage->download === null ? null : $isoImage->download->message) ?? ''],
                 'colorStatus' => $colorStatus,
                 'progress' => 0,
             ];
@@ -108,8 +108,8 @@ class IsoImages
         try
         {
             $result = $this->api->client()->osInstallation()->createIsoImage(new CreateIsoImageRequest(
-                name: (string) $data['name'],
-                isoUrl: (string) $data['iso_url']
+                (string) $data['name'],
+                (string) $data['iso_url']
             ));
 
             if ($result->success === false)
@@ -139,7 +139,7 @@ class IsoImages
         {
             $result = $this->api->client()->osInstallation()->updateIsoImage(
                 $data['updateId'],
-                new UpdateIsoImageRequest(name: (string) $data['name'])
+                new UpdateIsoImageRequest((string) $data['name'])
             );
 
             if ($result->success === false)

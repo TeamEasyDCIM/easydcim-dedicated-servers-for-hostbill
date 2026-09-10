@@ -4,14 +4,17 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class GetPowerUsageRequest
 {
+    public ?string $startDate;
+    public ?string $endDate;
     /**
      * @param string|null $startDate Start date (format: Y-m-d H:i:s)
      * @param string|null $endDate End date (format: Y-m-d H:i:s)
      */
-    public function __construct(
-        public ?string $startDate = null,
-        public ?string $endDate = null,
-    ) {}
+    public function __construct(?string $startDate = null, ?string $endDate = null)
+    {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
 
     /**
      * @return array<string, mixed>
@@ -31,8 +34,8 @@ class GetPowerUsageRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            startDate: $data['startDate'] ?? $data['start_date'] ?? null,
-            endDate: $data['endDate'] ?? $data['end_date'] ?? null,
+            $data['startDate'] ?? $data['start_date'] ?? null,
+            $data['endDate'] ?? $data['end_date'] ?? null
         );
     }
 }

@@ -12,7 +12,7 @@ class SystemConfigResponse extends BaseResponse
 {
     public ?array $data = null;
 
-    public static function fromArray(array $response): static
+    public static function fromArray(array $response)
     {
         $instance = parent::fromArray($response);
         $responseData = Arr::get($response, 'data');

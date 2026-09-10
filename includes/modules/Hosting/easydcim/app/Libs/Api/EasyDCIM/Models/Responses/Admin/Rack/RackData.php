@@ -15,17 +15,27 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class RackData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?int $floorId,
-        public ?int $locationId,
-        public ?string $description,
-        public ?string $room,
-        public ?int $unitsNumber,
-        public null|int|float $weight,
-        public null|int|float $speed,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?int $floorId;
+    public ?int $locationId;
+    public ?string $description;
+    public ?string $room;
+    public ?int $unitsNumber;
+    public $weight;
+    public $speed;
+    public function __construct(?int $id, ?string $name, ?int $floorId, ?int $locationId, ?string $description, ?string $room, ?int $unitsNumber, $weight, $speed)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->floorId = $floorId;
+        $this->locationId = $locationId;
+        $this->description = $description;
+        $this->room = $room;
+        $this->unitsNumber = $unitsNumber;
+        $this->weight = $weight;
+        $this->speed = $speed;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -34,15 +44,15 @@ class RackData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            floorId: Arr::get($data, 'floor_id', 0),
-            locationId: Arr::get($data, 'location_id', 0),
-            description: Arr::get($data, 'description', ''),
-            room: Arr::get($data, 'room'),
-            unitsNumber: Arr::get($data, 'units_number', 0),
-            weight: Arr::get($data, 'weight', 0),
-            speed: Arr::get($data, 'speed', 0),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'floor_id', 0),
+            Arr::get($data, 'location_id', 0),
+            Arr::get($data, 'description', ''),
+            Arr::get($data, 'room'),
+            Arr::get($data, 'units_number', 0),
+            Arr::get($data, 'weight', 0),
+            Arr::get($data, 'speed', 0)
         );
     }
 

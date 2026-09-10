@@ -29,7 +29,7 @@ class RacksEndpoint extends AbstractEndpoint
      */
     public function list(?ListRacksRequest $request = null): array
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         return $this->get('', $params);
     }
 
@@ -49,13 +49,13 @@ class RacksEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListRacksRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->list($request);
@@ -78,7 +78,7 @@ class RacksEndpoint extends AbstractEndpoint
      * @return array
      * @throws EasyDCIMException
      */
-    public function show(int|string $id): array
+    public function show($id): array
     {
         return $this->get((string) $id);
     }
@@ -103,7 +103,7 @@ class RacksEndpoint extends AbstractEndpoint
      * @return array
      * @throws EasyDCIMException
      */
-    public function update(int|string $id, UpdateRackRequest $request): array
+    public function update($id, UpdateRackRequest $request): array
     {
         return $this->put((string) $id, $request->toArray());
     }
@@ -115,7 +115,7 @@ class RacksEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function destroy(int|string $id): SuccessResponse
+    public function destroy($id): SuccessResponse
     {
         $response = parent::delete((string) $id);
         return SuccessResponse::fromArray($response);

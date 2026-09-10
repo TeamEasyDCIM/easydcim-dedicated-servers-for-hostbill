@@ -9,10 +9,13 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class ExportGraphResponse
 {
-    public function __construct(
-        public ?bool $success = false,
-        public ?GraphData $data = null,
-    ) {}
+    public ?bool $success;
+    public ?GraphData $data;
+    public function __construct(?bool $success = false, ?GraphData $data = null)
+    {
+        $this->success = $success;
+        $this->data = $data;
+    }
 
     public static function fromArray(array $response): self
     {
@@ -24,8 +27,8 @@ class ExportGraphResponse
         }
 
         return new self(
-            success: Arr::get($response, 'success', false),
-            data: $data,
+            Arr::get($response, 'success', false),
+            $data
         );
     }
 
@@ -33,7 +36,7 @@ class ExportGraphResponse
     {
         return [
             'success' => $this->success,
-            'data' => $this->data?->toArray(),
+            'data' => $this->data === null ? null : $this->data->toArray(),
         ];
     }
 }

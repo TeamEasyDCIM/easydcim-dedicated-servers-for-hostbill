@@ -4,11 +4,15 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class IpmiConsoleRequest
 {
-    public function __construct(
-        public string $password,
-        public int $port,
-        public string $token,
-    ) {}
+    public string $password;
+    public int $port;
+    public string $token;
+    public function __construct(string $password, int $port, string $token)
+    {
+        $this->password = $password;
+        $this->port = $port;
+        $this->token = $token;
+    }
 
     /**
      * @return array<string, mixed>
@@ -29,9 +33,9 @@ class IpmiConsoleRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            password: $data['password'],
-            port: $data['port'],
-            token: $data['token'],
+            $data['password'],
+            $data['port'],
+            $data['token']
         );
     }
 }

@@ -9,15 +9,23 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class IsoImageData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $isoUrl,
-        public ?int $status,
-        public ?string $statusLabel,
-        public ?string $createdAt,
-        public ?string $updatedAt,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $isoUrl;
+    public ?int $status;
+    public ?string $statusLabel;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?string $name, ?string $isoUrl, ?int $status, ?string $statusLabel, ?string $createdAt, ?string $updatedAt)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->isoUrl = $isoUrl;
+        $this->status = $status;
+        $this->statusLabel = $statusLabel;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -26,13 +34,13 @@ class IsoImageData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id'),
-            name: Arr::get($data, 'name'),
-            isoUrl: Arr::get($data, 'iso_url'),
-            status: Arr::get($data, 'status'),
-            statusLabel: Arr::get($data, 'status_label'),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'name'),
+            Arr::get($data, 'iso_url'),
+            Arr::get($data, 'status'),
+            Arr::get($data, 'status_label'),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 }

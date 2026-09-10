@@ -29,7 +29,7 @@ class UsersEndpoint extends AbstractEndpoint
      */
     public function list(?ListUsersRequest $request = null): array
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         return $this->get('', $params);
     }
 
@@ -51,7 +51,7 @@ class UsersEndpoint extends AbstractEndpoint
      * @param int $id User ID
      * @return UserResponse
      */
-    public function show(int|string $id): UserResponse
+    public function show($id): UserResponse
     {
         $response = $this->get((string) $id);
         return UserResponse::fromArray($response);
@@ -76,7 +76,7 @@ class UsersEndpoint extends AbstractEndpoint
      * @param UpdateUserRequest $request
      * @return array{success: bool, data: array}
      */
-    public function update(int|string $id, UpdateUserRequest $request): array
+    public function update($id, UpdateUserRequest $request): array
     {
         return $this->put((string) $id, $request->toArray());
     }
@@ -88,9 +88,9 @@ class UsersEndpoint extends AbstractEndpoint
      * @param GetUserBandwidthRequest|null $request
      * @return array{success: bool, data: array}
      */
-    public function bandwidth(int|string $id, ?GetUserBandwidthRequest $request = null): array
+    public function bandwidth($id, ?GetUserBandwidthRequest $request = null): array
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         return $this->post($this->buildPath((string) $id, 'bandwidth'), $params);
     }
 
@@ -100,7 +100,7 @@ class UsersEndpoint extends AbstractEndpoint
      * @param int|string $id User ID
      * @return array{success: bool, message: string}
      */
-    public function destroy(int|string $id): array
+    public function destroy($id): array
     {
         return parent::delete((string) $id);
     }

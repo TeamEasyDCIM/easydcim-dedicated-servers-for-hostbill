@@ -4,15 +4,23 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class ListSensorsRequest
 {
-    public function __construct(
-        public ?int $perPage = null,
-        public ?int $page = null,
-        public ?string $sortBy = null,
-        public ?string $sortDir = null,
-        public ?string $searchTerm = null,
-        public ?string $searchOp = null,
-        public ?string $searchFields = null,
-    ) {}
+    public ?int $perPage;
+    public ?int $page;
+    public ?string $sortBy;
+    public ?string $sortDir;
+    public ?string $searchTerm;
+    public ?string $searchOp;
+    public ?string $searchFields;
+    public function __construct(?int $perPage = null, ?int $page = null, ?string $sortBy = null, ?string $sortDir = null, ?string $searchTerm = null, ?string $searchOp = null, ?string $searchFields = null)
+    {
+        $this->perPage = $perPage;
+        $this->page = $page;
+        $this->sortBy = $sortBy;
+        $this->sortDir = $sortDir;
+        $this->searchTerm = $searchTerm;
+        $this->searchOp = $searchOp;
+        $this->searchFields = $searchFields;
+    }
 
     /**
      * @return array<string, mixed>
@@ -37,13 +45,13 @@ class ListSensorsRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            perPage: $data['per_page'] ?? $data['perPage'] ?? null,
-            page: $data['page'] ?? null,
-            sortBy: $data['sort_by'] ?? $data['sortBy'] ?? null,
-            sortDir: $data['sort_dir'] ?? $data['sortDir'] ?? null,
-            searchTerm: $data['search_term'] ?? $data['searchTerm'] ?? null,
-            searchOp: $data['search_op'] ?? $data['searchOp'] ?? null,
-            searchFields: $data['search_fields'] ?? $data['searchFields'] ?? null,
+            $data['per_page'] ?? $data['perPage'] ?? null,
+            $data['page'] ?? null,
+            $data['sort_by'] ?? $data['sortBy'] ?? null,
+            $data['sort_dir'] ?? $data['sortDir'] ?? null,
+            $data['search_term'] ?? $data['searchTerm'] ?? null,
+            $data['search_op'] ?? $data['searchOp'] ?? null,
+            $data['search_fields'] ?? $data['searchFields'] ?? null
         );
     }
 }

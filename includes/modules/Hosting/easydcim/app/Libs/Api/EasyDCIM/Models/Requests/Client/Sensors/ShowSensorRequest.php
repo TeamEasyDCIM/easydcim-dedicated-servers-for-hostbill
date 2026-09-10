@@ -4,9 +4,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class ShowSensorRequest
 {
-    public function __construct(
-        public int $sensorId,
-    ) {}
+    public int $sensorId;
+    public function __construct(int $sensorId)
+    {
+        $this->sensorId = $sensorId;
+    }
 
     /**
      * @return array<string, mixed>
@@ -25,7 +27,7 @@ class ShowSensorRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            sensorId: $data['sensorId'] ?? $data['sensor_id'] ?? 0,
+            $data['sensorId'] ?? $data['sensor_id'] ?? 0
         );
     }
 }

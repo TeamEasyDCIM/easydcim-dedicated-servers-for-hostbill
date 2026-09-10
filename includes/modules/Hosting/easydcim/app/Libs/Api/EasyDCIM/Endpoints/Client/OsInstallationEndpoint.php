@@ -43,7 +43,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      */
     public function listIsoImages(?ListIsoImagesRequest $request = null): ListIsoImagesResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('os/isoimages', $params);
         return ListIsoImagesResponse::fromArray($response);
     }
@@ -63,13 +63,13 @@ class OsInstallationEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListIsoImagesRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->listIsoImages($request);
@@ -100,7 +100,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param UpdateIsoImageRequest $request
      * @return UpdateIsoImageResponse
      */
-    public function updateIsoImage(int|string $id, UpdateIsoImageRequest $request): UpdateIsoImageResponse
+    public function updateIsoImage($id, UpdateIsoImageRequest $request): UpdateIsoImageResponse
     {
         $response = $this->put($this->buildPath('os/isoimages', (string) $id), $request->toArray());
         return UpdateIsoImageResponse::fromArray($response);
@@ -112,7 +112,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param int|string $id ISO image ID
      * @return DeleteIsoImageResponse
      */
-    public function deleteIsoImage(int|string $id): DeleteIsoImageResponse
+    public function deleteIsoImage($id): DeleteIsoImageResponse
     {
         $response = $this->delete($this->buildPath('os/isoimages', (string) $id));
         return DeleteIsoImageResponse::fromArray($response);
@@ -125,9 +125,9 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param ListTemplatesRequest|null $request
      * @return ListOsTemplatesResponse
      */
-    public function listTemplates(int|string $serviceId, ?ListTemplatesRequest $request = null): ListOsTemplatesResponse
+    public function listTemplates($serviceId, ?ListTemplatesRequest $request = null): ListOsTemplatesResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get($this->buildPath('services', (string) $serviceId, 'os/templates'), $params);
         return ListOsTemplatesResponse::fromArray($response);
     }
@@ -139,7 +139,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param ListTemplatesRequest|null $request
      * @return array<OsTemplateData> Array of all templates across all pages
      */
-    public function listAllTemplates(int|string $serviceId, ?ListTemplatesRequest $request = null): array
+    public function listAllTemplates($serviceId, ?ListTemplatesRequest $request = null): array
     {
         $allTemplates = [];
         $currentPage = 1;
@@ -148,14 +148,14 @@ class OsInstallationEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListTemplatesRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
-                withAddons: $request->withAddons,
+                $request->withAddons,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->listTemplates($serviceId, $request);
@@ -174,9 +174,9 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param ListAddonsRequest|null $request
      * @return ListOsAddonsResponse
      */
-    public function listAddons(int|string $serviceId, ?ListAddonsRequest $request = null): ListOsAddonsResponse
+    public function listAddons($serviceId, ?ListAddonsRequest $request = null): ListOsAddonsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get($this->buildPath('services', (string) $serviceId, 'os/addons'), $params);
         return ListOsAddonsResponse::fromArray($response);
     }
@@ -188,7 +188,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param ListAddonsRequest|null $request
      * @return array<OsAddonData> Array of all addons across all pages
      */
-    public function listAllAddons(int|string $serviceId, ?ListAddonsRequest $request = null): array
+    public function listAllAddons($serviceId, ?ListAddonsRequest $request = null): array
     {
         $allAddons = [];
         $currentPage = 1;
@@ -196,11 +196,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
 
         do {
             // Set the current page
-            $request = new ListAddonsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                search: $request->search,
-            );
+            $request = new ListAddonsRequest(null, $request->perPage ?? 100, $currentPage, null, null, $request->searchTerm);
 
             $response = $this->listAddons($serviceId, $request);
             $allAddons = array_merge($allAddons, $response->data);
@@ -218,7 +214,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param InstallOsRequest $request
      * @return InstallOsResponse
      */
-    public function installOs(int|string $serviceId, InstallOsRequest $request): InstallOsResponse
+    public function installOs($serviceId, InstallOsRequest $request): InstallOsResponse
     {
         $response = $this->post($this->buildPath('services', (string) $serviceId, 'os/install'), $request->toArray());
         return InstallOsResponse::fromArray($response);
@@ -230,7 +226,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param int|string $serviceId Service ID
      * @return CancelInstallationResponse
      */
-    public function cancelInstallation(int|string $serviceId): CancelInstallationResponse
+    public function cancelInstallation($serviceId): CancelInstallationResponse
     {
         $response = $this->post($this->buildPath('services', (string) $serviceId, 'os/cancel'));
         return CancelInstallationResponse::fromArray($response);
@@ -242,7 +238,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param int|string $serviceId Service ID
      * @return GetOsInstallationInfoResponse
      */
-    public function getInstallationInfo(int|string $serviceId): GetOsInstallationInfoResponse
+    public function getInstallationInfo($serviceId): GetOsInstallationInfoResponse
     {
         $response = $this->get($this->buildPath('services', (string) $serviceId, 'os/install/information'));
         return GetOsInstallationInfoResponse::fromArray($response);
@@ -254,7 +250,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param int|string $serviceId Service ID
      * @return EnableRescueModeResponse
      */
-    public function enableRescueMode(int|string $serviceId): EnableRescueModeResponse
+    public function enableRescueMode($serviceId): EnableRescueModeResponse
     {
         $response = $this->post($this->buildPath('services', (string) $serviceId, 'os/rescue/enable'));
         return EnableRescueModeResponse::fromArray($response);
@@ -266,7 +262,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param int|string $serviceId Service ID
      * @return GetRescueModeStatusResponse
      */
-    public function getRescueModeStatus(int|string $serviceId): GetRescueModeStatusResponse
+    public function getRescueModeStatus($serviceId): GetRescueModeStatusResponse
     {
         $response = $this->get($this->buildPath('services', (string) $serviceId, 'os/rescue/status'));
         return GetRescueModeStatusResponse::fromArray($response);

@@ -32,7 +32,7 @@ class FieldsEndpoint extends AbstractEndpoint
      */
     public function list(?ListFieldsRequest $request = null): ListFieldsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('', $params);
         return ListFieldsResponse::fromArray($response);
     }
@@ -53,13 +53,13 @@ class FieldsEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListFieldsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->list($request);
@@ -79,7 +79,7 @@ class FieldsEndpoint extends AbstractEndpoint
      * @return ShowFieldResponse
      * @throws EasyDCIMException
      */
-    public function show(int|string $id): ShowFieldResponse
+    public function show($id): ShowFieldResponse
     {
         $response = $this->get((string) $id);
         return ShowFieldResponse::fromArray($response);
@@ -106,7 +106,7 @@ class FieldsEndpoint extends AbstractEndpoint
      * @return ShowFieldResponse
      * @throws EasyDCIMException
      */
-    public function update(int|string $id, UpdateFieldRequest $request): ShowFieldResponse
+    public function update($id, UpdateFieldRequest $request): ShowFieldResponse
     {
         $response = $this->put((string) $id, $request->toArray());
         return ShowFieldResponse::fromArray($response);
@@ -119,7 +119,7 @@ class FieldsEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function destroy(int|string $id): SuccessResponse
+    public function destroy($id): SuccessResponse
     {
         $response = $this->delete((string) $id);
         return SuccessResponse::fromArray($response);

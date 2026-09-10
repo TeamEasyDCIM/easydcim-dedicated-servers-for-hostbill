@@ -9,6 +9,7 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\BaseA
  */
 class ListOsTemplatesRequest extends BaseAdvancedPaginatedRequest
 {
+    public ?int $withAddons;
     /**
      * @param int|null $perPage Number of items per page
      * @param int|null $page Current page number
@@ -27,8 +28,9 @@ class ListOsTemplatesRequest extends BaseAdvancedPaginatedRequest
         ?string $searchTerm = null,
         ?string $searchOp = null,
         ?string $searchFields = null,
-        public ?int $withAddons = null,
+        ?int $withAddons = null
     ) {
+        $this->withAddons = $withAddons;
         parent::__construct($perPage, $page, $sortBy, $sortDir, $searchTerm, $searchOp, $searchFields);
     }
 

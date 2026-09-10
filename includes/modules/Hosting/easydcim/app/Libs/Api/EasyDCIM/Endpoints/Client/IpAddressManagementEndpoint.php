@@ -26,9 +26,9 @@ class IpAddressManagementEndpoint extends AbstractEndpoint
      * @param ListIpAddressesRequest|null $request
      * @return ListIpAddressesResponse
      */
-    public function listIpAddresses(int|string $serviceId, ?ListIpAddressesRequest $request = null): ListIpAddressesResponse
+    public function listIpAddresses($serviceId, ?ListIpAddressesRequest $request = null): ListIpAddressesResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get($this->buildPath((string) $serviceId, 'ipaddresses'), $params);
         return ListIpAddressesResponse::fromArray($response);
     }
@@ -40,7 +40,7 @@ class IpAddressManagementEndpoint extends AbstractEndpoint
      * @param ListIpAddressesRequest|null $request
      * @return array<IpAddressData> Array of all IP addresses across all pages
      */
-    public function listAllIpAddresses(int|string $serviceId, ?ListIpAddressesRequest $request = null): array
+    public function listAllIpAddresses($serviceId, ?ListIpAddressesRequest $request = null): array
     {
         $allAddresses = [];
         $currentPage = 1;
@@ -49,9 +49,9 @@ class IpAddressManagementEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListIpAddressesRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                search: $request->search,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->search
             );
 
             $response = $this->listIpAddresses($serviceId, $request);
@@ -72,8 +72,8 @@ class IpAddressManagementEndpoint extends AbstractEndpoint
      * @return BaseResponse
      */
     public function updateIpDescription(
-        int|string $serviceId,
-        int|string $entityId,
+        $serviceId,
+        $entityId,
         UpdateIpDescriptionRequest $request
     ): BaseResponse {
         $data = $request->toArray();

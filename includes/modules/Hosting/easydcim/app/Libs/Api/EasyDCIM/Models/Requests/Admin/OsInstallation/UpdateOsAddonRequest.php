@@ -7,6 +7,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class UpdateOsAddonRequest
 {
+    public ?string $name;
+    public ?string $tag;
+    public ?string $type;
+    public ?string $description;
+    public ?string $data;
     /**
      * @param string|null $name Addon name
      * @param string|null $tag Tag identifier
@@ -14,13 +19,14 @@ class UpdateOsAddonRequest
      * @param string|null $description Description
      * @param string|null $data Addon data/configuration
      */
-    public function __construct(
-        public ?string $name = null,
-        public ?string $tag = null,
-        public ?string $type = null,
-        public ?string $description = null,
-        public ?string $data = null,
-    ) {}
+    public function __construct(?string $name = null, ?string $tag = null, ?string $type = null, ?string $description = null, ?string $data = null)
+    {
+        $this->name = $name;
+        $this->tag = $tag;
+        $this->type = $type;
+        $this->description = $description;
+        $this->data = $data;
+    }
 
     /**
      * @return array<string, mixed>

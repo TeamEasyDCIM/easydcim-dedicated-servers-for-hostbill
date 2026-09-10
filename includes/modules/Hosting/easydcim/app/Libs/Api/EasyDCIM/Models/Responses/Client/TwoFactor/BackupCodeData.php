@@ -11,9 +11,11 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class BackupCodeData
 {
-    public function __construct(
-        public ?string $backupCode,
-    ) {}
+    public ?string $backupCode;
+    public function __construct(?string $backupCode)
+    {
+        $this->backupCode = $backupCode;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -22,7 +24,7 @@ class BackupCodeData
     public static function fromArray(array $data): self
     {
         return new self(
-            backupCode: Arr::get($data, 'backup_code', ''),
+            Arr::get($data, 'backup_code', '')
         );
     }
 

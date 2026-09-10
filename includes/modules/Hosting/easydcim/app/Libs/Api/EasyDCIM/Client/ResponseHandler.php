@@ -73,49 +73,22 @@ class ResponseHandler
         $message = $this->extractErrorMessage($data, $statusCode);
         $requestContext = $this->buildRequestContext($response);
 
-        throw match (true) {
-            $statusCode === 401 => new AuthenticationException(
-                message: $message,
-                responseBody: $data,
-                requestContext: $requestContext
-            ),
-            $statusCode === 403 => new AuthorizationException(
-                message: $message,
-                responseBody: $data,
-                requestContext: $requestContext
-            ),
-            $statusCode === 404 => new NotFoundException(
-                message: $message,
-                responseBody: $data,
-                requestContext: $requestContext
-            ),
-            $statusCode === 422 => new ValidationException(
-                message: $message,
-                responseBody: $data,
-                requestContext: $requestContext,
-                errors: (array) (Arr::get($data, 'errors') ?? [])
-            ),
-            $statusCode === 429 => new RateLimitException(
-                message: $message,
-                responseBody: $data,
-                requestContext: $requestContext,
-                retryAfter: $this->extractRetryAfter($response),
-                rateLimit: $this->extractRateLimit($response),
-                remaining: $this->extractRateLimitRemaining($response)
-            ),
-            $statusCode >= 500 => new ServerException(
-                message: $message,
-                statusCode: $statusCode,
-                responseBody: $data,
-                requestContext: $requestContext
-            ),
-            default => new EasyDCIMException(
-                message: $message,
-                statusCode: $statusCode,
-                responseBody: $data,
-                requestContext: $requestContext
-            ),
-        };
+        switch (true) {
+            case $statusCode === 401:
+                throw new AuthenticationException($message, 401, null, $data, $requestContext);
+            case $statusCode === 403:
+                throw new AuthorizationException($message, 403, null, $data, $requestContext);
+            case $statusCode === 404:
+                throw new NotFoundException($message, 404, null, $data, $requestContext);
+            case $statusCode === 422:
+                throw new ValidationException($message, 422, null, $data, $requestContext, (array) (Arr::get($data, 'errors') ?? []));
+            case $statusCode === 429:
+                throw new RateLimitException($message, 429, null, $data, $requestContext, $this->extractRetryAfter($response), $this->extractRateLimit($response), $this->extractRateLimitRemaining($response));
+            case $statusCode >= 500:
+                throw new ServerException($message, 500, null, $statusCode, $data, $requestContext);
+            default:
+                throw new EasyDCIMException($message, 0, null, $statusCode, $data, $requestContext);
+        }
     }
 
     /**
@@ -129,11 +102,7 @@ class ResponseHandler
     {
         $message = Arr::get($data, 'message', 'API request failed');
 
-        throw new EasyDCIMException(
-            message: $message,
-            statusCode: $statusCode,
-            responseBody: $data
-        );
+        throw new EasyDCIMException($message, 0, null, $statusCode, $data);
     }
 
     /**
@@ -193,7 +162,7 @@ class ResponseHandler
      */
     protected function getHttpStatusMessage(int $statusCode): string
     {
-        return match ($statusCode) {
+        $messages = [
             400 => 'Bad Request',
             401 => 'Unauthorized',
             403 => 'Forbidden',
@@ -205,8 +174,9 @@ class ResponseHandler
             502 => 'Bad Gateway',
             503 => 'Service Unavailable',
             504 => 'Gateway Timeout',
-            default => "HTTP Error {$statusCode}",
-        };
+        ];
+
+        return $messages[$statusCode] ?? "HTTP Error {$statusCode}";
     }
 
     /**
@@ -285,7 +255,7 @@ class ResponseHandler
      * @param array<string, mixed> $response
      * @return mixed
      */
-    public function extractData(array $response): mixed
+    public function extractData(array $response)
     {
         // If response has 'data' key, return it
         return Arr::get($response, 'data', $response);

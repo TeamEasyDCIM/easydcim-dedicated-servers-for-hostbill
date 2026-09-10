@@ -9,11 +9,15 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class QuickCreateOrderRequest
 {
-    public function __construct(
-        public int|string $userId,
-        public int|string $productId,
-        public ?array $additionalData = null,
-    ) {}
+    public $userId;
+    public $productId;
+    public ?array $additionalData;
+    public function __construct($userId, $productId, ?array $additionalData = null)
+    {
+        $this->userId = $userId;
+        $this->productId = $productId;
+        $this->additionalData = $additionalData;
+    }
 
     /**
      * @return array<string, mixed>

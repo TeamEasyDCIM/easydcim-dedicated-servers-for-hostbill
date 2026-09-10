@@ -19,7 +19,7 @@ class GetLimitsResponse extends BaseResponse
     /** @var array<LimitsConfigurationData> */
     public ?array $configurations = [];
 
-    public static function fromArray(array $response): static
+    public static function fromArray(array $response)
     {
         $instance = parent::fromArray($response);
         $data = Arr::get($response, 'data', []);

@@ -12,7 +12,7 @@ class RescueModeStatusResponse extends BaseResponse
 {
     public ?bool $inRescueMode = null;
 
-    public static function fromArray(array $response): static
+    public static function fromArray(array $response)
     {
         $instance = parent::fromArray($response);
         $data = (array) (Arr::get($response, 'data') ?? []);

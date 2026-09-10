@@ -9,15 +9,19 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Http;
  */
 class HttpResponse
 {
+    protected int $statusCode;
+    protected string $body;
+    protected array $headers;
+    protected string $reasonPhrase;
     /**
      * @param array<string, array<int, string>> $headers
      */
-    public function __construct(
-        protected int $statusCode,
-        protected string $body = '',
-        protected array $headers = [],
-        protected string $reasonPhrase = ''
-    ) {
+    public function __construct(int $statusCode, string $body = '', array $headers = [], string $reasonPhrase = '')
+    {
+        $this->statusCode = $statusCode;
+        $this->body = $body;
+        $this->headers = $headers;
+        $this->reasonPhrase = $reasonPhrase;
     }
 
     public function getStatusCode(): int

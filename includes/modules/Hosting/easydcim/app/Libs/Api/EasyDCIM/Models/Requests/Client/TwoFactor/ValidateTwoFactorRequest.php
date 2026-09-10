@@ -7,12 +7,14 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class ValidateTwoFactorRequest
 {
+    public array $configuration;
     /**
      * @param array<string, string> $configuration
      */
-    public function __construct(
-        public array $configuration,
-    ) {}
+    public function __construct(array $configuration)
+    {
+        $this->configuration = $configuration;
+    }
 
     /**
      * @return array<string, mixed>
@@ -31,7 +33,7 @@ class ValidateTwoFactorRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            configuration: $data['configuration'] ?? [],
+            $data['configuration'] ?? []
         );
     }
 }

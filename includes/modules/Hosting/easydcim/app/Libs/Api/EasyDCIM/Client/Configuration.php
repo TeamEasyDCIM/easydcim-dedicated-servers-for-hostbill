@@ -115,7 +115,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getImpersonateUser(): int|string|null
+    public function getImpersonateUser()
     {
         return $this->config['impersonate_user'] ?? null;
     }
@@ -123,7 +123,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function setImpersonateUser(int|string|null $user): self
+    public function setImpersonateUser($user): self
     {
         $this->config['impersonate_user'] = $user;
         return $this;
@@ -148,7 +148,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, $default = null)
     {
         return $this->config[$key] ?? $default;
     }
@@ -168,7 +168,7 @@ class Configuration implements ConfigurationInterface
      * @param mixed $value
      * @return self
      */
-    public function set(string $key, mixed $value): self
+    public function set(string $key, $value): self
     {
         $this->config[$key] = $value;
         return $this;
@@ -233,7 +233,7 @@ class Configuration implements ConfigurationInterface
      * @param bool|string $secure
      * @return string
      */
-    private static function buildBaseUrl(string $hostname, bool|int|string $secure): string
+    private static function buildBaseUrl(string $hostname, $secure): string
     {
         $isSecure = in_array(strtolower((string) $secure), ['on', '1', 'true', 'yes'], true);
         $protocol = $isSecure ? 'https' : 'http';

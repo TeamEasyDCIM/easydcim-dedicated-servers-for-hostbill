@@ -9,6 +9,28 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class OsTemplateData
 {
+    public ?int $id;
+    public ?string $name;
+    public ?array $servers;
+    public $tags;
+    public ?string $architecture;
+    public ?string $cacheFolder;
+    public ?string $mirror;
+    public ?string $edition;
+    public ?string $isoUrl;
+    public ?bool $extractIso;
+    public ?string $timezone;
+    public ?string $language;
+    public ?string $gpxeScript;
+    public ?string $diskLayout;
+    public ?string $packages;
+    public ?string $postInstallation;
+    public ?string $family;
+    public ?bool $isWindows;
+    public ?string $firstBoot;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public ?array $addons;
     /**
      * @param int $id
      * @param string $name
@@ -33,30 +55,31 @@ class OsTemplateData
      * @param string|null $updatedAt
      * @param array<OsAddonData>|null $addons
      */
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?array $servers = null,
-        public mixed $tags = null,
-        public ?string $architecture = null,
-        public ?string $cacheFolder = null,
-        public ?string $mirror = null,
-        public ?string $edition = null,
-        public ?string $isoUrl = null,
-        public ?bool $extractIso = null,
-        public ?string $timezone = null,
-        public ?string $language = null,
-        public ?string $gpxeScript = null,
-        public ?string $diskLayout = null,
-        public ?string $packages = null,
-        public ?string $postInstallation = null,
-        public ?string $family = null,
-        public ?bool $isWindows = null,
-        public ?string $firstBoot = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-        public ?array $addons = null,
-    ) {}
+    public function __construct(?int $id, ?string $name, ?array $servers = null, $tags = null, ?string $architecture = null, ?string $cacheFolder = null, ?string $mirror = null, ?string $edition = null, ?string $isoUrl = null, ?bool $extractIso = null, ?string $timezone = null, ?string $language = null, ?string $gpxeScript = null, ?string $diskLayout = null, ?string $packages = null, ?string $postInstallation = null, ?string $family = null, ?bool $isWindows = null, ?string $firstBoot = null, ?string $createdAt = null, ?string $updatedAt = null, ?array $addons = null)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->servers = $servers;
+        $this->tags = $tags;
+        $this->architecture = $architecture;
+        $this->cacheFolder = $cacheFolder;
+        $this->mirror = $mirror;
+        $this->edition = $edition;
+        $this->isoUrl = $isoUrl;
+        $this->extractIso = $extractIso;
+        $this->timezone = $timezone;
+        $this->language = $language;
+        $this->gpxeScript = $gpxeScript;
+        $this->diskLayout = $diskLayout;
+        $this->packages = $packages;
+        $this->postInstallation = $postInstallation;
+        $this->family = $family;
+        $this->isWindows = $isWindows;
+        $this->firstBoot = $firstBoot;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+        $this->addons = $addons;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -83,28 +106,28 @@ class OsTemplateData
         }
 
         return new self(
-            id: Arr::get($data, 'id'),
-            name: Arr::get($data, 'name'),
-            servers: $servers,
-            tags: Arr::get($data, 'tags'),
-            architecture: Arr::get($data, 'architecture'),
-            cacheFolder: Arr::get($data, 'cache_folder'),
-            mirror: Arr::get($data, 'mirror'),
-            edition: Arr::get($data, 'edition'),
-            isoUrl: Arr::get($data, 'iso_url'),
-            extractIso: Arr::get($data, 'extract_iso'),
-            timezone: Arr::get($data, 'timezone'),
-            language: Arr::get($data, 'language'),
-            gpxeScript: Arr::get($data, 'gpxe_script'),
-            diskLayout: Arr::get($data, 'disk_layout'),
-            packages: Arr::get($data, 'packages'),
-            postInstallation: Arr::get($data, 'post_installation'),
-            family: Arr::get($data, 'family'),
-            isWindows: Arr::get($data, 'is_windows'),
-            firstBoot: Arr::get($data, 'first_boot'),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
-            addons: $addons,
+            Arr::get($data, 'id'),
+            Arr::get($data, 'name'),
+            $servers,
+            Arr::get($data, 'tags'),
+            Arr::get($data, 'architecture'),
+            Arr::get($data, 'cache_folder'),
+            Arr::get($data, 'mirror'),
+            Arr::get($data, 'edition'),
+            Arr::get($data, 'iso_url'),
+            Arr::get($data, 'extract_iso'),
+            Arr::get($data, 'timezone'),
+            Arr::get($data, 'language'),
+            Arr::get($data, 'gpxe_script'),
+            Arr::get($data, 'disk_layout'),
+            Arr::get($data, 'packages'),
+            Arr::get($data, 'post_installation'),
+            Arr::get($data, 'family'),
+            Arr::get($data, 'is_windows'),
+            Arr::get($data, 'first_boot'),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at'),
+            $addons
         );
     }
 }

@@ -60,7 +60,7 @@ interface ClientInterface
      * @param int|string $user User ID or email address
      * @return self
      */
-    public function setImpersonateUser(int|string $user): self;
+    public function setImpersonateUser($user): self;
 
     /**
      * Clear the impersonation setting

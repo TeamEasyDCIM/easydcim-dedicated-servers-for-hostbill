@@ -7,6 +7,12 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class UpdateDeviceConfigurationRequest
 {
+    public ?string $gateway;
+    public ?string $netmask;
+    public ?string $nameserver1;
+    public ?string $nameserver2;
+    public ?string $rebootmethod;
+    public ?string $bootloader;
     /**
      * @param string|null $gateway Gateway IP address
      * @param string|null $netmask Network mask
@@ -15,14 +21,15 @@ class UpdateDeviceConfigurationRequest
      * @param string|null $rebootmethod Reboot method
      * @param string|null $bootloader Bootloader type
      */
-    public function __construct(
-        public ?string $gateway = null,
-        public ?string $netmask = null,
-        public ?string $nameserver1 = null,
-        public ?string $nameserver2 = null,
-        public ?string $rebootmethod = null,
-        public ?string $bootloader = null,
-    ) {}
+    public function __construct(?string $gateway = null, ?string $netmask = null, ?string $nameserver1 = null, ?string $nameserver2 = null, ?string $rebootmethod = null, ?string $bootloader = null)
+    {
+        $this->gateway = $gateway;
+        $this->netmask = $netmask;
+        $this->nameserver1 = $nameserver1;
+        $this->nameserver2 = $nameserver2;
+        $this->rebootmethod = $rebootmethod;
+        $this->bootloader = $bootloader;
+    }
 
     /**
      * @return array<string, mixed>

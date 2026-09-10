@@ -9,12 +9,17 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class UpdateClientAreaConfigRequest
 {
-    public function __construct(
-        public ?string $url = null,
-        public ?string $token = null,
-        public ?bool $enabled = null,
-        public ?array $additionalConfig = null,
-    ) {}
+    public ?string $url;
+    public ?string $token;
+    public ?bool $enabled;
+    public ?array $additionalConfig;
+    public function __construct(?string $url = null, ?string $token = null, ?bool $enabled = null, ?array $additionalConfig = null)
+    {
+        $this->url = $url;
+        $this->token = $token;
+        $this->enabled = $enabled;
+        $this->additionalConfig = $additionalConfig;
+    }
 
     /**
      * @return array<string, mixed>

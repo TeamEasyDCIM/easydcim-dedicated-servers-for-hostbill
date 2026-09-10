@@ -30,7 +30,7 @@ class LocationsEndpoint extends AbstractEndpoint
      */
     public function list(?ListLocationsRequest $request = null): ListLocationsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('', $params);
         return ListLocationsResponse::fromArray($response);
     }
@@ -51,9 +51,9 @@ class LocationsEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListLocationsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                search: $request->search,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->search
             );
 
             $response = $this->list($request);
@@ -73,7 +73,7 @@ class LocationsEndpoint extends AbstractEndpoint
      * @return ShowLocationResponse
      * @throws EasyDCIMException
      */
-    public function show(int|string $id): ShowLocationResponse
+    public function show($id): ShowLocationResponse
     {
         $response = $this->get((string) $id);
         return ShowLocationResponse::fromArray($response);
@@ -100,7 +100,7 @@ class LocationsEndpoint extends AbstractEndpoint
      * @return ShowLocationResponse
      * @throws EasyDCIMException
      */
-    public function update(int|string $id, UpdateLocationRequest $request): ShowLocationResponse
+    public function update($id, UpdateLocationRequest $request): ShowLocationResponse
     {
         $response = $this->put((string) $id, $request->toArray());
         return ShowLocationResponse::fromArray($response);
@@ -113,7 +113,7 @@ class LocationsEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function destroy(int|string $id): SuccessResponse
+    public function destroy($id): SuccessResponse
     {
         $response = $this->delete((string) $id);
         return SuccessResponse::fromArray($response);

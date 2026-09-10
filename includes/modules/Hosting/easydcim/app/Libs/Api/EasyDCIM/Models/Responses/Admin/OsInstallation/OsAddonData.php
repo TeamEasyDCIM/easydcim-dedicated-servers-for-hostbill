@@ -9,6 +9,14 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class OsAddonData
 {
+    public ?int $id;
+    public ?int $serverId;
+    public ?string $name;
+    public ?string $description;
+    public ?string $type;
+    public ?string $tag;
+    public ?array $tags;
+    public ?string $data;
     /**
      * @param int|null $id
      * @param int|null $serverId
@@ -19,16 +27,17 @@ class OsAddonData
      * @param array<string>|null $tags
      * @param string|null $data
      */
-    public function __construct(
-        public ?int $id = null,
-        public ?int $serverId = null,
-        public ?string $name = null,
-        public ?string $description = null,
-        public ?string $type = null,
-        public ?string $tag = null,
-        public ?array $tags = null,
-        public ?string $data = null,
-    ) {}
+    public function __construct(?int $id = null, ?int $serverId = null, ?string $name = null, ?string $description = null, ?string $type = null, ?string $tag = null, ?array $tags = null, ?string $data = null)
+    {
+        $this->id = $id;
+        $this->serverId = $serverId;
+        $this->name = $name;
+        $this->description = $description;
+        $this->type = $type;
+        $this->tag = $tag;
+        $this->tags = $tags;
+        $this->data = $data;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -37,14 +46,14 @@ class OsAddonData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id') !== null ? (int) Arr::get($data, 'id') : null,
-            serverId: Arr::get($data, 'server_id') !== null ? (int) Arr::get($data, 'server_id') : null,
-            name: Arr::get($data, 'name'),
-            description: Arr::get($data, 'description'),
-            type: Arr::get($data, 'type'),
-            tag: Arr::get($data, 'tag'),
-            tags: Arr::get($data, 'tags'),
-            data: Arr::get($data, 'data'),
+            Arr::get($data, 'id') !== null ? (int) Arr::get($data, 'id') : null,
+            Arr::get($data, 'server_id') !== null ? (int) Arr::get($data, 'server_id') : null,
+            Arr::get($data, 'name'),
+            Arr::get($data, 'description'),
+            Arr::get($data, 'type'),
+            Arr::get($data, 'tag'),
+            Arr::get($data, 'tags'),
+            Arr::get($data, 'data')
         );
     }
 }

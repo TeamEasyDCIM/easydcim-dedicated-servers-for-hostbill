@@ -156,18 +156,12 @@ class ClientSync
 
         $existing = $api->admin()->users()->fetchByEmail($lookupEmail);
 
-        if (empty($existing->data?->id))
+        if (empty($existing->data === null ? null : $existing->data->id))
         {
             return;
         }
 
-        $api->admin()->users()->update($existing->data->id, new UpdateUserRequest(
-            email: $changed['email'] ?? null,
-            firstName: $changed['firstName'] ?? null,
-            lastName: $changed['lastName'] ?? null,
-            company: $changed['company'] ?? null,
-            phone: $changed['phone'] ?? null
-        ));
+        $api->admin()->users()->update($existing->data->id, new UpdateUserRequest($changed['email'] ?? null, null, $changed['firstName'] ?? null, $changed['lastName'] ?? null, $changed['company'] ?? null, $changed['phone'] ?? null));
     }
 
     private function getServer(int $serverId): array

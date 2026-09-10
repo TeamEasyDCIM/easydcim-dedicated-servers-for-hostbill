@@ -11,16 +11,18 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\BaseA
  */
 class ListServicesRequest extends BaseAdvancedPaginatedRequest
 {
+    public ?string $filter;
     public function __construct(
-        public ?string $filter = null,
+        ?string $filter = null,
         ?int $perPage = null,
         ?int $page = null,
         ?string $sortBy = null,
         ?string $sortDir = null,
         ?string $searchTerm = null,
         ?string $searchOp = null,
-        ?string $searchFields = null,
+        ?string $searchFields = null
     ) {
+        $this->filter = $filter;
         parent::__construct($perPage, $page, $sortBy, $sortDir, $searchTerm, $searchOp, $searchFields);
     }
 
@@ -41,14 +43,14 @@ class ListServicesRequest extends BaseAdvancedPaginatedRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            filter: $data['filter'] ?? null,
-            perPage: $data['per_page'] ?? $data['perPage'] ?? null,
-            page: $data['page'] ?? null,
-            sortBy: $data['sort_by'] ?? $data['sortBy'] ?? null,
-            sortDir: $data['sort_dir'] ?? $data['sortDir'] ?? null,
-            searchTerm: $data['search_term'] ?? $data['searchTerm'] ?? null,
-            searchOp: $data['search_op'] ?? $data['searchOp'] ?? null,
-            searchFields: $data['search_fields'] ?? $data['searchFields'] ?? null,
+            $data['filter'] ?? null,
+            $data['per_page'] ?? $data['perPage'] ?? null,
+            $data['page'] ?? null,
+            $data['sort_by'] ?? $data['sortBy'] ?? null,
+            $data['sort_dir'] ?? $data['sortDir'] ?? null,
+            $data['search_term'] ?? $data['searchTerm'] ?? null,
+            $data['search_op'] ?? $data['searchOp'] ?? null,
+            $data['search_fields'] ?? $data['searchFields'] ?? null
         );
     }
 }

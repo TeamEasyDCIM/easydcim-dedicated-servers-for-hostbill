@@ -11,11 +11,15 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class GroupData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $title,
-        public ?array $permissions = null,
-    ) {}
+    public ?int $id;
+    public ?string $title;
+    public ?array $permissions;
+    public function __construct(?int $id, ?string $title, ?array $permissions = null)
+    {
+        $this->id = $id;
+        $this->title = $title;
+        $this->permissions = $permissions;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -24,9 +28,9 @@ class GroupData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            title: Arr::get($data, 'title', ''),
-            permissions: Arr::get($data, 'permissions'),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'title', ''),
+            Arr::get($data, 'permissions')
         );
     }
 

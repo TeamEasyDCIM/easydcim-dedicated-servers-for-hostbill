@@ -7,6 +7,22 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class UpdateOsTemplateRequest
 {
+    public ?string $name;
+    public ?array $server;
+    public ?string $tags;
+    public ?string $architecture;
+    public ?string $cacheFolder;
+    public ?string $mirror;
+    public ?string $edition;
+    public ?string $isoUrl;
+    public ?bool $extractIso;
+    public ?string $timezone;
+    public ?string $language;
+    public ?string $gpxeScript;
+    public ?string $diskLayout;
+    public ?string $packages;
+    public ?string $postInstallation;
+    public ?string $firstBoot;
     /**
      * @param string|null $name Template name
      * @param array<int>|null $server Server IDs
@@ -25,24 +41,25 @@ class UpdateOsTemplateRequest
      * @param string|null $postInstallation Post-installation script
      * @param string|null $firstBoot First boot script
      */
-    public function __construct(
-        public ?string $name = null,
-        public ?array $server = null,
-        public ?string $tags = null,
-        public ?string $architecture = null,
-        public ?string $cacheFolder = null,
-        public ?string $mirror = null,
-        public ?string $edition = null,
-        public ?string $isoUrl = null,
-        public ?bool $extractIso = null,
-        public ?string $timezone = null,
-        public ?string $language = null,
-        public ?string $gpxeScript = null,
-        public ?string $diskLayout = null,
-        public ?string $packages = null,
-        public ?string $postInstallation = null,
-        public ?string $firstBoot = null,
-    ) {}
+    public function __construct(?string $name = null, ?array $server = null, ?string $tags = null, ?string $architecture = null, ?string $cacheFolder = null, ?string $mirror = null, ?string $edition = null, ?string $isoUrl = null, ?bool $extractIso = null, ?string $timezone = null, ?string $language = null, ?string $gpxeScript = null, ?string $diskLayout = null, ?string $packages = null, ?string $postInstallation = null, ?string $firstBoot = null)
+    {
+        $this->name = $name;
+        $this->server = $server;
+        $this->tags = $tags;
+        $this->architecture = $architecture;
+        $this->cacheFolder = $cacheFolder;
+        $this->mirror = $mirror;
+        $this->edition = $edition;
+        $this->isoUrl = $isoUrl;
+        $this->extractIso = $extractIso;
+        $this->timezone = $timezone;
+        $this->language = $language;
+        $this->gpxeScript = $gpxeScript;
+        $this->diskLayout = $diskLayout;
+        $this->packages = $packages;
+        $this->postInstallation = $postInstallation;
+        $this->firstBoot = $firstBoot;
+    }
 
     /**
      * @return array<string, mixed>

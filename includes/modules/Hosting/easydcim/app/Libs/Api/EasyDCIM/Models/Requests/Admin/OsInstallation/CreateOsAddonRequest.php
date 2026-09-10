@@ -7,6 +7,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class CreateOsAddonRequest
 {
+    public string $name;
+    public string $tag;
+    public string $type;
+    public ?string $description;
+    public ?string $data;
     /**
      * @param string $name Addon name
      * @param string $tag Tag identifier
@@ -14,13 +19,14 @@ class CreateOsAddonRequest
      * @param string|null $description Description
      * @param string|null $data Addon data/configuration
      */
-    public function __construct(
-        public string $name,
-        public string $tag,
-        public string $type,
-        public ?string $description = null,
-        public ?string $data = null,
-    ) {}
+    public function __construct(string $name, string $tag, string $type, ?string $description = null, ?string $data = null)
+    {
+        $this->name = $name;
+        $this->tag = $tag;
+        $this->type = $type;
+        $this->description = $description;
+        $this->data = $data;
+    }
 
     /**
      * @return array<string, mixed>

@@ -38,9 +38,9 @@ class Synchronize
 
         $info = $this->getOrderInformation($this->client->getEasyOrderID());
 
-        $service = $info->data?->service;
+        $service = $info->data === null ? null : $info->data->service;
 
-        if (empty($service?->related_id) || $this->module->getDetail('ServerID') != '')
+        if (empty($service === null ? null : $service->related_id) || $this->module->getDetail('ServerID') != '')
         {
             return;
         }
@@ -98,19 +98,14 @@ class Synchronize
         {
             $existing = $this->api->admin()->users()->fetchByEmail($email);
 
-            if (empty($existing->data?->id))
+            if (empty($existing->data === null ? null : $existing->data->id))
             {
                 return;
             }
 
             $current = $existing->data;
 
-            $request = new UpdateUserRequest(
-                firstName: $this->pick($clientData, 'firstname', $current->firstname),
-                lastName: $this->pick($clientData, 'lastname', $current->lastname),
-                company: $this->pick($clientData, 'companyname', $current->company),
-                phone: $this->pick($clientData, 'phonenumber', null)
-            );
+            $request = new UpdateUserRequest(null, null, $this->pick($clientData, 'firstname', $current->firstname), $this->pick($clientData, 'lastname', $current->lastname), $this->pick($clientData, 'companyname', $current->company), $this->pick($clientData, 'phonenumber', null));
 
             if ($request->toArray() === [])
             {
@@ -162,6 +157,6 @@ class Synchronize
      */
     public function saveDedicatedIP($device)
     {
-        $this->module->updateDetail('DedicatedIP', $device?->metadata['IP Address'] ?? '');
+        $this->module->updateDetail('DedicatedIP', ($device === null ? null : $device->metadata)['IP Address'] ?? '');
     }
 }

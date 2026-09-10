@@ -11,14 +11,17 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class PositionData
 {
+    public ?array $units;
+    public ?bool $outsideRack;
     /**
      * @param array<UnitData> $units Array of unit positions
      * @param bool $outsideRack Whether device is positioned outside the rack
      */
-    public function __construct(
-        public ?array $units,
-        public ?bool $outsideRack,
-    ) {}
+    public function __construct(?array $units, ?bool $outsideRack)
+    {
+        $this->units = $units;
+        $this->outsideRack = $outsideRack;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -34,8 +37,8 @@ class PositionData
         }
 
         return new self(
-            units: $units,
-            outsideRack: Arr::get($data, 'outsideRack', false),
+            $units,
+            Arr::get($data, 'outsideRack', false)
         );
     }
 

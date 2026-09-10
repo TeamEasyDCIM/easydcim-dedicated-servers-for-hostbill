@@ -6,17 +6,27 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class ServicePartData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $type,
-        public ?string $model = null,
-        public ?string $serial = null,
-        public ?string $size = null,
-        public ?string $description = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $type;
+    public ?string $model;
+    public ?string $serial;
+    public ?string $size;
+    public ?string $description;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?string $name, ?string $type, ?string $model = null, ?string $serial = null, ?string $size = null, ?string $description = null, ?string $createdAt = null, ?string $updatedAt = null)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->type = $type;
+        $this->model = $model;
+        $this->serial = $serial;
+        $this->size = $size;
+        $this->description = $description;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -25,15 +35,15 @@ class ServicePartData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            type: Arr::get($data, 'type', ''),
-            model: Arr::get($data, 'model'),
-            serial: Arr::get($data, 'serial'),
-            size: Arr::get($data, 'size'),
-            description: Arr::get($data, 'description'),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'type', ''),
+            Arr::get($data, 'model'),
+            Arr::get($data, 'serial'),
+            Arr::get($data, 'size'),
+            Arr::get($data, 'description'),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 

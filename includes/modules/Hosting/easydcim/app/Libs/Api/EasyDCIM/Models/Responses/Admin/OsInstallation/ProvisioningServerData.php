@@ -9,14 +9,21 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class ProvisioningServerData
 {
-    public function __construct(
-        public ?int $id,
-        public ?int $appId,
-        public ?string $name,
-        public ?string $module,
-        public ?ProvisioningServerConfigurationData $configuration,
-        public ?int $enabled,
-    ) {}
+    public ?int $id;
+    public ?int $appId;
+    public ?string $name;
+    public ?string $module;
+    public ?ProvisioningServerConfigurationData $configuration;
+    public ?int $enabled;
+    public function __construct(?int $id, ?int $appId, ?string $name, ?string $module, ?ProvisioningServerConfigurationData $configuration, ?int $enabled)
+    {
+        $this->id = $id;
+        $this->appId = $appId;
+        $this->name = $name;
+        $this->module = $module;
+        $this->configuration = $configuration;
+        $this->enabled = $enabled;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -32,12 +39,12 @@ class ProvisioningServerData
         }
 
         return new self(
-            id: Arr::get($data, 'id'),
-            appId: Arr::get($data, 'app_id'),
-            name: Arr::get($data, 'name'),
-            module: Arr::get($data, 'module'),
-            configuration: $configuration,
-            enabled: Arr::get($data, 'enabled'),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'app_id'),
+            Arr::get($data, 'name'),
+            Arr::get($data, 'module'),
+            $configuration,
+            Arr::get($data, 'enabled')
         );
     }
 }

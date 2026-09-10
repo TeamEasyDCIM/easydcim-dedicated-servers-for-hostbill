@@ -15,7 +15,7 @@ class ListIsoImagesResponse extends BaseResponse
     public array $data = [];
     public ?PaginationMeta $meta = null;
 
-    public static function fromArray(array $response): static
+    public static function fromArray(array $response)
     {
         $instance = parent::fromArray($response);
         $items = (array) (Arr::get($response, 'data') ?? []);
@@ -28,7 +28,7 @@ class ListIsoImagesResponse extends BaseResponse
     {
         return array_merge(parent::toArray(), [
             'data' => array_map(fn(IsoImageData $item) => $item->toArray(), $this->data),
-            'meta' => $this->meta?->toArray(),
+            'meta' => $this->meta === null ? null : $this->meta->toArray(),
         ]);
     }
 }

@@ -25,7 +25,7 @@ class PasswordManagementEndpoint extends AbstractEndpoint
      */
     public function listAccessDetails(?ListAccessDetailsRequest $request = null): ListAccessDetailsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get($this->buildPath('pm/access'), $params);
         return ListAccessDetailsResponse::fromArray($response);
     }
@@ -44,13 +44,13 @@ class PasswordManagementEndpoint extends AbstractEndpoint
 
         do {
             $request = new ListAccessDetailsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->listAccessDetails($request);

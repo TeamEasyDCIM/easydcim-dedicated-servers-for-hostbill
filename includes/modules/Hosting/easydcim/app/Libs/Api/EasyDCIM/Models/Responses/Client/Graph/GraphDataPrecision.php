@@ -6,18 +6,22 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class GraphDataPrecision
 {
-    public function __construct(
-        public ?int $traffic,
-        public ?int $ping,
-        public ?int $powerUsage,
-    ) {}
+    public ?int $traffic;
+    public ?int $ping;
+    public ?int $powerUsage;
+    public function __construct(?int $traffic, ?int $ping, ?int $powerUsage)
+    {
+        $this->traffic = $traffic;
+        $this->ping = $ping;
+        $this->powerUsage = $powerUsage;
+    }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            traffic:    Arr::get($data, 'traffic'),
-            ping:       Arr::get($data, 'ping'),
-            powerUsage: Arr::get($data, 'power_usage'),
+            Arr::get($data, 'traffic'),
+            Arr::get($data, 'ping'),
+            Arr::get($data, 'power_usage')
         );
     }
 

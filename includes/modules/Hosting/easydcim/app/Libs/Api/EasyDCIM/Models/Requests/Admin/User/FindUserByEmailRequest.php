@@ -9,9 +9,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class FindUserByEmailRequest
 {
-    public function __construct(
-        public string $email,
-    ) {}
+    public string $email;
+    public function __construct(string $email)
+    {
+        $this->email = $email;
+    }
 
     /**
      * @return array<string, mixed>

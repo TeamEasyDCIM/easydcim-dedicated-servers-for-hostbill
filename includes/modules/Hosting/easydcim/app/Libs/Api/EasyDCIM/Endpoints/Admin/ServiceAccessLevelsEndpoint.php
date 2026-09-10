@@ -27,7 +27,7 @@ class ServiceAccessLevelsEndpoint extends AbstractEndpoint
      */
     public function list(?ListServiceAccessLevelsRequest $request = null): ListServiceAccessLevelsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         return ListServiceAccessLevelsResponse::fromArray($this->get('', $params));
     }
 
@@ -47,13 +47,13 @@ class ServiceAccessLevelsEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListServiceAccessLevelsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->list($request);

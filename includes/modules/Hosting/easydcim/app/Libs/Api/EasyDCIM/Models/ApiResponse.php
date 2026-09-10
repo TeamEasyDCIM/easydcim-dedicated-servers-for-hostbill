@@ -16,6 +16,13 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class ApiResponse implements \ArrayAccess
 {
+    public bool $success;
+    public string $status;
+    public string $message;
+    public $data;
+    public ?array $error;
+    public ?array $errors;
+    public ?array $meta;
     /**
      * @param bool $success Whether the request was successful
      * @param string $status Status code/message (success, error, etc.)
@@ -25,15 +32,16 @@ class ApiResponse implements \ArrayAccess
      * @param array<string, array<string>>|null $errors Field-level validation errors (e.g. ['type' => ['The selected type is invalid.']])
      * @param array<string, mixed>|null $meta Metadata (pagination, etc.)
      */
-    public function __construct(
-        public bool $success,
-        public string $status,
-        public string $message,
-        public mixed $data = null,
-        public ?array $error = null,
-        public ?array $errors = null,
-        public ?array $meta = null
-    ) {}
+    public function __construct(bool $success, string $status, string $message, $data = null, ?array $error = null, ?array $errors = null, ?array $meta = null)
+    {
+        $this->success = $success;
+        $this->status = $status;
+        $this->message = $message;
+        $this->data = $data;
+        $this->error = $error;
+        $this->errors = $errors;
+        $this->meta = $meta;
+    }
 
     /**
      * Create response from array
@@ -44,13 +52,13 @@ class ApiResponse implements \ArrayAccess
     public static function fromArray(array $data): self
     {
         return new self(
-            success: $data['success'] ?? true,
-            status: $data['status'] ?? 'success',
-            message: $data['message'] ?? '',
-            data: $data['data'] ?? null,
-            error: $data['error'] ?? null,
-            errors: isset($data['errors']) && is_array($data['errors']) ? $data['errors'] : null,
-            meta: $data['meta'] ?? null
+            $data['success'] ?? true,
+            $data['status'] ?? 'success',
+            $data['message'] ?? '',
+            $data['data'] ?? null,
+            $data['error'] ?? null,
+            isset($data['errors']) && is_array($data['errors']) ? $data['errors'] : null,
+            $data['meta'] ?? null
         );
     }
 
@@ -62,16 +70,9 @@ class ApiResponse implements \ArrayAccess
      * @param array<string, mixed>|null $meta
      * @return self
      */
-    public static function success(mixed $data = null, string $message = 'Success', ?array $meta = null): self
+    public static function success($data = null, string $message = 'Success', ?array $meta = null): self
     {
-        return new self(
-            success: true,
-            status: 'success',
-            message: $message,
-            data: $data,
-            error: null,
-            meta: $meta
-        );
+        return new self(true, 'success', $message, $data, null, null, $meta);
     }
 
     /**
@@ -86,8 +87,8 @@ class ApiResponse implements \ArrayAccess
     public static function error(
         string $message,
         ?string $errorType = null,
-        string|int|null $errorCode = null,
-        mixed $data = null,
+        $errorCode = null,
+        $data = null,
         ?array $errors = null
     ): self {
         $error = [];
@@ -99,13 +100,13 @@ class ApiResponse implements \ArrayAccess
         }
 
         return new self(
-            success: false,
-            status: 'error',
-            message: $message,
-            data: $data,
-            error: !empty($error) ? $error : null,
-            errors: $errors,
-            meta: null
+            false,
+            'error',
+            $message,
+            $data,
+            !empty($error) ? $error : null,
+            $errors,
+            null
         );
     }
 
@@ -212,7 +213,7 @@ class ApiResponse implements \ArrayAccess
      *
      * @return string|int|null
      */
-    public function getErrorCode(): string|int|null
+    public function getErrorCode()
     {
         if ($this->error === null) {
             return null;
@@ -226,7 +227,7 @@ class ApiResponse implements \ArrayAccess
      * @param mixed $default
      * @return mixed
      */
-    public function getData(mixed $default = null): mixed
+    public function getData($default = null)
     {
         return $this->data ?? $default;
     }
@@ -300,7 +301,7 @@ class ApiResponse implements \ArrayAccess
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists(mixed $offset): bool
+    public function offsetExists($offset): bool
     {
         $array = $this->toArray();
         return Arr::has($array, $offset);
@@ -312,7 +313,7 @@ class ApiResponse implements \ArrayAccess
      * @param mixed $offset
      * @return mixed
      */
-    public function offsetGet(mixed $offset): mixed
+    public function offsetGet($offset)
     {
         $array = $this->toArray();
         return Arr::get($array, $offset);
@@ -326,7 +327,7 @@ class ApiResponse implements \ArrayAccess
      * @return void
      * @throws \RuntimeException
      */
-    public function offsetSet(mixed $offset, mixed $value): void
+    public function offsetSet($offset, $value): void
     {
         throw new \RuntimeException('ApiResponse is immutable and cannot be modified');
     }
@@ -338,7 +339,7 @@ class ApiResponse implements \ArrayAccess
      * @return void
      * @throws \RuntimeException
      */
-    public function offsetUnset(mixed $offset): void
+    public function offsetUnset($offset): void
     {
         throw new \RuntimeException('ApiResponse is immutable and cannot be modified');
     }

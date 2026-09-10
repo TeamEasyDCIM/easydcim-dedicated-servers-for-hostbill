@@ -6,26 +6,34 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class OrderService
 {
-    public function __construct(
-        public ?int $id = null,
-        public ?int $related_id = null,
-        public ?string $type = null,
-        public ?string $status = null,
-        public ?ServiceRelated $related = null,
-        public ?ServiceAccessLevel $access_level = null,
-        public ?string $created_at = null,
-    ) {}
+    public ?int $id;
+    public ?int $related_id;
+    public ?string $type;
+    public ?string $status;
+    public ?ServiceRelated $related;
+    public ?ServiceAccessLevel $access_level;
+    public ?string $created_at;
+    public function __construct(?int $id = null, ?int $related_id = null, ?string $type = null, ?string $status = null, ?ServiceRelated $related = null, ?ServiceAccessLevel $access_level = null, ?string $created_at = null)
+    {
+        $this->id = $id;
+        $this->related_id = $related_id;
+        $this->type = $type;
+        $this->status = $status;
+        $this->related = $related;
+        $this->access_level = $access_level;
+        $this->created_at = $created_at;
+    }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id'),
-            related_id: Arr::get($data, 'related_id'),
-            type: Arr::get($data, 'type'),
-            status: Arr::get($data, 'status'),
-            related: isset($data['related']) ? ServiceRelated::fromArray($data['related']) : null,
-            access_level: isset($data['access_level']) ? ServiceAccessLevel::fromArray($data['access_level']) : null,
-            created_at: Arr::get($data, 'created_at'),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'related_id'),
+            Arr::get($data, 'type'),
+            Arr::get($data, 'status'),
+            isset($data['related']) ? ServiceRelated::fromArray($data['related']) : null,
+            isset($data['access_level']) ? ServiceAccessLevel::fromArray($data['access_level']) : null,
+            Arr::get($data, 'created_at')
         );
     }
 
@@ -36,8 +44,8 @@ class OrderService
             'related_id' => $this->related_id,
             'type' => $this->type,
             'status' => $this->status,
-            'related' => $this->related?->toArray(),
-            'access_level' => $this->access_level?->toArray(),
+            'related' => $this->related === null ? null : $this->related->toArray(),
+            'access_level' => $this->access_level === null ? null : $this->access_level->toArray(),
             'created_at' => $this->created_at,
         ];
     }

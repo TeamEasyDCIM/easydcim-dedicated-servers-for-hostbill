@@ -8,14 +8,21 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class SshKeyData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $sshKey,
-        public ?string $fingerprint,
-        public ?bool $default,
-        public ?string $createdAt,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $sshKey;
+    public ?string $fingerprint;
+    public ?bool $default;
+    public ?string $createdAt;
+    public function __construct(?int $id, ?string $name, ?string $sshKey, ?string $fingerprint, ?bool $default, ?string $createdAt)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->sshKey = $sshKey;
+        $this->fingerprint = $fingerprint;
+        $this->default = $default;
+        $this->createdAt = $createdAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -24,12 +31,12 @@ class SshKeyData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id'),
-            name: Arr::get($data, 'name'),
-            sshKey: Arr::get($data, 'ssh_key'),
-            fingerprint: Arr::get($data, 'fingerprint'),
-            default: Arr::get($data, 'default'),
-            createdAt: Arr::get($data, 'created_at'),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'name'),
+            Arr::get($data, 'ssh_key'),
+            Arr::get($data, 'fingerprint'),
+            Arr::get($data, 'default'),
+            Arr::get($data, 'created_at')
         );
     }
 

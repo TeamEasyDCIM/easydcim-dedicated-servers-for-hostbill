@@ -11,10 +11,13 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class IsoImageDownloadData
 {
-    public function __construct(
-        public ?string $status,
-        public ?string $message,
-    ) {}
+    public ?string $status;
+    public ?string $message;
+    public function __construct(?string $status, ?string $message)
+    {
+        $this->status = $status;
+        $this->message = $message;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -23,8 +26,8 @@ class IsoImageDownloadData
     public static function fromArray(array $data): self
     {
         return new self(
-            status: Arr::get($data, 'status', ''),
-            message: Arr::get($data, 'message', ''),
+            Arr::get($data, 'status', ''),
+            Arr::get($data, 'message', '')
         );
     }
 

@@ -133,9 +133,9 @@ class EasyDCIMClient implements ClientInterface
             $this->logError($method, $uri, $e);
 
             return ApiResponse::error(
-                message: $e->getMessage(),
-                errorType: 'NetworkException',
-                errorCode: 'connection_failed'
+                $e->getMessage(),
+                'NetworkException',
+                'connection_failed'
             );
         } catch (EasyDCIMException $e) {
             $this->logError($method, $uri, $e);
@@ -144,16 +144,16 @@ class EasyDCIMClient implements ClientInterface
             $errors       = Arr::get($responseBody, 'errors');
 
             return ApiResponse::error(
-                message: $e->getMessage(),
-                errorType: get_class($e),
-                errorCode: $e->getCode(),
-                data: Arr::get($responseBody, 'data'),
-                errors: !empty($errors) ? (array) $errors : null
+                $e->getMessage(),
+                get_class($e),
+                $e->getCode(),
+                Arr::get($responseBody, 'data'),
+                !empty($errors) ? (array) $errors : null
             );
         }
     }
 
-    protected function logRequest(string $method, string $uri, mixed $body): void
+    protected function logRequest(string $method, string $uri, $body): void
     {
         Logger::info("{$method} {$this->extractActionFromUri($uri)}", "API Request: {$method} {$uri}", [
             'method' => $method,
@@ -200,7 +200,7 @@ class EasyDCIMClient implements ClientInterface
     /**
      * {@inheritDoc}
      */
-    public function setImpersonateUser(int|string $user): self
+    public function setImpersonateUser($user): self
     {
         $this->config->setImpersonateUser($user);
         return $this;

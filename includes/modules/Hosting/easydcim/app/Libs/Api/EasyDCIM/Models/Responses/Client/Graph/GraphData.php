@@ -9,18 +9,23 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class GraphData
 {
+    public ?array $datasets;
+    public ?array $labels;
+    public $units;
+    public $precision;
     /**
      * @param GraphDataset[] $datasets
      * @param string[] $labels
      * @param GraphDataUnits|array $units
      * @param GraphDataPrecision|array $precision
      */
-    public function __construct(
-        public ?array $datasets = [],
-        public ?array $labels = [],
-        public null|GraphDataUnits|array $units = [],
-        public null|GraphDataPrecision|array $precision = [],
-    ) {}
+    public function __construct(?array $datasets = [], ?array $labels = [], $units = [], $precision = [])
+    {
+        $this->datasets = $datasets;
+        $this->labels = $labels;
+        $this->units = $units;
+        $this->precision = $precision;
+    }
 
     public static function fromArray(array $data): self
     {
@@ -34,10 +39,10 @@ class GraphData
         }
 
         return new self(
-            datasets:  $datasets,
-            labels:    Arr::get($data, 'labels', []),
-            units:     GraphDataUnits::fromArray(Arr::get($data, 'units', [])),
-            precision: GraphDataPrecision::fromArray(Arr::get($data, 'precision', [])),
+            $datasets,
+            Arr::get($data, 'labels', []),
+            GraphDataUnits::fromArray(Arr::get($data, 'units', [])),
+            GraphDataPrecision::fromArray(Arr::get($data, 'precision', []))
         );
     }
 

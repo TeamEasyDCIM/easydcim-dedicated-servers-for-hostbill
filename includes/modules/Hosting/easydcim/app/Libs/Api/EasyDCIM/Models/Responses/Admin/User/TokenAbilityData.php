@@ -6,17 +6,19 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class TokenAbilityData
 {
-    public function __construct(
-        public ?array $abilities,
-        public ?bool $valid,
-    ) {
+    public ?array $abilities;
+    public ?bool $valid;
+    public function __construct(?array $abilities, ?bool $valid)
+    {
+        $this->abilities = $abilities;
+        $this->valid = $valid;
     }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            abilities: Arr::get($data, 'abilities', []),
-            valid: Arr::get($data, 'valid', false),
+            Arr::get($data, 'abilities', []),
+            Arr::get($data, 'valid', false)
         );
     }
 }

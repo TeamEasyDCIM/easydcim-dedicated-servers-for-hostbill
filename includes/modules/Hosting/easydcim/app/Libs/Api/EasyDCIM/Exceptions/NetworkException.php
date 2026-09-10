@@ -23,12 +23,12 @@ class NetworkException extends EasyDCIMException
         ?array $requestContext = null
     ) {
         parent::__construct(
-            message: $message,
-            code: $code,
-            previous: $previous,
-            statusCode: null,
-            responseBody: null,
-            requestContext: $requestContext
+            $message,
+            $code,
+            $previous,
+            null,
+            null,
+            $requestContext
         );
     }
 }

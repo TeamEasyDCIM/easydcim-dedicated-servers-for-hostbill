@@ -11,30 +11,53 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class FieldData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $relatedType,
-        public ?string $element,
-        public ?string $group,
-        public ?string $slug,
-        public ?string $label,
-        public ?array $options,
-        public ?int $predefined,
-        public ?int $hidden,
-        public ?int $provisionable,
-        public ?int $combined,
-        public ?int $filterable,
-        public ?string $filterableType,
-        public ?int $unique,
-        public ?int $sortable,
-        public ?int $encrypted,
-        public ?array $additionalRules,
-        public ?int $order,
-        public ?array $types,
-        public ?string $createdAt,
-        public ?string $updatedAt,
-        public ?array $values = null,
-    ) {}
+    public ?int $id;
+    public ?string $relatedType;
+    public ?string $element;
+    public ?string $group;
+    public ?string $slug;
+    public ?string $label;
+    public ?array $options;
+    public ?int $predefined;
+    public ?int $hidden;
+    public ?int $provisionable;
+    public ?int $combined;
+    public ?int $filterable;
+    public ?string $filterableType;
+    public ?int $unique;
+    public ?int $sortable;
+    public ?int $encrypted;
+    public ?array $additionalRules;
+    public ?int $order;
+    public ?array $types;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public ?array $values;
+    public function __construct(?int $id, ?string $relatedType, ?string $element, ?string $group, ?string $slug, ?string $label, ?array $options, ?int $predefined, ?int $hidden, ?int $provisionable, ?int $combined, ?int $filterable, ?string $filterableType, ?int $unique, ?int $sortable, ?int $encrypted, ?array $additionalRules, ?int $order, ?array $types, ?string $createdAt, ?string $updatedAt, ?array $values = null)
+    {
+        $this->id = $id;
+        $this->relatedType = $relatedType;
+        $this->element = $element;
+        $this->group = $group;
+        $this->slug = $slug;
+        $this->label = $label;
+        $this->options = $options;
+        $this->predefined = $predefined;
+        $this->hidden = $hidden;
+        $this->provisionable = $provisionable;
+        $this->combined = $combined;
+        $this->filterable = $filterable;
+        $this->filterableType = $filterableType;
+        $this->unique = $unique;
+        $this->sortable = $sortable;
+        $this->encrypted = $encrypted;
+        $this->additionalRules = $additionalRules;
+        $this->order = $order;
+        $this->types = $types;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+        $this->values = $values;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -43,28 +66,28 @@ class FieldData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            relatedType: Arr::get($data, 'related_type'),
-            element: Arr::get($data, 'element', ''),
-            group: Arr::get($data, 'group', ''),
-            slug: Arr::get($data, 'slug', ''),
-            label: Arr::get($data, 'label', ''),
-            options: Arr::get($data, 'options', []),
-            predefined: Arr::get($data, 'predefined', 0),
-            hidden: Arr::get($data, 'hidden', 0),
-            provisionable: Arr::get($data, 'provisionable', 0),
-            combined: Arr::get($data, 'combined', 0),
-            filterable: Arr::get($data, 'filterable', 0),
-            filterableType: Arr::get($data, 'filterable_type'),
-            unique: Arr::get($data, 'unique', 0),
-            sortable: Arr::get($data, 'sortable', 0),
-            encrypted: Arr::get($data, 'encrypted', 0),
-            additionalRules: Arr::get($data, 'additional_rules', []),
-            order: Arr::get($data, 'order', 0),
-            types: Arr::get($data, 'types', []),
-            createdAt: Arr::get($data, 'created_at', ''),
-            updatedAt: Arr::get($data, 'updated_at', ''),
-            values: Arr::get($data, 'values'),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'related_type'),
+            Arr::get($data, 'element', ''),
+            Arr::get($data, 'group', ''),
+            Arr::get($data, 'slug', ''),
+            Arr::get($data, 'label', ''),
+            Arr::get($data, 'options', []),
+            Arr::get($data, 'predefined', 0),
+            Arr::get($data, 'hidden', 0),
+            Arr::get($data, 'provisionable', 0),
+            Arr::get($data, 'combined', 0),
+            Arr::get($data, 'filterable', 0),
+            Arr::get($data, 'filterable_type'),
+            Arr::get($data, 'unique', 0),
+            Arr::get($data, 'sortable', 0),
+            Arr::get($data, 'encrypted', 0),
+            Arr::get($data, 'additional_rules', []),
+            Arr::get($data, 'order', 0),
+            Arr::get($data, 'types', []),
+            Arr::get($data, 'created_at', ''),
+            Arr::get($data, 'updated_at', ''),
+            Arr::get($data, 'values')
         );
     }
 

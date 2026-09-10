@@ -9,10 +9,13 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class GetOrderActionsListRequest
 {
-    public function __construct(
-        public ?string $type = null,
-        public ?string $action = null,
-    ) {}
+    public ?string $type;
+    public ?string $action;
+    public function __construct(?string $type = null, ?string $action = null)
+    {
+        $this->type = $type;
+        $this->action = $action;
+    }
 
     /**
      * @return array<string, mixed>

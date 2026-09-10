@@ -11,15 +11,23 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class ClientIsoImageData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $isoUrl,
-        public ?int $status,
-        public ?IsoImageDownloadData $download,
-        public ?string $createdAt,
-        public ?string $updatedAt,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $isoUrl;
+    public ?int $status;
+    public ?IsoImageDownloadData $download;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?string $name, ?string $isoUrl, ?int $status, ?IsoImageDownloadData $download, ?string $createdAt, ?string $updatedAt)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->isoUrl = $isoUrl;
+        $this->status = $status;
+        $this->download = $download;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -33,13 +41,13 @@ class ClientIsoImageData
         }
 
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            isoUrl: Arr::get($data, 'iso_url', ''),
-            status: Arr::get($data, 'status', 0),
-            download: IsoImageDownloadData::fromArray($download),
-            createdAt: Arr::get($data, 'created_at', ''),
-            updatedAt: Arr::get($data, 'updated_at', ''),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'iso_url', ''),
+            Arr::get($data, 'status', 0),
+            IsoImageDownloadData::fromArray($download),
+            Arr::get($data, 'created_at', ''),
+            Arr::get($data, 'updated_at', '')
         );
     }
 

@@ -9,9 +9,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class AcceptOrderRequest
 {
-    public function __construct(
-        public ?array $additionalData = null,
-    ) {}
+    public ?array $additionalData;
+    public function __construct(?array $additionalData = null)
+    {
+        $this->additionalData = $additionalData;
+    }
 
     /**
      * @return array<string, mixed>

@@ -50,7 +50,7 @@ class AutomationSettings
     {
         try {
             $response = $this->api->admin()->orders()->getActionsList(
-                new GetOrderActionsListRequest(type: self::ITEM_TYPE, action: $event)
+                new GetOrderActionsListRequest(self::ITEM_TYPE, $event)
             );
 
             return (array) ($response->allActions ?? []);

@@ -9,32 +9,57 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class CreateItemModelRequest
 {
-    public function __construct(
-        public string $name,
-        public int $typeId,
-        public int $locationId,
-        public ?string $label = null,
-        public ?string $status = null,
-        public ?string $description = null,
-        public ?bool $isPart = null,
-        public ?bool $mountable = null,
-        public ?string $manufacturer = null,
-        public ?string $position = null,
-        public ?int $size = null,
-        public ?string $image = null,
-        public ?string $serialnumber1 = null,
-        public ?string $serialnumber2 = null,
-        public ?string $serviceTag = null,
-        public ?string $comments = null,
-        public ?string $notes = null,
-        public ?string $purchaseDate = null,
-        public ?int $warrantyMonths = null,
-        public ?string $warrantyInfo = null,
-        public ?string $function = null,
-        public ?string $maintenanceInstruction = null,
-        public ?string $origin = null,
-        public ?float $buyPrice = null,
-    ) {}
+    public string $name;
+    public int $typeId;
+    public int $locationId;
+    public ?string $label;
+    public ?string $status;
+    public ?string $description;
+    public ?bool $isPart;
+    public ?bool $mountable;
+    public ?string $manufacturer;
+    public ?string $position;
+    public ?int $size;
+    public ?string $image;
+    public ?string $serialnumber1;
+    public ?string $serialnumber2;
+    public ?string $serviceTag;
+    public ?string $comments;
+    public ?string $notes;
+    public ?string $purchaseDate;
+    public ?int $warrantyMonths;
+    public ?string $warrantyInfo;
+    public ?string $function;
+    public ?string $maintenanceInstruction;
+    public ?string $origin;
+    public ?float $buyPrice;
+    public function __construct(string $name, int $typeId, int $locationId, ?string $label = null, ?string $status = null, ?string $description = null, ?bool $isPart = null, ?bool $mountable = null, ?string $manufacturer = null, ?string $position = null, ?int $size = null, ?string $image = null, ?string $serialnumber1 = null, ?string $serialnumber2 = null, ?string $serviceTag = null, ?string $comments = null, ?string $notes = null, ?string $purchaseDate = null, ?int $warrantyMonths = null, ?string $warrantyInfo = null, ?string $function = null, ?string $maintenanceInstruction = null, ?string $origin = null, ?float $buyPrice = null)
+    {
+        $this->name = $name;
+        $this->typeId = $typeId;
+        $this->locationId = $locationId;
+        $this->label = $label;
+        $this->status = $status;
+        $this->description = $description;
+        $this->isPart = $isPart;
+        $this->mountable = $mountable;
+        $this->manufacturer = $manufacturer;
+        $this->position = $position;
+        $this->size = $size;
+        $this->image = $image;
+        $this->serialnumber1 = $serialnumber1;
+        $this->serialnumber2 = $serialnumber2;
+        $this->serviceTag = $serviceTag;
+        $this->comments = $comments;
+        $this->notes = $notes;
+        $this->purchaseDate = $purchaseDate;
+        $this->warrantyMonths = $warrantyMonths;
+        $this->warrantyInfo = $warrantyInfo;
+        $this->function = $function;
+        $this->maintenanceInstruction = $maintenanceInstruction;
+        $this->origin = $origin;
+        $this->buyPrice = $buyPrice;
+    }
 
     /**
      * @return array<string, mixed>

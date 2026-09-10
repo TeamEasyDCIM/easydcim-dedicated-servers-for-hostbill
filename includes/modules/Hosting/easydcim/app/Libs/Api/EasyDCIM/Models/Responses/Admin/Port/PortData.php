@@ -9,32 +9,57 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class PortData
 {
-    public function __construct(
-        public ?int $id = null,
-        public ?string $name = null,
-        public ?string $description = null,
-        public ?int $itemId = null,
-        public ?int $colocationId = null,
-        public ?int $connectedItem = null,
-        public ?int $connectedPort = null,
-        public ?int $portNumber = null,
-        public ?int $portIndex = null,
-        public ?string $portMode = null,
-        public ?string $portLabel = null,
-        public ?string $userLabel = null,
-        public ?string $speed = null,
-        public ?string $highSpeed = null,
-        public ?string $ifType = null,
-        public ?string $physaddress = null,
-        public ?int $pullable = null,
-        public ?int $primary = null,
-        public ?int $vlan = null,
-        public ?string $opstate = null,
-        public ?string $adminstate = null,
-        public ?string $type = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $description;
+    public ?int $itemId;
+    public ?int $colocationId;
+    public ?int $connectedItem;
+    public ?int $connectedPort;
+    public ?int $portNumber;
+    public ?int $portIndex;
+    public ?string $portMode;
+    public ?string $portLabel;
+    public ?string $userLabel;
+    public ?string $speed;
+    public ?string $highSpeed;
+    public ?string $ifType;
+    public ?string $physaddress;
+    public ?int $pullable;
+    public ?int $primary;
+    public ?int $vlan;
+    public ?string $opstate;
+    public ?string $adminstate;
+    public ?string $type;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id = null, ?string $name = null, ?string $description = null, ?int $itemId = null, ?int $colocationId = null, ?int $connectedItem = null, ?int $connectedPort = null, ?int $portNumber = null, ?int $portIndex = null, ?string $portMode = null, ?string $portLabel = null, ?string $userLabel = null, ?string $speed = null, ?string $highSpeed = null, ?string $ifType = null, ?string $physaddress = null, ?int $pullable = null, ?int $primary = null, ?int $vlan = null, ?string $opstate = null, ?string $adminstate = null, ?string $type = null, ?string $createdAt = null, ?string $updatedAt = null)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->description = $description;
+        $this->itemId = $itemId;
+        $this->colocationId = $colocationId;
+        $this->connectedItem = $connectedItem;
+        $this->connectedPort = $connectedPort;
+        $this->portNumber = $portNumber;
+        $this->portIndex = $portIndex;
+        $this->portMode = $portMode;
+        $this->portLabel = $portLabel;
+        $this->userLabel = $userLabel;
+        $this->speed = $speed;
+        $this->highSpeed = $highSpeed;
+        $this->ifType = $ifType;
+        $this->physaddress = $physaddress;
+        $this->pullable = $pullable;
+        $this->primary = $primary;
+        $this->vlan = $vlan;
+        $this->opstate = $opstate;
+        $this->adminstate = $adminstate;
+        $this->type = $type;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -43,30 +68,30 @@ class PortData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id') !== null ? (int) Arr::get($data, 'id') : null,
-            name: Arr::get($data, 'name'),
-            description: Arr::get($data, 'description'),
-            itemId: Arr::get($data, 'item_id') !== null ? (int) Arr::get($data, 'item_id') : null,
-            colocationId: Arr::get($data, 'colocation_id') !== null ? (int) Arr::get($data, 'colocation_id') : null,
-            connectedItem: Arr::get($data, 'connected_item') !== null ? (int) Arr::get($data, 'connected_item') : null,
-            connectedPort: Arr::get($data, 'connected_port') !== null ? (int) Arr::get($data, 'connected_port') : null,
-            portNumber: Arr::get($data, 'port_number') !== null ? (int) Arr::get($data, 'port_number') : null,
-            portIndex: Arr::get($data, 'port_index') !== null ? (int) Arr::get($data, 'port_index') : null,
-            portMode: Arr::get($data, 'port_mode'),
-            portLabel: Arr::get($data, 'port_label'),
-            userLabel: Arr::get($data, 'user_label'),
-            speed: Arr::get($data, 'speed'),
-            highSpeed: Arr::get($data, 'high_speed'),
-            ifType: Arr::get($data, 'if_type'),
-            physaddress: Arr::get($data, 'physaddress'),
-            pullable: Arr::get($data, 'pullable') !== null ? (int) Arr::get($data, 'pullable') : null,
-            primary: Arr::get($data, 'primary') !== null ? (int) Arr::get($data, 'primary') : null,
-            vlan: Arr::get($data, 'vlan') !== null ? (int) Arr::get($data, 'vlan') : null,
-            opstate: Arr::get($data, 'opstate'),
-            adminstate: Arr::get($data, 'adminstate'),
-            type: Arr::get($data, 'type'),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id') !== null ? (int) Arr::get($data, 'id') : null,
+            Arr::get($data, 'name'),
+            Arr::get($data, 'description'),
+            Arr::get($data, 'item_id') !== null ? (int) Arr::get($data, 'item_id') : null,
+            Arr::get($data, 'colocation_id') !== null ? (int) Arr::get($data, 'colocation_id') : null,
+            Arr::get($data, 'connected_item') !== null ? (int) Arr::get($data, 'connected_item') : null,
+            Arr::get($data, 'connected_port') !== null ? (int) Arr::get($data, 'connected_port') : null,
+            Arr::get($data, 'port_number') !== null ? (int) Arr::get($data, 'port_number') : null,
+            Arr::get($data, 'port_index') !== null ? (int) Arr::get($data, 'port_index') : null,
+            Arr::get($data, 'port_mode'),
+            Arr::get($data, 'port_label'),
+            Arr::get($data, 'user_label'),
+            Arr::get($data, 'speed'),
+            Arr::get($data, 'high_speed'),
+            Arr::get($data, 'if_type'),
+            Arr::get($data, 'physaddress'),
+            Arr::get($data, 'pullable') !== null ? (int) Arr::get($data, 'pullable') : null,
+            Arr::get($data, 'primary') !== null ? (int) Arr::get($data, 'primary') : null,
+            Arr::get($data, 'vlan') !== null ? (int) Arr::get($data, 'vlan') : null,
+            Arr::get($data, 'opstate'),
+            Arr::get($data, 'adminstate'),
+            Arr::get($data, 'type'),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 }

@@ -9,10 +9,13 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class GetDevicePowerUsageRequest
 {
-    public function __construct(
-        public string $startDate,
-        public string $endDate,
-    ) {}
+    public string $startDate;
+    public string $endDate;
+    public function __construct(string $startDate, string $endDate)
+    {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
 
     /**
      * @return array<string, mixed>

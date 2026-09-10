@@ -11,12 +11,20 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Http;
  */
 class HttpRequest
 {
+    protected string $method;
+    protected string $uri;
+    protected array $headers;
+    protected ?string $body;
     public function __construct(
-        protected string $method,
-        protected string $uri,
-        protected array $headers = [],
-        protected ?string $body = null
+        string $method,
+        string $uri,
+        array $headers = [],
+        ?string $body = null
     ) {
+        $this->method = $method;
+        $this->uri = $uri;
+        $this->headers = $headers;
+        $this->body = $body;
         $this->method = strtoupper($method);
     }
 

@@ -6,10 +6,13 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class UpdateIpDescriptionRequest
 {
-    public function __construct(
-        public string $description,
-        public string $ipAddress,
-    ) {}
+    public string $description;
+    public string $ipAddress;
+    public function __construct(string $description, string $ipAddress)
+    {
+        $this->description = $description;
+        $this->ipAddress = $ipAddress;
+    }
 
     /**
      * @return array<string, mixed>
@@ -29,8 +32,8 @@ class UpdateIpDescriptionRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            description: $data['description'],
-            ipAddress: $data['ip_address'] ?? $data['ipAddress'],
+            $data['description'],
+            $data['ip_address'] ?? $data['ipAddress']
         );
     }
 }

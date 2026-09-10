@@ -6,13 +6,19 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class NovncConnectData
 {
-    public function __construct(
-        public ?int $id = null,
-        public ?int $device_id = null,
-        public ?string $url = null,
-        public ?int $status = null,
-        public ?string $message = null,
-    ) {}
+    public ?int $id;
+    public ?int $device_id;
+    public ?string $url;
+    public ?int $status;
+    public ?string $message;
+    public function __construct(?int $id = null, ?int $device_id = null, ?string $url = null, ?int $status = null, ?string $message = null)
+    {
+        $this->id = $id;
+        $this->device_id = $device_id;
+        $this->url = $url;
+        $this->status = $status;
+        $this->message = $message;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -21,11 +27,11 @@ class NovncConnectData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id'),
-            device_id: Arr::get($data, 'device_id'),
-            url: Arr::get($data, 'url'),
-            status: Arr::get($data, 'status'),
-            message: Arr::get($data, 'message'),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'device_id'),
+            Arr::get($data, 'url'),
+            Arr::get($data, 'status'),
+            Arr::get($data, 'message')
         );
     }
 

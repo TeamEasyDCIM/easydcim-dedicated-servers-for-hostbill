@@ -4,10 +4,13 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class AssignMetadataRequest
 {
-    public function __construct(
-        public string $slug,
-        public string $value,
-    ) {}
+    public string $slug;
+    public string $value;
+    public function __construct(string $slug, string $value)
+    {
+        $this->slug = $slug;
+        $this->value = $value;
+    }
 
     /**
      * @return array<string, mixed>
@@ -27,8 +30,8 @@ class AssignMetadataRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            slug: $data['slug'] ?? '',
-            value: $data['value'] ?? '',
+            $data['slug'] ?? '',
+            $data['value'] ?? ''
         );
     }
 }

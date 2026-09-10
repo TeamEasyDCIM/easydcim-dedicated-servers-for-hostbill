@@ -6,9 +6,11 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class RescueModeStatusData
 {
-    public function __construct(
-        public ?bool $inRescueMode,
-    ) {}
+    public ?bool $inRescueMode;
+    public function __construct(?bool $inRescueMode)
+    {
+        $this->inRescueMode = $inRescueMode;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -17,7 +19,7 @@ class RescueModeStatusData
     public static function fromArray(array $data): self
     {
         return new self(
-            inRescueMode: Arr::get($data, 'inRescueMode', false),
+            Arr::get($data, 'inRescueMode', false)
         );
     }
 

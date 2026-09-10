@@ -9,14 +9,21 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class UpdateLocationRequest
 {
-    public function __construct(
-        public ?string $name = null,
-        public ?string $address = null,
-        public ?string $city = null,
-        public ?string $country = null,
-        public ?string $phone = null,
-        public ?string $description = null,
-    ) {}
+    public ?string $name;
+    public ?string $address;
+    public ?string $city;
+    public ?string $country;
+    public ?string $phone;
+    public ?string $description;
+    public function __construct(?string $name = null, ?string $address = null, ?string $city = null, ?string $country = null, ?string $phone = null, ?string $description = null)
+    {
+        $this->name = $name;
+        $this->address = $address;
+        $this->city = $city;
+        $this->country = $country;
+        $this->phone = $phone;
+        $this->description = $description;
+    }
 
     /**
      * @return array<string, mixed>

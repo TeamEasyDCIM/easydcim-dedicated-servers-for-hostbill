@@ -59,7 +59,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      */
     public function listIsoImages(?ListIsoImagesRequest $request = null): ListIsoImagesResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('isoimages', $params);
         return ListIsoImagesResponse::fromArray($response);
     }
@@ -79,13 +79,13 @@ class OsInstallationEndpoint extends AbstractEndpoint
 
         do {
             $request = new ListIsoImagesRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->listIsoImages($request);
@@ -105,7 +105,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return ShowIsoImageResponse
      * @throws EasyDCIMException
      */
-    public function showIsoImage(int|string $id): ShowIsoImageResponse
+    public function showIsoImage($id): ShowIsoImageResponse
     {
         $response = $this->get("isoimages/{$id}");
         return ShowIsoImageResponse::fromArray($response);
@@ -132,7 +132,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return ShowIsoImageResponse
      * @throws EasyDCIMException
      */
-    public function updateIsoImage(int|string $id, UpdateIsoImageRequest $request): ShowIsoImageResponse
+    public function updateIsoImage($id, UpdateIsoImageRequest $request): ShowIsoImageResponse
     {
         $response = $this->put("isoimages/{$id}", $request->toArray());
         return ShowIsoImageResponse::fromArray($response);
@@ -145,7 +145,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function deleteIsoImage(int|string $id): SuccessResponse
+    public function deleteIsoImage($id): SuccessResponse
     {
         $response = $this->delete("isoimages/{$id}");
         return SuccessResponse::fromArray($response);
@@ -161,7 +161,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      */
     public function listOsTemplates(?ListOsTemplatesRequest $request = null): ListOsTemplatesResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('templates', $params);
         return ListOsTemplatesResponse::fromArray($response);
     }
@@ -180,14 +180,14 @@ class OsInstallationEndpoint extends AbstractEndpoint
 
         do {
             $request = new ListOsTemplatesRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
-                withAddons: $request->withAddons,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields,
+                $request->withAddons
             );
 
             $response = $this->listOsTemplates($request);
@@ -207,9 +207,9 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param ShowOsTemplateRequest|null $request
      * @return ShowOsTemplateResponse
      */
-    public function showOsTemplate(int|string $id, ?ShowOsTemplateRequest $request = null): ShowOsTemplateResponse
+    public function showOsTemplate($id, ?ShowOsTemplateRequest $request = null): ShowOsTemplateResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get("templates/{$id}", $params);
         return ShowOsTemplateResponse::fromArray($response);
     }
@@ -235,7 +235,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return ShowOsTemplateResponse
      * @throws EasyDCIMException
      */
-    public function updateOsTemplate(int|string $id, UpdateOsTemplateRequest $request): ShowOsTemplateResponse
+    public function updateOsTemplate($id, UpdateOsTemplateRequest $request): ShowOsTemplateResponse
     {
         $response = $this->put("templates/{$id}", $request->toArray());
         return ShowOsTemplateResponse::fromArray($response);
@@ -248,7 +248,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function deleteOsTemplate(int|string $id): SuccessResponse
+    public function deleteOsTemplate($id): SuccessResponse
     {
         $response = $this->delete("templates/{$id}");
         return SuccessResponse::fromArray($response);
@@ -264,7 +264,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      */
     public function listOsAddons(?ListOsAddonsRequest $request = null): ListOsAddonsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('addons', $params);
         return ListOsAddonsResponse::fromArray($response);
     }
@@ -283,14 +283,14 @@ class OsInstallationEndpoint extends AbstractEndpoint
 
         do {
             $request = new ListOsAddonsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
-                templateId: $request->templateId,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields,
+                $request->templateId
             );
 
             $response = $this->listOsAddons($request);
@@ -310,7 +310,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return ShowOsAddonResponse
      * @throws EasyDCIMException
      */
-    public function showOsAddon(int|string $id): ShowOsAddonResponse
+    public function showOsAddon($id): ShowOsAddonResponse
     {
         $response = $this->get("addons/{$id}");
         return ShowOsAddonResponse::fromArray($response);
@@ -337,7 +337,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return ShowOsAddonResponse
      * @throws EasyDCIMException
      */
-    public function updateOsAddon(int|string $id, UpdateOsAddonRequest $request): ShowOsAddonResponse
+    public function updateOsAddon($id, UpdateOsAddonRequest $request): ShowOsAddonResponse
     {
         $response = $this->put("addons/{$id}", $request->toArray());
         return ShowOsAddonResponse::fromArray($response);
@@ -350,7 +350,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function deleteOsAddon(int|string $id): SuccessResponse
+    public function deleteOsAddon($id): SuccessResponse
     {
         $response = $this->delete("addons/{$id}");
         return SuccessResponse::fromArray($response);
@@ -366,7 +366,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return ShowOsInstallationResponse
      * @throws EasyDCIMException
      */
-    public function installOs(int|string $deviceId, InstallOsRequest $request): ShowOsInstallationResponse
+    public function installOs($deviceId, InstallOsRequest $request): ShowOsInstallationResponse
     {
         $response = $this->post("{$deviceId}/install", $request->toArray());
         return ShowOsInstallationResponse::fromArray($response);
@@ -379,7 +379,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function cancelOsInstallation(int|string $deviceId): SuccessResponse
+    public function cancelOsInstallation($deviceId): SuccessResponse
     {
         $response = $this->post("{$deviceId}/cancel");
         return SuccessResponse::fromArray($response);
@@ -392,7 +392,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return ShowOsInstallationResponse
      * @throws EasyDCIMException
      */
-    public function getOsInstallationInfo(int|string $deviceId): ShowOsInstallationResponse
+    public function getOsInstallationInfo($deviceId): ShowOsInstallationResponse
     {
         $response = $this->get("{$deviceId}/install/information");
         return ShowOsInstallationResponse::fromArray($response);
@@ -405,7 +405,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return ShowOsInstallationResponse
      * @throws EasyDCIMException
      */
-    public function enableRescueMode(int|string $deviceId): ShowOsInstallationResponse
+    public function enableRescueMode($deviceId): ShowOsInstallationResponse
     {
         $response = $this->post("{$deviceId}/rescue/enable");
         return ShowOsInstallationResponse::fromArray($response);
@@ -418,7 +418,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return RescueModeStatusResponse
      * @throws EasyDCIMException
      */
-    public function getRescueModeStatus(int|string $deviceId): RescueModeStatusResponse
+    public function getRescueModeStatus($deviceId): RescueModeStatusResponse
     {
         $response = $this->get("{$deviceId}/rescue/status");
         return RescueModeStatusResponse::fromArray($response);
@@ -431,7 +431,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return ShowDeviceConfigurationResponse
      * @throws EasyDCIMException
      */
-    public function showDeviceConfiguration(int|string $deviceId): ShowDeviceConfigurationResponse
+    public function showDeviceConfiguration($deviceId): ShowDeviceConfigurationResponse
     {
         $response = $this->get("{$deviceId}/configuration");
         return ShowDeviceConfigurationResponse::fromArray($response);
@@ -445,7 +445,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @return ShowDeviceConfigurationResponse
      * @throws EasyDCIMException
      */
-    public function updateDeviceConfiguration(int|string $deviceId, UpdateDeviceConfigurationRequest $request): ShowDeviceConfigurationResponse
+    public function updateDeviceConfiguration($deviceId, UpdateDeviceConfigurationRequest $request): ShowDeviceConfigurationResponse
     {
         $response = $this->post("{$deviceId}/configuration", $request->toArray());
         return ShowDeviceConfigurationResponse::fromArray($response);
@@ -458,9 +458,9 @@ class OsInstallationEndpoint extends AbstractEndpoint
      * @param FindProvisioningServerRequest|null $request
      * @return ProvisioningServerResponse
      */
-    public function findProvisioningServer(int|string $id, ?FindProvisioningServerRequest $request = null): ProvisioningServerResponse
+    public function findProvisioningServer($id, ?FindProvisioningServerRequest $request = null): ProvisioningServerResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get("{$id}/provisioning/server", $params);
         return ProvisioningServerResponse::fromArray($response);
     }
@@ -474,7 +474,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      */
     public function listProvisioningTasks(?ListProvisioningTasksRequest $request = null): ListProvisioningTasksResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('provisioning/tasks', $params);
         return ListProvisioningTasksResponse::fromArray($response);
     }
@@ -494,13 +494,13 @@ class OsInstallationEndpoint extends AbstractEndpoint
 
         do {
             $request = new ListProvisioningTasksRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->listProvisioningTasks($request);
@@ -522,7 +522,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
      */
     public function listProvisioningHistory(?ListProvisioningHistoryRequest $request = null): ListProvisioningHistoryResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('provisioning/history', $params);
         return ListProvisioningHistoryResponse::fromArray($response);
     }
@@ -542,13 +542,13 @@ class OsInstallationEndpoint extends AbstractEndpoint
 
         do {
             $request = new ListProvisioningHistoryRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->listProvisioningHistory($request);

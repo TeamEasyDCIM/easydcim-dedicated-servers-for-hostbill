@@ -41,13 +41,7 @@ class Graphs
 
             $dates = $this->getStartAndEndDateTimestamps($getParams['interval']);
 
-            $graphData = $this->api->admin()->graphs()->export($deviceId, new ExportGraphRequest(
-                type: $getParams['graphs'],
-                target: self::TARGET_DEVICE,
-                start: (string) $dates['start'],
-                end: (string) $dates['end'],
-                raw: false
-            ));
+            $graphData = $this->api->admin()->graphs()->export($deviceId, new ExportGraphRequest($getParams['graphs'], self::TARGET_DEVICE, (string) $dates['start'], (string) $dates['end'], null, false));
 
             $data = $graphData->toArray();
             $data['unit'] = $this->getDateUnitForLabels((array) $graphData->labels);

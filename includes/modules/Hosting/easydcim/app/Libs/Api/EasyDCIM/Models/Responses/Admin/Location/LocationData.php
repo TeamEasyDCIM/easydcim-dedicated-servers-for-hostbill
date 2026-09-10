@@ -11,21 +11,35 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class LocationData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $appId,
-        public ?string $name,
-        public ?string $address,
-        public ?string $city,
-        public ?string $state,
-        public ?string $description,
-        public ?string $notes,
-        public ?string $emergency,
-        public ?string $phone,
-        public ?string $flag,
-        public ?string $createdAt,
-        public ?string $updatedAt,
-    ) {}
+    public ?int $id;
+    public ?string $appId;
+    public ?string $name;
+    public ?string $address;
+    public ?string $city;
+    public ?string $state;
+    public ?string $description;
+    public ?string $notes;
+    public ?string $emergency;
+    public ?string $phone;
+    public ?string $flag;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?string $appId, ?string $name, ?string $address, ?string $city, ?string $state, ?string $description, ?string $notes, ?string $emergency, ?string $phone, ?string $flag, ?string $createdAt, ?string $updatedAt)
+    {
+        $this->id = $id;
+        $this->appId = $appId;
+        $this->name = $name;
+        $this->address = $address;
+        $this->city = $city;
+        $this->state = $state;
+        $this->description = $description;
+        $this->notes = $notes;
+        $this->emergency = $emergency;
+        $this->phone = $phone;
+        $this->flag = $flag;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -34,19 +48,19 @@ class LocationData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            appId: Arr::get($data, 'app_id'),
-            name: Arr::get($data, 'name', ''),
-            address: Arr::get($data, 'address', ''),
-            city: Arr::get($data, 'city', ''),
-            state: Arr::get($data, 'state', ''),
-            description: Arr::get($data, 'description', ''),
-            notes: Arr::get($data, 'notes', ''),
-            emergency: Arr::get($data, 'emergency', ''),
-            phone: Arr::get($data, 'phone', ''),
-            flag: Arr::get($data, 'flag', ''),
-            createdAt: Arr::get($data, 'created_at', ''),
-            updatedAt: Arr::get($data, 'updated_at', ''),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'app_id'),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'address', ''),
+            Arr::get($data, 'city', ''),
+            Arr::get($data, 'state', ''),
+            Arr::get($data, 'description', ''),
+            Arr::get($data, 'notes', ''),
+            Arr::get($data, 'emergency', ''),
+            Arr::get($data, 'phone', ''),
+            Arr::get($data, 'flag', ''),
+            Arr::get($data, 'created_at', ''),
+            Arr::get($data, 'updated_at', '')
         );
     }
 

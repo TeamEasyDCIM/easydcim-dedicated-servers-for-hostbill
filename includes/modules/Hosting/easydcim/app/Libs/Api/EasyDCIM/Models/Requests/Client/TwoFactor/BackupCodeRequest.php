@@ -7,9 +7,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class BackupCodeRequest
 {
-    public function __construct(
-        public string $code,
-    ) {}
+    public string $code;
+    public function __construct(string $code)
+    {
+        $this->code = $code;
+    }
 
     /**
      * @return array<string, mixed>
@@ -28,7 +30,7 @@ class BackupCodeRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            code: $data['code'],
+            $data['code']
         );
     }
 }

@@ -7,34 +7,45 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class OrderData
 {
-    public function __construct(
-        public ?int $id = null,
-        public ?int $ordernumber = null,
-        public ?int $user_id = null,
-        public ?string $status = null,
-        public ?string $service_status = null,
-        public ?string $type = null,
-        public mixed $options = null,
-        public ?OrderService $service = null,
-        public ?string $created_at = null,
-        public ?string $updated_at = null,
-    ) {}
+    public ?int $id;
+    public ?int $ordernumber;
+    public ?int $user_id;
+    public ?string $status;
+    public ?string $service_status;
+    public ?string $type;
+    public $options;
+    public ?OrderService $service;
+    public ?string $created_at;
+    public ?string $updated_at;
+    public function __construct(?int $id = null, ?int $ordernumber = null, ?int $user_id = null, ?string $status = null, ?string $service_status = null, ?string $type = null, $options = null, ?OrderService $service = null, ?string $created_at = null, ?string $updated_at = null)
+    {
+        $this->id = $id;
+        $this->ordernumber = $ordernumber;
+        $this->user_id = $user_id;
+        $this->status = $status;
+        $this->service_status = $service_status;
+        $this->type = $type;
+        $this->options = $options;
+        $this->service = $service;
+        $this->created_at = $created_at;
+        $this->updated_at = $updated_at;
+    }
 
     public static function fromArray(array $data): self
     {
         $serviceData = Arr::get($data, 'service', []);
 
         return new self(
-            id: Arr::get($data, 'id'),
-            ordernumber: Arr::get($data, 'ordernumber'),
-            user_id: Arr::get($data, 'user_id'),
-            status: Arr::get($data, 'status'),
-            service_status: Arr::get($data, 'service_status'),
-            type: Arr::get($data, 'type'),
-            options: Arr::get($data, 'options'),
-            service: !empty($serviceData) ? OrderService::fromArray($serviceData) : null,
-            created_at: Arr::get($data, 'created_at'),
-            updated_at: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'ordernumber'),
+            Arr::get($data, 'user_id'),
+            Arr::get($data, 'status'),
+            Arr::get($data, 'service_status'),
+            Arr::get($data, 'type'),
+            Arr::get($data, 'options'),
+            !empty($serviceData) ? OrderService::fromArray($serviceData) : null,
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 
@@ -48,7 +59,7 @@ class OrderData
             'service_status' => $this->service_status,
             'type' => $this->type,
             'options' => $this->options,
-            'service' => $this->service?->toArray(),
+            'service' => $this->service === null ? null : $this->service->toArray(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

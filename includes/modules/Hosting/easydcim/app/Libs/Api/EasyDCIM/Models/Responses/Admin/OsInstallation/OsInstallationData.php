@@ -9,6 +9,16 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class OsInstallationData
 {
+    public ?int $id;
+    public ?int $deviceId;
+    public ?int $templateId;
+    public ?int $serverId;
+    public ?string $message;
+    public ?int $dhcp;
+    public ?array $configuration;
+    public ?string $log;
+    public ?string $createdAt;
+    public ?string $updatedAt;
     /**
      * @param int $id
      * @param int $deviceId
@@ -21,18 +31,19 @@ class OsInstallationData
      * @param string $createdAt
      * @param string $updatedAt
      */
-    public function __construct(
-        public ?int $id,
-        public ?int $deviceId,
-        public ?int $templateId,
-        public ?int $serverId,
-        public ?string $message,
-        public ?int $dhcp,
-        public ?array $configuration,
-        public ?string $log,
-        public ?string $createdAt,
-        public ?string $updatedAt,
-    ) {}
+    public function __construct(?int $id, ?int $deviceId, ?int $templateId, ?int $serverId, ?string $message, ?int $dhcp, ?array $configuration, ?string $log, ?string $createdAt, ?string $updatedAt)
+    {
+        $this->id = $id;
+        $this->deviceId = $deviceId;
+        $this->templateId = $templateId;
+        $this->serverId = $serverId;
+        $this->message = $message;
+        $this->dhcp = $dhcp;
+        $this->configuration = $configuration;
+        $this->log = $log;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -41,16 +52,16 @@ class OsInstallationData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id'),
-            deviceId: Arr::get($data, 'device_id'),
-            templateId: Arr::get($data, 'template_id'),
-            serverId: Arr::get($data, 'server_id'),
-            message: Arr::get($data, 'message', ''),
-            dhcp: Arr::get($data, 'dhcp'),
-            configuration: Arr::get($data, 'configuration', []),
-            log: Arr::get($data, 'log', ''),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'device_id'),
+            Arr::get($data, 'template_id'),
+            Arr::get($data, 'server_id'),
+            Arr::get($data, 'message', ''),
+            Arr::get($data, 'dhcp'),
+            Arr::get($data, 'configuration', []),
+            Arr::get($data, 'log', ''),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 }

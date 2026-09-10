@@ -9,9 +9,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class GetDevicesInStockRequest
 {
-    public function __construct(
-        public array $criteria,
-    ) {}
+    public array $criteria;
+    public function __construct(array $criteria)
+    {
+        $this->criteria = $criteria;
+    }
 
     /**
      * @return array<string, mixed>

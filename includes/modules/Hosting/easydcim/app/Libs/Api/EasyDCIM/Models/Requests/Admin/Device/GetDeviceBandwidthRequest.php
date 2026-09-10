@@ -9,18 +9,23 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class GetDeviceBandwidthRequest
 {
+    public string $startDate;
+    public string $endDate;
+    public ?string $units;
+    public ?array $ports;
     /**
      * @param string $startDate Start date for bandwidth calculation
      * @param string $endDate End date for bandwidth calculation
      * @param string|null $units Units for bandwidth (optional)
      * @param array<int>|null $ports Array of port IDs (optional)
      */
-    public function __construct(
-        public string $startDate,
-        public string $endDate,
-        public ?string $units = null,
-        public ?array $ports = null,
-    ) {}
+    public function __construct(string $startDate, string $endDate, ?string $units = null, ?array $ports = null)
+    {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+        $this->units = $units;
+        $this->ports = $ports;
+    }
 
     /**
      * @return array<string, mixed>

@@ -6,15 +6,23 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class AccessDetailData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $username,
-        public ?string $password,
-        public ?int $deviceId = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $username;
+    public ?string $password;
+    public ?int $deviceId;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?string $name, ?string $username, ?string $password, ?int $deviceId = null, ?string $createdAt = null, ?string $updatedAt = null)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->username = $username;
+        $this->password = $password;
+        $this->deviceId = $deviceId;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -23,13 +31,13 @@ class AccessDetailData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            username: Arr::get($data, 'username', ''),
-            password: Arr::get($data, 'password', ''),
-            deviceId: Arr::get($data, 'device_id'),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'username', ''),
+            Arr::get($data, 'password', ''),
+            Arr::get($data, 'device_id'),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 

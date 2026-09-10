@@ -12,7 +12,7 @@ class ShowOsAddonResponse extends BaseResponse
 {
     public ?OsAddonData $data = null;
 
-    public static function fromArray(array $response): static
+    public static function fromArray(array $response)
     {
         $instance = parent::fromArray($response);
         $instance->data = OsAddonData::fromArray($response);
@@ -22,7 +22,7 @@ class ShowOsAddonResponse extends BaseResponse
     public function toArray(): array
     {
         return array_merge(parent::toArray(), array_filter(
-            ['data' => $this->data?->toArray()],
+            ['data' => $this->data === null ? null : $this->data->toArray()],
             fn($v) => $v !== null
         ));
     }

@@ -15,28 +15,34 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class BaseResponse
 {
-    public function __construct(
-        public ?bool $success = null,
-        public ?string $status = null,
-        public ?string $message = null,
-        public array $error = [],
-        public ?array $errors = null,
-    ) {}
+    public ?bool $success;
+    public ?string $status;
+    public ?string $message;
+    public array $error;
+    public ?array $errors;
+    public function __construct(?bool $success = null, ?string $status = null, ?string $message = null, array $error = [], ?array $errors = null)
+    {
+        $this->success = $success;
+        $this->status = $status;
+        $this->message = $message;
+        $this->error = $error;
+        $this->errors = $errors;
+    }
 
     /**
      * @param array<string, mixed> $response
      * @return static
      */
-    public static function fromArray(array $response): static
+    public static function fromArray(array $response)
     {
         $errors = Arr::get($response, 'errors');
 
         return new static(
-            success: Arr::get($response, 'success', false),
-            status:  Arr::get($response, 'status', ''),
-            message: Arr::get($response, 'message', ''),
-            error:   (array) (Arr::get($response, 'error') ?? []),
-            errors:  is_array($errors) ? $errors : null,
+            Arr::get($response, 'success', false),
+            Arr::get($response, 'status', ''),
+            Arr::get($response, 'message', ''),
+            (array) (Arr::get($response, 'error') ?? []),
+            is_array($errors) ? $errors : null
         );
     }
 

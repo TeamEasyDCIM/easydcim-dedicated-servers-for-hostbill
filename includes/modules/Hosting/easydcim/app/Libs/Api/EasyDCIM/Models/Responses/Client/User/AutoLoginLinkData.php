@@ -11,9 +11,11 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class AutoLoginLinkData
 {
-    public function __construct(
-        public ?string $link,
-    ) {}
+    public ?string $link;
+    public function __construct(?string $link)
+    {
+        $this->link = $link;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -22,7 +24,7 @@ class AutoLoginLinkData
     public static function fromArray(array $data): self
     {
         return new self(
-            link: Arr::get($data, 'link', ''),
+            Arr::get($data, 'link', '')
         );
     }
 

@@ -9,18 +9,29 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class UpdateUserRequest
 {
-    public function __construct(
-        public ?string $email = null,
-        public ?string $firstName = null,
-        public ?string $lastName = null,
-        public ?string $phone = null,
-        public ?string $company = null,
-        public ?string $address = null,
-        public ?string $city = null,
-        public ?string $state = null,
-        public ?string $zipCode = null,
-        public ?string $country = null,
-    ) {}
+    public ?string $email;
+    public ?string $firstName;
+    public ?string $lastName;
+    public ?string $phone;
+    public ?string $company;
+    public ?string $address;
+    public ?string $city;
+    public ?string $state;
+    public ?string $zipCode;
+    public ?string $country;
+    public function __construct(?string $email = null, ?string $firstName = null, ?string $lastName = null, ?string $phone = null, ?string $company = null, ?string $address = null, ?string $city = null, ?string $state = null, ?string $zipCode = null, ?string $country = null)
+    {
+        $this->email = $email;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+        $this->phone = $phone;
+        $this->company = $company;
+        $this->address = $address;
+        $this->city = $city;
+        $this->state = $state;
+        $this->zipCode = $zipCode;
+        $this->country = $country;
+    }
 
     /**
      * @return array<string, mixed>

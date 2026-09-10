@@ -36,7 +36,7 @@ class OrdersEndpoint extends AbstractEndpoint
      */
     public function list(?ListOrdersRequest $request = null): ListOrdersResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('', $params);
         return ListOrdersResponse::fromArray($response);
     }
@@ -57,14 +57,14 @@ class OrdersEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListOrdersRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
-                status: $request->status,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields,
+                $request->status
             );
 
             $response = $this->list($request);
@@ -84,7 +84,7 @@ class OrdersEndpoint extends AbstractEndpoint
      * @return OrderResponse
      * @throws EasyDCIMException
      */
-    public function show(int|string $id): OrderResponse
+    public function show($id): OrderResponse
     {
         $response = $this->get((string) $id);
         return OrderResponse::fromArray($response);
@@ -124,7 +124,7 @@ class OrdersEndpoint extends AbstractEndpoint
      * @return array
      * @throws EasyDCIMException
      */
-    public function update(int|string $id, UpdateOrderRequest $request): array
+    public function update($id, UpdateOrderRequest $request): array
     {
         return $this->put((string) $id, $request->toArray());
     }
@@ -136,7 +136,7 @@ class OrdersEndpoint extends AbstractEndpoint
      * @return array
      * @throws EasyDCIMException
      */
-    public function destroy(int|string $id): array
+    public function destroy($id): array
     {
         return $this->delete((string) $id);
     }
@@ -151,9 +151,9 @@ class OrdersEndpoint extends AbstractEndpoint
      * @return array
      * @throws EasyDCIMException
      */
-    public function accept(int|string $id, ?AcceptOrderRequest $request = null): array
+    public function accept($id, ?AcceptOrderRequest $request = null): array
     {
-        $data = $request?->toArray() ?? [];
+        $data = ($request === null ? null : $request->toArray()) ?? [];
         return $this->post($this->buildPath((string) $id, 'accept'), $data);
     }
 
@@ -167,9 +167,9 @@ class OrdersEndpoint extends AbstractEndpoint
      * @return array
      * @throws EasyDCIMException
      */
-    public function activateService(int|string $id, ?ServiceActionRequest $request = null): array
+    public function activateService($id, ?ServiceActionRequest $request = null): array
     {
-        $data = $request?->toArray() ?? [];
+        $data = ($request === null ? null : $request->toArray()) ?? [];
         return $this->post($this->buildPath((string) $id, 'service/activate'), $data);
     }
 
@@ -183,9 +183,9 @@ class OrdersEndpoint extends AbstractEndpoint
      * @return OrderResponse
      * @throws EasyDCIMException
      */
-    public function suspendService(int|string $id, ?ServiceActionRequest $request = null): OrderResponse
+    public function suspendService($id, ?ServiceActionRequest $request = null): OrderResponse
     {
-        $data = $request?->toArray() ?? [];
+        $data = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->post($this->buildPath((string) $id, 'service/suspend'), $data);
         return OrderResponse::fromArray($response);
     }
@@ -200,9 +200,9 @@ class OrdersEndpoint extends AbstractEndpoint
      * @return OrderResponse
      * @throws EasyDCIMException
      */
-    public function unsuspendService(int|string $id, ?ServiceActionRequest $request = null): OrderResponse
+    public function unsuspendService($id, ?ServiceActionRequest $request = null): OrderResponse
     {
-        $data = $request?->toArray() ?? [];
+        $data = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->post($this->buildPath((string) $id, 'service/unsuspend'), $data);
         return OrderResponse::fromArray($response);
     }
@@ -217,9 +217,9 @@ class OrdersEndpoint extends AbstractEndpoint
      * @return OrderResponse
      * @throws EasyDCIMException
      */
-    public function terminateService(int|string $id, ?ServiceActionRequest $request = null): OrderResponse
+    public function terminateService($id, ?ServiceActionRequest $request = null): OrderResponse
     {
-        $data = $request?->toArray() ?? [];
+        $data = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->post($this->buildPath((string) $id, 'service/terminate'), $data);
         return OrderResponse::fromArray($response);
     }
@@ -232,9 +232,9 @@ class OrdersEndpoint extends AbstractEndpoint
      * @return array
      * @throws EasyDCIMException
      */
-    public function listProvisioningLogs(int|string $id, ?ListProvisioningLogsRequest $request = null): array
+    public function listProvisioningLogs($id, ?ListProvisioningLogsRequest $request = null): array
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         return $this->get($this->buildPath((string) $id, 'provisioning-logs'), $params);
     }
 
@@ -249,7 +249,7 @@ class OrdersEndpoint extends AbstractEndpoint
      */
     public function getActionsList(?GetOrderActionsListRequest $request = null): GetOrderActionsListResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('actions/list', $params);
         return GetOrderActionsListResponse::fromArray($response);
     }

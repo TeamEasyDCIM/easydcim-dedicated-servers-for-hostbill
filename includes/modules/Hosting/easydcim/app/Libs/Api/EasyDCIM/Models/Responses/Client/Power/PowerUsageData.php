@@ -8,10 +8,13 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class PowerUsageData
 {
-    public function __construct(
-        public null|int|float $avgTotalUsage,
-        public ?string $units,
-    ) {}
+    public $avgTotalUsage;
+    public ?string $units;
+    public function __construct($avgTotalUsage, ?string $units)
+    {
+        $this->avgTotalUsage = $avgTotalUsage;
+        $this->units = $units;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -20,8 +23,8 @@ class PowerUsageData
     public static function fromArray(array $data): self
     {
         return new self(
-            avgTotalUsage: Arr::get($data, 'AVG_TOTAL_USAGE', 0),
-            units: Arr::get($data, 'units', ''),
+            Arr::get($data, 'AVG_TOTAL_USAGE', 0),
+            Arr::get($data, 'units', '')
         );
     }
 

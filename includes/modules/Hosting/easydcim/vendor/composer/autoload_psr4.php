@@ -6,5 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ModulesGarden\\Servers\\EasyDCIMv2\\App\\' => array($baseDir . '/app'),
+    'ModulesGarden\\Servers\\EasyDCIMv2\\App\\' => array($baseDir . '/app')
 );

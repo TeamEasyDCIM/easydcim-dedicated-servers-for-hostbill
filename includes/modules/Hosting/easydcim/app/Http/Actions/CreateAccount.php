@@ -143,19 +143,12 @@ class CreateAccount
 
         $clientID = $this->getClientID($api, $client);
 
-        $request = new CreateOrderRequest(
-            module: 'Server',
-            client: (int) $clientID,
-            autoAccept: (bool) $client->getBaseFeatures()['autoAccept'],
-            criteria: $this->buildCriteria($client),
-            service: $this->buildService($api, $client),
-            actions: (new OrderActions($this->params['options'] ?? []))->build()
-        );
+        $request = new CreateOrderRequest('Server', (int) $clientID, (bool) $client->getBaseFeatures()['autoAccept'], $this->buildCriteria($client), $this->buildService($api, $client), null, (new OrderActions($this->params['options'] ?? []))->build());
 
         $result = $api->admin()->orders()->create($request);
 
         $error   = '';
-        $orderId = $result->data?->id ?: 0;
+        $orderId = ($result->data === null ? null : $result->data->id) ?: 0;
 
         if ($result->success === false)
         {
@@ -175,16 +168,16 @@ class CreateAccount
             throw new \Exception(ucfirst($error));
         }
 
-        $service = $result->data?->service;
+        $service = $result->data === null ? null : $result->data->service;
 
         // The EasyDCIM service ID is what every client-scoped v3 endpoint keys
         // off, so store it alongside the order and device IDs.
-        if (!empty($service?->id))
+        if (!empty($service === null ? null : $service->id))
         {
             $this->module->updateDetail('EasyServiceID', $service->id);
         }
 
-        if (!empty($service?->related_id))
+        if (!empty($service === null ? null : $service->related_id))
         {
             $this->module->updateDetail('ServerID', $service->related_id);
 
@@ -206,7 +199,7 @@ class CreateAccount
 
         return [
             'orderId'          => $orderId,
-            'serverId'         => !empty($service?->related_id) ? $service->related_id : '',
+            'serverId'         => !empty($service === null ? null : $service->related_id) ? $service->related_id : '',
             'lastModuleAction' => 'CreateAccount',
         ];
     }
@@ -302,11 +295,11 @@ class CreateAccount
         try
         {
             $response = $api->client()->sshKeys()->create(new CreateSshKeyRequest(
-                name: 'HostBill Order Key ' . date('Y-m-d H:i:s'),
-                sshKey: $value
+                'HostBill Order Key ' . date('Y-m-d H:i:s'),
+                $value
             ));
 
-            if ($response->success !== false && !empty($response->data?->id))
+            if ($response->success !== false && !empty($response->data === null ? null : $response->data->id))
             {
                 return [(int) $response->data->id];
             }
@@ -581,7 +574,7 @@ class CreateAccount
     {
         $existing = $api->admin()->users()->fetchByEmail($client->getEmail());
 
-        if (!empty($existing->data?->id))
+        if (!empty($existing->data === null ? null : $existing->data->id))
         {
             return $existing->data->id;
         }
@@ -597,24 +590,11 @@ class CreateAccount
      */
     private function createClient(EasyDCIMClient $api, IClient $client)
     {
-        $request = new CreateUserRequest(
-            email: $client->getEmail(),
-            password: $client->getPassword(),
-            username: $client->getEmail(),
-            firstname: $client->getFirstName(),
-            lastname: $client->getLastName(),
-            address1: $client->getAddress1(),
-            address2: $client->getAddress2(),
-            city: $client->getCity(),
-            state: $client->getState(),
-            postcode: $client->getPostCode(),
-            countryCode: $client->getCountryCode(),
-            role: $this->getUserRole()
-        );
+        $request = new CreateUserRequest($client->getEmail(), $client->getPassword(), $client->getEmail(), $client->getFirstName(), $client->getLastName(), null, null, $client->getAddress1(), $client->getAddress2(), $client->getCity(), $client->getState(), $client->getPostCode(), $client->getCountryCode(), null, null, $this->getUserRole());
 
         $response = $api->admin()->users()->create($request);
 
-        if ($response->success === false || empty($response->data?->id))
+        if ($response->success === false || empty($response->data === null ? null : $response->data->id))
         {
             $message = $response->hasErrors() ? $response->getErrorsSummary() : (string) $response->message;
 

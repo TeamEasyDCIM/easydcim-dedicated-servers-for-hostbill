@@ -9,6 +9,16 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class ProvisioningServerConfigurationData
 {
+    public ?int $app;
+    public ?string $rebootmethod;
+    public ?string $nameserver1;
+    public ?string $nameserver2;
+    public ?string $emailsToAdmin;
+    public ?string $admin;
+    public ?string $emailsToClient;
+    public ?string $rescueTemplate;
+    public ?string $reinstallTemplate;
+    public ?string $bootloader;
     /**
      * @param int|null $app
      * @param string|null $rebootmethod
@@ -21,18 +31,18 @@ class ProvisioningServerConfigurationData
      * @param string|null $reinstallTemplate
      * @param string|null $bootloader
      */
-    public function __construct(
-        public ?int    $app = null,
-        public ?string $rebootmethod = null,
-        public ?string $nameserver1 = null,
-        public ?string $nameserver2 = null,
-        public ?string $emailsToAdmin = null,
-        public ?string $admin = null,
-        public ?string $emailsToClient = null,
-        public ?string $rescueTemplate = null,
-        public ?string $reinstallTemplate = null,
-        public ?string $bootloader = null,
-    ) {
+    public function __construct(?int    $app = null, ?string $rebootmethod = null, ?string $nameserver1 = null, ?string $nameserver2 = null, ?string $emailsToAdmin = null, ?string $admin = null, ?string $emailsToClient = null, ?string $rescueTemplate = null, ?string $reinstallTemplate = null, ?string $bootloader = null)
+    {
+        $this->app = $app;
+        $this->rebootmethod = $rebootmethod;
+        $this->nameserver1 = $nameserver1;
+        $this->nameserver2 = $nameserver2;
+        $this->emailsToAdmin = $emailsToAdmin;
+        $this->admin = $admin;
+        $this->emailsToClient = $emailsToClient;
+        $this->rescueTemplate = $rescueTemplate;
+        $this->reinstallTemplate = $reinstallTemplate;
+        $this->bootloader = $bootloader;
     }
 
     /**
@@ -42,16 +52,16 @@ class ProvisioningServerConfigurationData
     public static function fromArray(array $data): self
     {
         return new self(
-            app: Arr::get($data, 'app'),
-            rebootmethod: Arr::get($data, 'rebootmethod'),
-            nameserver1: Arr::get($data, 'nameserver_1'),
-            nameserver2: Arr::get($data, 'nameserver_2'),
-            emailsToAdmin: Arr::get($data, 'emails_to_admin'),
-            admin: Arr::get($data, 'admin'),
-            emailsToClient: Arr::get($data, 'emails_to_client'),
-            rescueTemplate: Arr::get($data, 'rescue_template'),
-            reinstallTemplate: Arr::get($data, 'reinstall_template'),
-            bootloader: Arr::get($data, 'bootloader'),
+            Arr::get($data, 'app'),
+            Arr::get($data, 'rebootmethod'),
+            Arr::get($data, 'nameserver_1'),
+            Arr::get($data, 'nameserver_2'),
+            Arr::get($data, 'emails_to_admin'),
+            Arr::get($data, 'admin'),
+            Arr::get($data, 'emails_to_client'),
+            Arr::get($data, 'rescue_template'),
+            Arr::get($data, 'reinstall_template'),
+            Arr::get($data, 'bootloader')
         );
     }
 }

@@ -44,11 +44,7 @@ class DefaultOptions
     public function getModelList()
     {
         try {
-            $models = $this->api->admin()->itemModels()->listAll(new ListItemModelsRequest(
-                searchTerm: implode(',', self::SERVER_TYPE_IDS),
-                searchOp: 'in',
-                searchFields: 'type_id'
-            ));
+            $models = $this->api->admin()->itemModels()->listAll(new ListItemModelsRequest(null, null, null, null, implode(',', self::SERVER_TYPE_IDS), 'in', 'type_id'));
 
             return $models;
         } catch (\Exception $ex) {
@@ -105,9 +101,7 @@ class DefaultOptions
                 return [];
             }
 
-            $addons = $this->api->admin()->osInstallation()->listAllOsAddons(new ListOsAddonsRequest(
-                templateId: $templateId !== null && $templateId !== '' ? (int) $templateId : null
-            ));
+            $addons = $this->api->admin()->osInstallation()->listAllOsAddons(new ListOsAddonsRequest(null, null, null, null, null, null, null, $templateId !== null && $templateId !== '' ? (int) $templateId : null));
 
             return array_values(array_filter($addons, function ($addon) use ($provisioningServerId) {
                 return $addon->serverId === null || (int) $addon->serverId === (int) $provisioningServerId;
@@ -128,10 +122,10 @@ class DefaultOptions
 
         $response = $this->api->admin()->osInstallation()->findProvisioningServer(
             $locationId,
-            new FindProvisioningServerRequest(findByType: FindProvisioningServerRequest::LOCATION_TYPE)
+            new FindProvisioningServerRequest(FindProvisioningServerRequest::LOCATION_TYPE)
         );
 
-        $id = $response->data?->id;
+        $id = $response->data === null ? null : $response->data->id;
 
         return $id !== null ? (int) $id : null;
     }

@@ -6,34 +6,46 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class ItemModelData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $label,
-        public ?int $typeId,
-        public ?int $locationId,
-        public ?string $status,
-        public ?string $description,
-        public ?bool $isPart,
-        public ?bool $mountable,
-        public ?string $manufacturer,
-        public ?string $position,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $label;
+    public ?int $typeId;
+    public ?int $locationId;
+    public ?string $status;
+    public ?string $description;
+    public ?bool $isPart;
+    public ?bool $mountable;
+    public ?string $manufacturer;
+    public ?string $position;
+    public function __construct(?int $id, ?string $name, ?string $label, ?int $typeId, ?int $locationId, ?string $status, ?string $description, ?bool $isPart, ?bool $mountable, ?string $manufacturer, ?string $position)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->label = $label;
+        $this->typeId = $typeId;
+        $this->locationId = $locationId;
+        $this->status = $status;
+        $this->description = $description;
+        $this->isPart = $isPart;
+        $this->mountable = $mountable;
+        $this->manufacturer = $manufacturer;
+        $this->position = $position;
+    }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            label: Arr::get($data, 'label', ''),
-            typeId: Arr::get($data, 'type_id', 0),
-            locationId: Arr::get($data, 'location_id', 0),
-            status: Arr::get($data, 'status', ''),
-            description: Arr::get($data, 'description', ''),
-            isPart: (bool) Arr::get($data, 'is_part', false),
-            mountable: (bool) Arr::get($data, 'mountable', false),
-            manufacturer: Arr::get($data, 'manufacturer', ''),
-            position: Arr::get($data, 'position', ''),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'label', ''),
+            Arr::get($data, 'type_id', 0),
+            Arr::get($data, 'location_id', 0),
+            Arr::get($data, 'status', ''),
+            Arr::get($data, 'description', ''),
+            (bool) Arr::get($data, 'is_part', false),
+            (bool) Arr::get($data, 'mountable', false),
+            Arr::get($data, 'manufacturer', ''),
+            Arr::get($data, 'position', '')
         );
     }
 

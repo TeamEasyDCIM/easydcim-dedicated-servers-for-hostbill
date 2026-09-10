@@ -6,17 +6,27 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class ServicePortData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $type,
-        public ?string $speed = null,
-        public ?string $mac = null,
-        public ?string $status = null,
-        public ?array $traffic = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $type;
+    public ?string $speed;
+    public ?string $mac;
+    public ?string $status;
+    public ?array $traffic;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?string $name, ?string $type, ?string $speed = null, ?string $mac = null, ?string $status = null, ?array $traffic = null, ?string $createdAt = null, ?string $updatedAt = null)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->type = $type;
+        $this->speed = $speed;
+        $this->mac = $mac;
+        $this->status = $status;
+        $this->traffic = $traffic;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -25,15 +35,15 @@ class ServicePortData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            type: Arr::get($data, 'type', ''),
-            speed: Arr::get($data, 'speed'),
-            mac: Arr::get($data, 'mac'),
-            status: Arr::get($data, 'status'),
-            traffic: Arr::get($data, 'traffic'),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'type', ''),
+            Arr::get($data, 'speed'),
+            Arr::get($data, 'mac'),
+            Arr::get($data, 'status'),
+            Arr::get($data, 'traffic'),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 

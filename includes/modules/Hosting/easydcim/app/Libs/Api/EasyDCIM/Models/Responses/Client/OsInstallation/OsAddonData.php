@@ -6,21 +6,32 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class OsAddonData
 {
+    public ?int $id;
+    public ?string $name;
+    public ?string $type;
+    public ?string $description;
+    public ?string $tag;
+    public ?array $tags;
+    public ?string $data;
+    public ?bool $isDefault;
+    public ?string $createdAt;
+    public ?string $updatedAt;
     /**
      * @param array<string>|null $tags
      */
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $type,
-        public ?string $description = null,
-        public ?string $tag = null,
-        public ?array $tags = null,
-        public ?string $data = null,
-        public ?bool $isDefault = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-    ) {}
+    public function __construct(?int $id, ?string $name, ?string $type, ?string $description = null, ?string $tag = null, ?array $tags = null, ?string $data = null, ?bool $isDefault = null, ?string $createdAt = null, ?string $updatedAt = null)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->type = $type;
+        $this->description = $description;
+        $this->tag = $tag;
+        $this->tags = $tags;
+        $this->data = $data;
+        $this->isDefault = $isDefault;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -29,16 +40,16 @@ class OsAddonData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            type: Arr::get($data, 'type', ''),
-            description: Arr::get($data, 'description'),
-            tag: Arr::get($data, 'tag'),
-            tags: Arr::get($data, 'tags'),
-            data: Arr::get($data, 'data'),
-            isDefault: Arr::get($data, 'is_default'),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'type', ''),
+            Arr::get($data, 'description'),
+            Arr::get($data, 'tag'),
+            Arr::get($data, 'tags'),
+            Arr::get($data, 'data'),
+            Arr::get($data, 'is_default'),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 

@@ -8,12 +8,17 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class RackData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?int $locationId,
-        public ?FloorData $floor,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?int $locationId;
+    public ?FloorData $floor;
+    public function __construct(?int $id, ?string $name, ?int $locationId, ?FloorData $floor)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->locationId = $locationId;
+        $this->floor = $floor;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -22,10 +27,10 @@ class RackData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            locationId: Arr::get($data, 'location_id', 0),
-            floor: FloorData::fromArray(Arr::get($data, 'floor', [])),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'location_id', 0),
+            FloorData::fromArray(Arr::get($data, 'floor', []))
         );
     }
 

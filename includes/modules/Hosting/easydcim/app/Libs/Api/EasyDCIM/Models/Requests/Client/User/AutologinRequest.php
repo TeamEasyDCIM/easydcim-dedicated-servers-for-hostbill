@@ -7,9 +7,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class AutologinRequest
 {
-    public function __construct(
-        public string $token,
-    ) {}
+    public string $token;
+    public function __construct(string $token)
+    {
+        $this->token = $token;
+    }
 
     /**
      * @return array<string, mixed>
@@ -28,7 +30,7 @@ class AutologinRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            token: $data['token'],
+            $data['token']
         );
     }
 }

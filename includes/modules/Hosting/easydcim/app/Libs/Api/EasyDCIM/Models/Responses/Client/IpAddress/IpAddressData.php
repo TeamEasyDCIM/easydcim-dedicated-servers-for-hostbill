@@ -8,12 +8,17 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class IpAddressData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $ipAddress,
-        public ?string $description = null,
-        public ?string $type = null,
-    ) {}
+    public ?int $id;
+    public ?string $ipAddress;
+    public ?string $description;
+    public ?string $type;
+    public function __construct(?int $id, ?string $ipAddress, ?string $description = null, ?string $type = null)
+    {
+        $this->id = $id;
+        $this->ipAddress = $ipAddress;
+        $this->description = $description;
+        $this->type = $type;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -22,10 +27,10 @@ class IpAddressData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id'),
-            ipAddress: Arr::get($data, 'ip_address'),
-            description: Arr::get($data, 'description', null),
-            type: Arr::get($data, 'type', null),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'ip_address'),
+            Arr::get($data, 'description', null),
+            Arr::get($data, 'type', null)
         );
     }
 

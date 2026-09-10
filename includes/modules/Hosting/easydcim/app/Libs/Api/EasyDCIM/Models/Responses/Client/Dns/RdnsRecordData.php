@@ -6,18 +6,29 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class RdnsRecordData
 {
-    public function __construct(
-        public ?int $id,
-        public ?int $deviceId,
-        public ?int $userId,
-        public ?int $serverId,
-        public ?string $ip,
-        public ?string $from,
-        public ?string $name,
-        public ?int $ttl,
-        public ?string $createdAt,
-        public ?string $updatedAt,
-    ) {}
+    public ?int $id;
+    public ?int $deviceId;
+    public ?int $userId;
+    public ?int $serverId;
+    public ?string $ip;
+    public ?string $from;
+    public ?string $name;
+    public ?int $ttl;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?int $deviceId, ?int $userId, ?int $serverId, ?string $ip, ?string $from, ?string $name, ?int $ttl, ?string $createdAt, ?string $updatedAt)
+    {
+        $this->id = $id;
+        $this->deviceId = $deviceId;
+        $this->userId = $userId;
+        $this->serverId = $serverId;
+        $this->ip = $ip;
+        $this->from = $from;
+        $this->name = $name;
+        $this->ttl = $ttl;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -26,16 +37,16 @@ class RdnsRecordData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id'),
-            deviceId: Arr::get($data, 'device_id'),
-            userId: Arr::get($data, 'user_id'),
-            serverId: Arr::get($data, 'server_id'),
-            ip: Arr::get($data, 'ip'),
-            from: Arr::get($data, 'from', ''),
-            name: Arr::get($data, 'name', ''),
-            ttl: Arr::get($data, 'ttl'),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'device_id'),
+            Arr::get($data, 'user_id'),
+            Arr::get($data, 'server_id'),
+            Arr::get($data, 'ip'),
+            Arr::get($data, 'from', ''),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'ttl'),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 

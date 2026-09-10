@@ -27,9 +27,9 @@ class SensorsEndpoint extends AbstractEndpoint
      * @return ListSensorsResponse
      * @throws EasyDCIMException
      */
-    public function list(int|string $serviceId, ?ListSensorsRequest $request = null): ListSensorsResponse
+    public function list($serviceId, ?ListSensorsRequest $request = null): ListSensorsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get($this->buildPath((string) $serviceId, 'sensors'), $params);
         return ListSensorsResponse::fromArray($response);
     }
@@ -42,7 +42,7 @@ class SensorsEndpoint extends AbstractEndpoint
      * @return ShowSensorResponse
      * @throws EasyDCIMException
      */
-    public function show(int|string $serviceId, int|string $sensorId): ShowSensorResponse
+    public function show($serviceId, $sensorId): ShowSensorResponse
     {
         $response = $this->get($this->buildPath((string) $serviceId, 'sensors', (string) $sensorId));
         return ShowSensorResponse::fromArray($response);
@@ -56,7 +56,7 @@ class SensorsEndpoint extends AbstractEndpoint
      * @return array<SensorData> Array of all sensors across all pages
      * @throws EasyDCIMException
      */
-    public function listAll(int|string $serviceId, ?ListSensorsRequest $request = null): array
+    public function listAll($serviceId, ?ListSensorsRequest $request = null): array
     {
         $allSensors = [];
         $currentPage = 1;
@@ -65,13 +65,13 @@ class SensorsEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListSensorsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->list($serviceId, $request);

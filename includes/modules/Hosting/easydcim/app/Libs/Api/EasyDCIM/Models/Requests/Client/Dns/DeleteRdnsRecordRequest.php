@@ -4,9 +4,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class DeleteRdnsRecordRequest
 {
-    public function __construct(
-        public int $recordId,
-    ) {}
+    public int $recordId;
+    public function __construct(int $recordId)
+    {
+        $this->recordId = $recordId;
+    }
 
     /**
      * @return array<string, mixed>
@@ -25,7 +27,7 @@ class DeleteRdnsRecordRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            recordId: $data['recordId'] ?? $data['record_id'] ?? 0,
+            $data['recordId'] ?? $data['record_id'] ?? 0
         );
     }
 }

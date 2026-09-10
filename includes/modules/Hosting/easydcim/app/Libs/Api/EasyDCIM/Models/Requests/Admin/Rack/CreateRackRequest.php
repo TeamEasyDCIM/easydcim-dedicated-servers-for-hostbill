@@ -9,12 +9,17 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class CreateRackRequest
 {
-    public function __construct(
-        public string $name,
-        public int|string|null $locationId = null,
-        public ?int $units = null,
-        public ?string $description = null,
-    ) {}
+    public string $name;
+    public $locationId;
+    public ?int $units;
+    public ?string $description;
+    public function __construct(string $name, $locationId = null, ?int $units = null, ?string $description = null)
+    {
+        $this->name = $name;
+        $this->locationId = $locationId;
+        $this->units = $units;
+        $this->description = $description;
+    }
 
     /**
      * @return array<string, mixed>

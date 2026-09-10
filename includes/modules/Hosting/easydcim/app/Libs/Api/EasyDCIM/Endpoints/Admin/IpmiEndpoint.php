@@ -18,7 +18,7 @@ class IpmiEndpoint extends AbstractEndpoint
      * @return NovncConnectResponse
      * @throws EasyDCIMException
      */
-    public function startNoVncSession(int|string $deviceId): NovncConnectResponse
+    public function startNoVncSession($deviceId): NovncConnectResponse
     {
         $response = $this->post($this->buildPath('ipmi', (string) $deviceId, 'novnc-connect'));
         return NovncConnectResponse::fromArray($response);
@@ -31,7 +31,7 @@ class IpmiEndpoint extends AbstractEndpoint
      * @return BmcResetResponse
      * @throws EasyDCIMException
      */
-    public function bmcColdReset(int|string $deviceId): BmcResetResponse
+    public function bmcColdReset($deviceId): BmcResetResponse
     {
         $response = $this->post($this->buildPath('ipmi', (string) $deviceId, 'bmc-reset-cold'));
         return BmcResetResponse::fromArray($response);

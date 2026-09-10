@@ -87,7 +87,7 @@ class ServiceActions
 
                         self::jsonEncode([
                             'success' => 'noVNC KVM Console Launched Successfully',
-                            'url'     => $result->data?->url,
+                            'url'     => $result->data === null ? null : $result->data->url,
                         ]);
                     } catch (\Exception $e) {
                         $this->fail($e->getMessage());
@@ -100,7 +100,7 @@ class ServiceActions
                         // the account's owner, so the link is issued for them.
                         $result = $this->api->client()->users()->getAutoLoginLink();
 
-                        if ($result->success === false || empty($result->data?->link)) {
+                        if ($result->success === false || empty($result->data === null ? null : $result->data->link)) {
                             throw new \Exception($result->message ?: 'Account Not Exist');
                         }
 
@@ -158,7 +158,7 @@ class ServiceActions
     protected function checkMetadataPresent(?DeviceData $device, array $requiredProperties): bool
     {
         foreach ($requiredProperties as $property) {
-            if (empty($device?->metadata[$property] ?? null)) {
+            if (empty(($device === null ? null : $device->metadata)[$property] ?? null)) {
                 return false;
             }
         }

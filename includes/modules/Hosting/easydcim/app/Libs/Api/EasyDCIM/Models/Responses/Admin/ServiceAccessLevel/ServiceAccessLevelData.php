@@ -11,13 +11,19 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class ServiceAccessLevelData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $type,
-        public ?int $default,
-        public ?array $value,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $type;
+    public ?int $default;
+    public ?array $value;
+    public function __construct(?int $id, ?string $name, ?string $type, ?int $default, ?array $value)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->type = $type;
+        $this->default = $default;
+        $this->value = $value;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -26,11 +32,11 @@ class ServiceAccessLevelData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            type: Arr::get($data, 'type', ''),
-            default: Arr::get($data, 'default', 0),
-            value: Arr::get($data, 'value', []),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'type', ''),
+            Arr::get($data, 'default', 0),
+            Arr::get($data, 'value', [])
         );
     }
 

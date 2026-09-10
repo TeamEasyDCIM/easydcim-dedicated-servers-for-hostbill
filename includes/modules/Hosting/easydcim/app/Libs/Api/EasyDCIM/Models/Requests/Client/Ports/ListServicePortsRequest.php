@@ -11,12 +11,14 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\BaseP
  */
 class ListServicePortsRequest extends BasePaginatedRequest
 {
+    public ?bool $withTraffic;
     public function __construct(
-        public ?bool $withTraffic = null,
+        ?bool $withTraffic = null,
         ?int $perPage = null,
         ?int $page = null,
-        ?string $search = null,
+        ?string $search = null
     ) {
+        $this->withTraffic = $withTraffic;
         parent::__construct($perPage, $page, $search);
     }
 

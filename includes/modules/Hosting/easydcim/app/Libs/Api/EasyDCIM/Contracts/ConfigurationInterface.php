@@ -49,7 +49,7 @@ interface ConfigurationInterface
      *
      * @return int|string|null User ID, email, or null
      */
-    public function getImpersonateUser(): int|string|null;
+    public function getImpersonateUser();
 
     /**
      * Set the user to impersonate
@@ -57,7 +57,7 @@ interface ConfigurationInterface
      * @param int|string|null $user User ID, email, or null to clear
      * @return self
      */
-    public function setImpersonateUser(int|string|null $user): self;
+    public function setImpersonateUser($user): self;
 
     /**
      * Get a configuration value by key
@@ -66,7 +66,7 @@ interface ConfigurationInterface
      * @param mixed $default Default value if key not found
      * @return mixed
      */
-    public function get(string $key, mixed $default = null): mixed;
+    public function get(string $key, $default = null);
 
     /**
      * Check if a configuration key exists

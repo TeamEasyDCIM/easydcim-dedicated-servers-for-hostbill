@@ -29,9 +29,9 @@ class DnsManagementEndpoint extends AbstractEndpoint
      * @return ListRdnsRecordsResponse
      * @throws EasyDCIMException
      */
-    public function listRdnsRecords(int|string $serviceId, ?ListRdnsRecordsRequest $request = null): ListRdnsRecordsResponse
+    public function listRdnsRecords($serviceId, ?ListRdnsRecordsRequest $request = null): ListRdnsRecordsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get($this->buildPath((string) $serviceId, 'rdns'), $params);
         return ListRdnsRecordsResponse::fromArray($response);
     }
@@ -44,7 +44,7 @@ class DnsManagementEndpoint extends AbstractEndpoint
      * @return array<RdnsRecordData> Array of all rDNS records across all pages
      * @throws EasyDCIMException
      */
-    public function listAllRdnsRecords(int|string $serviceId, ?ListRdnsRecordsRequest $request = null): array
+    public function listAllRdnsRecords($serviceId, ?ListRdnsRecordsRequest $request = null): array
     {
         $allRecords = [];
         $currentPage = 1;
@@ -53,9 +53,9 @@ class DnsManagementEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListRdnsRecordsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                search: $request->search,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->search
             );
 
             $response = $this->listRdnsRecords($serviceId, $request);
@@ -75,7 +75,7 @@ class DnsManagementEndpoint extends AbstractEndpoint
      * @return BaseResponse
      * @throws EasyDCIMException
      */
-    public function createRdnsRecord(int|string $serviceId, CreateRdnsRecordRequest $request): BaseResponse
+    public function createRdnsRecord($serviceId, CreateRdnsRecordRequest $request): BaseResponse
     {
         $response = $this->post($this->buildPath((string) $serviceId, 'rdns'), $request->toArray());
         return BaseResponse::fromArray($response);
@@ -91,8 +91,8 @@ class DnsManagementEndpoint extends AbstractEndpoint
      * @throws EasyDCIMException
      */
     public function updateRdnsRecord(
-        int|string $serviceId,
-        int|string $recordId,
+        $serviceId,
+        $recordId,
         UpdateRdnsRecordRequest $request
     ): BaseResponse {
         $response = $this->post($this->buildPath((string) $serviceId, 'rdns', (string) $recordId), $request->toArray());
@@ -107,7 +107,7 @@ class DnsManagementEndpoint extends AbstractEndpoint
      * @return BaseResponse
      * @throws EasyDCIMException
      */
-    public function deleteRdnsRecord(int|string $serviceId, int|string $recordId): BaseResponse
+    public function deleteRdnsRecord($serviceId, $recordId): BaseResponse
     {
         $response = $this->delete($this->buildPath((string) $serviceId, 'rdns', (string) $recordId));
         return BaseResponse::fromArray($response);

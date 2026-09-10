@@ -6,11 +6,15 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class UpdateSshKeyRequest
 {
-    public function __construct(
-        public ?string $name = null,
-        public ?string $sshKey = null,
-        public ?bool $default = null,
-    ) {}
+    public ?string $name;
+    public ?string $sshKey;
+    public ?bool $default;
+    public function __construct(?string $name = null, ?string $sshKey = null, ?bool $default = null)
+    {
+        $this->name = $name;
+        $this->sshKey = $sshKey;
+        $this->default = $default;
+    }
 
     /**
      * @return array<string, mixed>
@@ -31,9 +35,9 @@ class UpdateSshKeyRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            name: $data['name'] ?? null,
-            sshKey: $data['ssh_key'] ?? $data['sshKey'] ?? null,
-            default: $data['default'] ?? null,
+            $data['name'] ?? null,
+            $data['ssh_key'] ?? $data['sshKey'] ?? null,
+            $data['default'] ?? null
         );
     }
 }

@@ -36,49 +36,49 @@ class GeneralInformation
 
     public function getIPAddresses(): string
     {
-        $ipAddresses = implode(',', (array) ($this->generalInformations?->ipList ?? []));
+        $ipAddresses = implode(',', (array) (($this->generalInformations === null ? null : $this->generalInformations->ipList) ?? []));
 
         return $ipAddresses != '' ? $ipAddresses : '-';
     }
 
     public function getServiceStatus(): string
     {
-        return $this->generalInformations?->serviceStatus ? ucfirst($this->generalInformations->serviceStatus) : '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->serviceStatus) ? ucfirst($this->generalInformations->serviceStatus) : '-';
     }
 
     public function getDeviceStatus(): string
     {
-        return $this->generalInformations?->deviceStatus ?: '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->deviceStatus) ?: '-';
     }
 
     public function getModel(): string
     {
-        return $this->generalInformations?->model?->name ?: '-';
+        return (($this->generalInformations === null ? null : $this->generalInformations->model) === null ? null : ($this->generalInformations === null ? null : $this->generalInformations->model)->name) ?: '-';
     }
 
     public function getLabel(): string
     {
-        return $this->generalInformations?->label ?: '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->label) ?: '-';
     }
 
     public function getSerialNumber(): string
     {
-        return $this->generalInformations?->serialnumber1 ?: '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->serialnumber1) ?: '-';
     }
 
     public function getStatus(): string
     {
-        return $this->generalInformations?->status ? ucfirst($this->generalInformations->status) : '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->status) ? ucfirst($this->generalInformations->status) : '-';
     }
 
     public function getPurchaseDate(): string
     {
-        return $this->generalInformations?->purchaseDate ? (string) $this->generalInformations->purchaseDate : '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->purchaseDate) ? (string) $this->generalInformations->purchaseDate : '-';
     }
 
     public function getWarrantyMonths(): string
     {
-        $warrantyMonths = (int) ($this->generalInformations?->warrantyMonths ?? 0);
+        $warrantyMonths = (int) (($this->generalInformations === null ? null : $this->generalInformations->warrantyMonths) ?? 0);
 
         if ($warrantyMonths === 0)
         {
@@ -103,12 +103,12 @@ class GeneralInformation
 
     public function getOrderID(): string
     {
-        return $this->generalInformations?->orderId ? (string) $this->generalInformations->orderId : '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->orderId) ? (string) $this->generalInformations->orderId : '-';
     }
 
     public function getServerID(): string
     {
-        return $this->generalInformations?->id ? (string) $this->generalInformations->id : '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->id) ? (string) $this->generalInformations->id : '-';
     }
 
     public function getOrderLink(): string

@@ -31,12 +31,12 @@ class ValidationException extends EasyDCIMException
         array $errors = []
     ) {
         parent::__construct(
-            message: $message,
-            code: $code,
-            previous: $previous,
-            statusCode: 422,
-            responseBody: $responseBody,
-            requestContext: $requestContext
+            $message,
+            $code,
+            $previous,
+            422,
+            $responseBody,
+            $requestContext
         );
         $this->errors = $errors;
     }

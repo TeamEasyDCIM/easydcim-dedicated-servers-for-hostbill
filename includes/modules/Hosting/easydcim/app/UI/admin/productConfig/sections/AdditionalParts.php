@@ -58,11 +58,7 @@ class AdditionalParts
         $options = [];
 
         try {
-            $models = $this->api->admin()->itemModels()->listAll(new ListItemModelsRequest(
-                searchTerm: (string) $typeId,
-                searchOp: 'eq',
-                searchFields: 'type_id'
-            ));
+            $models = $this->api->admin()->itemModels()->listAll(new ListItemModelsRequest(null, null, null, null, (string) $typeId, 'eq', 'type_id'));
         } catch (\Exception $ex) {
             return [];
         }
@@ -88,11 +84,7 @@ class AdditionalParts
         }
 
         try {
-            $types = $this->api->admin()->itemTypes()->listAll(new ListItemTypesRequest(
-                searchTerm: (string) $type,
-                searchOp: 'eq',
-                searchFields: 'name'
-            ));
+            $types = $this->api->admin()->itemTypes()->listAll(new ListItemTypesRequest(null, null, null, null, (string) $type, 'eq', 'name'));
         } catch (\Exception $ex) {
             return null;
         }

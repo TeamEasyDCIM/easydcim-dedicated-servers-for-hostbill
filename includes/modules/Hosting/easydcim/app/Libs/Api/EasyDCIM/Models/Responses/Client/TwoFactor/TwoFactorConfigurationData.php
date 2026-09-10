@@ -11,10 +11,13 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class TwoFactorConfigurationData
 {
-    public function __construct(
-        public ?string $qrCode,
-        public ?string $secretWord,
-    ) {}
+    public ?string $qrCode;
+    public ?string $secretWord;
+    public function __construct(?string $qrCode, ?string $secretWord)
+    {
+        $this->qrCode = $qrCode;
+        $this->secretWord = $secretWord;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -23,8 +26,8 @@ class TwoFactorConfigurationData
     public static function fromArray(array $data): self
     {
         return new self(
-            qrCode: Arr::get($data, 'qr_code', ''),
-            secretWord: Arr::get($data, 'secret_word', ''),
+            Arr::get($data, 'qr_code', ''),
+            Arr::get($data, 'secret_word', '')
         );
     }
 

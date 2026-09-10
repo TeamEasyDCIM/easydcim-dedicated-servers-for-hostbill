@@ -9,14 +9,17 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class UpdateGroupRequest
 {
+    public ?string $title;
+    public ?array $permissions;
     /**
      * @param string|null $title Group title
      * @param array<int>|null $permissions Array of permission IDs
      */
-    public function __construct(
-        public ?string $title = null,
-        public ?array $permissions = null,
-    ) {}
+    public function __construct(?string $title = null, ?array $permissions = null)
+    {
+        $this->title = $title;
+        $this->permissions = $permissions;
+    }
 
     /**
      * @return array<string, mixed>

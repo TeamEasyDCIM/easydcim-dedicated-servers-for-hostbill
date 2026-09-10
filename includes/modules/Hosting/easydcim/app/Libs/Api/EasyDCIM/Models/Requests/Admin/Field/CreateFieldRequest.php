@@ -9,6 +9,22 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class CreateFieldRequest
 {
+    public string $element;
+    public string $group;
+    public string $slug;
+    public string $label;
+    public ?string $options;
+    public ?bool $hidden;
+    public ?bool $provisionable;
+    public ?bool $combined;
+    public ?bool $filterable;
+    public ?string $filterableType;
+    public ?bool $unique;
+    public ?bool $sortable;
+    public ?bool $encrypted;
+    public ?array $additionalRules;
+    public ?int $order;
+    public ?array $types;
     /**
      * @param string $element Field element type
      * @param string $group Field group
@@ -27,24 +43,25 @@ class CreateFieldRequest
      * @param int|null $order Field order
      * @param array<int>|null $types Array of type IDs this field applies to
      */
-    public function __construct(
-        public string $element,
-        public string $group,
-        public string $slug,
-        public string $label,
-        public ?string $options = null,
-        public ?bool $hidden = null,
-        public ?bool $provisionable = null,
-        public ?bool $combined = null,
-        public ?bool $filterable = null,
-        public ?string $filterableType = null,
-        public ?bool $unique = null,
-        public ?bool $sortable = null,
-        public ?bool $encrypted = null,
-        public ?array $additionalRules = null,
-        public ?int $order = null,
-        public ?array $types = null,
-    ) {}
+    public function __construct(string $element, string $group, string $slug, string $label, ?string $options = null, ?bool $hidden = null, ?bool $provisionable = null, ?bool $combined = null, ?bool $filterable = null, ?string $filterableType = null, ?bool $unique = null, ?bool $sortable = null, ?bool $encrypted = null, ?array $additionalRules = null, ?int $order = null, ?array $types = null)
+    {
+        $this->element = $element;
+        $this->group = $group;
+        $this->slug = $slug;
+        $this->label = $label;
+        $this->options = $options;
+        $this->hidden = $hidden;
+        $this->provisionable = $provisionable;
+        $this->combined = $combined;
+        $this->filterable = $filterable;
+        $this->filterableType = $filterableType;
+        $this->unique = $unique;
+        $this->sortable = $sortable;
+        $this->encrypted = $encrypted;
+        $this->additionalRules = $additionalRules;
+        $this->order = $order;
+        $this->types = $types;
+    }
 
     /**
      * @return array<string, mixed>

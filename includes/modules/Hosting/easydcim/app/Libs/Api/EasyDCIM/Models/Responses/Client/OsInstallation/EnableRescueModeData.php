@@ -6,11 +6,15 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class EnableRescueModeData
 {
-    public function __construct(
-        public ?string $username = null,
-        public ?string $password = null,
-        public ?string $status = null,
-    ) {}
+    public ?string $username;
+    public ?string $password;
+    public ?string $status;
+    public function __construct(?string $username = null, ?string $password = null, ?string $status = null)
+    {
+        $this->username = $username;
+        $this->password = $password;
+        $this->status = $status;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -19,9 +23,9 @@ class EnableRescueModeData
     public static function fromArray(array $data): self
     {
         return new self(
-            username: Arr::get($data, 'username'),
-            password: Arr::get($data, 'password'),
-            status: Arr::get($data, 'status'),
+            Arr::get($data, 'username'),
+            Arr::get($data, 'password'),
+            Arr::get($data, 'status')
         );
     }
 

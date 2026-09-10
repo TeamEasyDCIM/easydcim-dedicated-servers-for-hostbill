@@ -8,10 +8,13 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class UptimeData
 {
-    public function __construct(
-        public ?bool $isDown,
-        public ?string $value,
-    ) {}
+    public ?bool $isDown;
+    public ?string $value;
+    public function __construct(?bool $isDown, ?string $value)
+    {
+        $this->isDown = $isDown;
+        $this->value = $value;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -20,8 +23,8 @@ class UptimeData
     public static function fromArray(array $data): self
     {
         return new self(
-            isDown: Arr::get($data, 'is_down', false),
-            value: Arr::get($data, 'value', ''),
+            Arr::get($data, 'is_down', false),
+            Arr::get($data, 'value', '')
         );
     }
 

@@ -9,9 +9,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class DiscoverDeviceRequest
 {
-    public function __construct(
-        public string $protocol,
-    ) {}
+    public string $protocol;
+    public function __construct(string $protocol)
+    {
+        $this->protocol = $protocol;
+    }
 
     /**
      * @return array<string, mixed>

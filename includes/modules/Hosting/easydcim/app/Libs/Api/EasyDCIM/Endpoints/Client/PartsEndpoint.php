@@ -23,9 +23,9 @@ class PartsEndpoint extends AbstractEndpoint
      * @param ListServicePartsRequest|null $request
      * @return ListServicePartsResponse
      */
-    public function listServiceParts(int|string $serviceId, ?ListServicePartsRequest $request = null): ListServicePartsResponse
+    public function listServiceParts($serviceId, ?ListServicePartsRequest $request = null): ListServicePartsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get($this->buildPath((string) $serviceId, 'parts'), $params);
         return ListServicePartsResponse::fromArray($response);
     }
@@ -37,7 +37,7 @@ class PartsEndpoint extends AbstractEndpoint
      * @param ListServicePartsRequest|null $request
      * @return array Array of all parts across all pages
      */
-    public function listAllServiceParts(int|string $serviceId, ?ListServicePartsRequest $request = null): array
+    public function listAllServiceParts($serviceId, ?ListServicePartsRequest $request = null): array
     {
         $allParts = [];
         $currentPage = 1;
@@ -46,9 +46,9 @@ class PartsEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListServicePartsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                search: $request->search,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->search
             );
 
             $response = $this->listServiceParts($serviceId, $request);

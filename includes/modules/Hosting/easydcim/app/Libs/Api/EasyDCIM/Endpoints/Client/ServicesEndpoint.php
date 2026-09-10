@@ -36,7 +36,7 @@ class ServicesEndpoint extends AbstractEndpoint
      */
     public function list(?ListServicesRequest $request = null): ListServicesResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('', $params);
         return ListServicesResponse::fromArray($response);
     }
@@ -57,14 +57,14 @@ class ServicesEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListServicesRequest(
-                filter: $request->filter,
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields,
+                $request->filter,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->list($request);
@@ -83,7 +83,7 @@ class ServicesEndpoint extends AbstractEndpoint
      * @return ShowServiceResponse
      * @throws EasyDCIMException
      */
-    public function show(int|string $id): ShowServiceResponse
+    public function show($id): ShowServiceResponse
     {
         $response = $this->get((string) $id);
         return ShowServiceResponse::fromArray($response);
@@ -97,9 +97,9 @@ class ServicesEndpoint extends AbstractEndpoint
      * @return GetBandwidthResponse
      * @throws EasyDCIMException
      */
-    public function getBandwidth(int|string $id, ?GetBandwidthRequest $request = null): GetBandwidthResponse
+    public function getBandwidth($id, ?GetBandwidthRequest $request = null): GetBandwidthResponse
     {
-        $data = $request?->toArray() ?? [];
+        $data = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->post($this->buildPath((string) $id, 'bandwidth'), $data);
         return GetBandwidthResponse::fromArray($response);
     }
@@ -112,9 +112,9 @@ class ServicesEndpoint extends AbstractEndpoint
      * @return GetPowerUsageResponse
      * @throws EasyDCIMException
      */
-    public function getPowerUsage(int|string $id, ?GetPowerUsageRequest $request = null): GetPowerUsageResponse
+    public function getPowerUsage($id, ?GetPowerUsageRequest $request = null): GetPowerUsageResponse
     {
-        $data = $request?->toArray() ?? [];
+        $data = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->post($this->buildPath((string) $id, 'powerusage'), $data);
         return GetPowerUsageResponse::fromArray($response);
     }
@@ -126,7 +126,7 @@ class ServicesEndpoint extends AbstractEndpoint
      * @param PowerActionRequest $request
      * @return PowerActionResponse
      */
-    public function powerAction(int|string $id, PowerActionRequest $request): PowerActionResponse
+    public function powerAction($id, PowerActionRequest $request): PowerActionResponse
     {
         $data = $request->toArray();
         $response = $this->post($this->buildPath((string) $id, 'power/action'), $data);
@@ -141,7 +141,7 @@ class ServicesEndpoint extends AbstractEndpoint
      * @return BaseResponse
      * @throws EasyDCIMException
      */
-    public function assignMetadata(int|string $id, AssignMetadataRequest $request): BaseResponse
+    public function assignMetadata($id, AssignMetadataRequest $request): BaseResponse
     {
         $response = $this->post(
             $this->buildPath((string) $id, 'assign-metadata'),

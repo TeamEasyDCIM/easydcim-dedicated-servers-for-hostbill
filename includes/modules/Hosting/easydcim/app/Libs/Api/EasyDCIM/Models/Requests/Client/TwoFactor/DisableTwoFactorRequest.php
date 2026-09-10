@@ -7,9 +7,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class DisableTwoFactorRequest
 {
-    public function __construct(
-        public string $password,
-    ) {}
+    public string $password;
+    public function __construct(string $password)
+    {
+        $this->password = $password;
+    }
 
     /**
      * @return array<string, mixed>
@@ -28,7 +30,7 @@ class DisableTwoFactorRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            password: $data['password'],
+            $data['password']
         );
     }
 }

@@ -11,11 +11,15 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class ConsoleInformationData
 {
-    public function __construct(
-        public ?string $ipmiUsername,
-        public ?string $ipmiPassword,
-        public ?bool $disableLoginButtons,
-    ) {}
+    public ?string $ipmiUsername;
+    public ?string $ipmiPassword;
+    public ?bool $disableLoginButtons;
+    public function __construct(?string $ipmiUsername, ?string $ipmiPassword, ?bool $disableLoginButtons)
+    {
+        $this->ipmiUsername = $ipmiUsername;
+        $this->ipmiPassword = $ipmiPassword;
+        $this->disableLoginButtons = $disableLoginButtons;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -24,9 +28,9 @@ class ConsoleInformationData
     public static function fromArray(array $data): self
     {
         return new self(
-            ipmiUsername: Arr::get($data, 'ipmi_username', ''),
-            ipmiPassword: Arr::get($data, 'ipmi_password', ''),
-            disableLoginButtons: Arr::get($data, 'disable_login_buttons', false),
+            Arr::get($data, 'ipmi_username', ''),
+            Arr::get($data, 'ipmi_password', ''),
+            Arr::get($data, 'disable_login_buttons', false)
         );
     }
 

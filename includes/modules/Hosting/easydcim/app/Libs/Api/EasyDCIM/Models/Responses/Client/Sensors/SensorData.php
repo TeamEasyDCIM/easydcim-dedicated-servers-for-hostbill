@@ -6,20 +6,33 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class SensorData
 {
-    public function __construct(
-        public ?int $id,
-        public ?int $itemId = null,
-        public ?string $name = null,
-        public ?string $class = null,
-        public ?string $type = null,
-        public ?string $unit = null,
-        public ?string $index = null,
-        public ?string $reading = null,
-        public ?string $lastPolled = null,
-        public mixed $configuration = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-    ) {}
+    public ?int $id;
+    public ?int $itemId;
+    public ?string $name;
+    public ?string $class;
+    public ?string $type;
+    public ?string $unit;
+    public ?string $index;
+    public ?string $reading;
+    public ?string $lastPolled;
+    public $configuration;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?int $itemId = null, ?string $name = null, ?string $class = null, ?string $type = null, ?string $unit = null, ?string $index = null, ?string $reading = null, ?string $lastPolled = null, $configuration = null, ?string $createdAt = null, ?string $updatedAt = null)
+    {
+        $this->id = $id;
+        $this->itemId = $itemId;
+        $this->name = $name;
+        $this->class = $class;
+        $this->type = $type;
+        $this->unit = $unit;
+        $this->index = $index;
+        $this->reading = $reading;
+        $this->lastPolled = $lastPolled;
+        $this->configuration = $configuration;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -28,18 +41,18 @@ class SensorData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            itemId: Arr::get($data, 'item_id'),
-            name: Arr::get($data, 'name'),
-            class: Arr::get($data, 'class'),
-            type: Arr::get($data, 'type'),
-            unit: Arr::get($data, 'unit'),
-            index: Arr::get($data, 'index'),
-            reading: Arr::get($data, 'reading'),
-            lastPolled: Arr::get($data, 'last_polled'),
-            configuration: Arr::get($data, 'configuration'),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'item_id'),
+            Arr::get($data, 'name'),
+            Arr::get($data, 'class'),
+            Arr::get($data, 'type'),
+            Arr::get($data, 'unit'),
+            Arr::get($data, 'index'),
+            Arr::get($data, 'reading'),
+            Arr::get($data, 'last_polled'),
+            Arr::get($data, 'configuration'),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 

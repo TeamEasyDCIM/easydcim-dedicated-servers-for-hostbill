@@ -117,7 +117,7 @@ abstract class AbstractEndpoint
      * @param array<string, mixed> $response
      * @return mixed
      */
-    protected function extractData(array $response): mixed
+    protected function extractData(array $response)
     {
         return Arr::get($response, 'data', $response);
     }

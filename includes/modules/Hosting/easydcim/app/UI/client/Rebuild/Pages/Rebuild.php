@@ -150,20 +150,18 @@ class Rebuild
         $deviceId = $this->client->getEasyServerID();
 
         $request = new InstallOsRequest(
-            template: (int) $data['templateCaId'],
-            hostname: $data['rebuildHostname'] ?? null,
-            username: $data['rebuildUsername'] ?? null,
-            password: $data['rebuildPassword'] ?? null,
-            rootPassword: $data['rebuildRootSSHPassword'] ?? null,
-            // v2 sent both the disk layout and the extras as "disk_addon", so
-            // the extras silently replaced the layout. They are distinct here.
-            diskAddon: isset($data['rebuildDiskLayout']) && $data['rebuildDiskLayout'] !== ''
+            (int) $data['templateCaId'],
+            $data['rebuildHostname'] ?? null,
+            $data['rebuildUsername'] ?? null,
+            $data['rebuildPassword'] ?? null,
+            $data['rebuildRootSSHPassword'] ?? null,
+            isset($data['rebuildDiskLayout']) && $data['rebuildDiskLayout'] !== ''
                 ? (int) $data['rebuildDiskLayout']
                 : null,
-            extras: isset($data['rebuildExtras']) && $data['rebuildExtras'] !== ''
+            isset($data['rebuildExtras']) && $data['rebuildExtras'] !== ''
                 ? array_values((array) $data['rebuildExtras'])
                 : null,
-            sshKeys: $this->getSelectedSshKeys($data)
+            $this->getSelectedSshKeys($data)
         );
 
         $result = $this->api->admin()->osInstallation()->installOs($deviceId, $request);
@@ -221,11 +219,11 @@ class Rebuild
         $deviceId = $this->client->getEasyServerID();
 
         $device = $this->api->admin()->devices()->show($deviceId)->data;
-        $metadata = (array) ($device?->metadata ?? []);
+        $metadata = (array) (($device === null ? null : $device->metadata) ?? []);
 
         // v3 reports the provisioning state as a message rather than a status.
         $installation = $this->api->admin()->osInstallation()->getOsInstallationInfo($deviceId);
-        $instalationStatus = (string) ($installation->data?->message ?? '');
+        $instalationStatus = (string) (($installation->data === null ? null : $installation->data->message) ?? '');
 
         $currentOs = $metadata['OS'] ?? '';
 
@@ -233,7 +231,7 @@ class Rebuild
             'hostInformation'             => $metadata['IP Address'] ?? '',
             'hostname'                    => $metadata['Hostname'] ?? '',
             'currentOS'                   => $currentOs,
-            'osIsCurrentlyBeingInstalled' => empty($device?->osInstallation) ? 'NO' : 'YES',
+            'osIsCurrentlyBeingInstalled' => empty($device === null ? null : $device->osInstallation) ? 'NO' : 'YES',
             'username'                    => $this->params['username'],
             'sshPassword'                 => $metadata['SSH Password'] ?? '',
             'sshRootPassword'             => $metadata['SSH Root Password'] ?? '',

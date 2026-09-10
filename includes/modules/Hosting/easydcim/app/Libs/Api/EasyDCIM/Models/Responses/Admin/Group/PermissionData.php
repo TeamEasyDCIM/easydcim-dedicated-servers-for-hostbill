@@ -11,13 +11,19 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class PermissionData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $displayName,
-        public ?string $createdAt,
-        public ?string $updatedAt,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $displayName;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?string $name, ?string $displayName, ?string $createdAt, ?string $updatedAt)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->displayName = $displayName;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -26,11 +32,11 @@ class PermissionData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            displayName: Arr::get($data, 'display_name', ''),
-            createdAt: Arr::get($data, 'created_at', ''),
-            updatedAt: Arr::get($data, 'updated_at', ''),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'display_name', ''),
+            Arr::get($data, 'created_at', ''),
+            Arr::get($data, 'updated_at', '')
         );
     }
 

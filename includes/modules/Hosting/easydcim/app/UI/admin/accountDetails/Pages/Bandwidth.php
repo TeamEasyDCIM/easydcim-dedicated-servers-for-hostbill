@@ -83,8 +83,8 @@ class Bandwidth
         try
         {
             $response = $this->api->admin()->devices()->getBandwidth($deviceId, new GetDeviceBandwidthRequest(
-                startDate: $start->toDateTimeString(),
-                endDate: $end->toDateTimeString()
+                $start->toDateTimeString(),
+                $end->toDateTimeString()
             ));
 
             return $response->data;

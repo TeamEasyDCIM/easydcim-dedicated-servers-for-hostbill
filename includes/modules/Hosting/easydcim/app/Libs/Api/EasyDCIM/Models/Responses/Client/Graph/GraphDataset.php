@@ -9,16 +9,19 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class GraphDataset
 {
-    public function __construct(
-        public ?array $data = [],
-        public ?string $dataset_name = null,
-    ) {}
+    public ?array $data;
+    public ?string $dataset_name;
+    public function __construct(?array $data = [], ?string $dataset_name = null)
+    {
+        $this->data = $data;
+        $this->dataset_name = $dataset_name;
+    }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            data: Arr::get($data, 'data', []),
-            dataset_name: Arr::get($data, 'dataset_name') ?? Arr::get($data, 'datasetName'),
+            Arr::get($data, 'data', []),
+            Arr::get($data, 'dataset_name') ?? Arr::get($data, 'datasetName')
         );
     }
 

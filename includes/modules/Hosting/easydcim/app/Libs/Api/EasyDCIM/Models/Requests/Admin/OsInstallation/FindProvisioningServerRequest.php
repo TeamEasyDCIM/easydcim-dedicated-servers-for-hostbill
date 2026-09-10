@@ -9,13 +9,15 @@ class FindProvisioningServerRequest
 {
     public const LOCATION_TYPE = 'location';
     public const DEVICE_TYPE = 'device';
+    public ?string $findByType;
 
     /**
      * @param string|null $findByType Find by type
      */
-    public function __construct(
-        public ?string $findByType = null,
-    ) {}
+    public function __construct(?string $findByType = null)
+    {
+        $this->findByType = $findByType;
+    }
 
     /**
      * @return array<string, mixed>

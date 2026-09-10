@@ -6,30 +6,40 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class ServiceRelated
 {
-    public function __construct(
-        public ?string $label = null,
-        public ?string $model = null,
-        public ?string $location = null,
-        public ?string $location_flag = null,
-        public ?string $rack = null,
-        public ?string $device_status = null,
-        public ?string $uptime = null,
-        public ?array  $ip_addresses = null,
-        public ?array  $metadata = null,
-    ) {}
+    public ?string $label;
+    public ?string $model;
+    public ?string $location;
+    public ?string $location_flag;
+    public ?string $rack;
+    public ?string $device_status;
+    public ?string $uptime;
+    public ?array $ip_addresses;
+    public ?array $metadata;
+    public function __construct(?string $label = null, ?string $model = null, ?string $location = null, ?string $location_flag = null, ?string $rack = null, ?string $device_status = null, ?string $uptime = null, ?array  $ip_addresses = null, ?array  $metadata = null)
+    {
+        $this->label = $label;
+        $this->model = $model;
+        $this->location = $location;
+        $this->location_flag = $location_flag;
+        $this->rack = $rack;
+        $this->device_status = $device_status;
+        $this->uptime = $uptime;
+        $this->ip_addresses = $ip_addresses;
+        $this->metadata = $metadata;
+    }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            label: Arr::get($data, 'label'),
-            model: Arr::get($data, 'model'),
-            location: Arr::get($data, 'location'),
-            location_flag: Arr::get($data, 'location_flag'),
-            rack: Arr::get($data, 'rack'),
-            device_status: Arr::get($data, 'device_status'),
-            uptime: Arr::get($data, 'uptime'),
-            ip_addresses: Arr::get($data, 'ip_addresses'),
-            metadata: Arr::get($data, 'metadata'),
+            Arr::get($data, 'label'),
+            Arr::get($data, 'model'),
+            Arr::get($data, 'location'),
+            Arr::get($data, 'location_flag'),
+            Arr::get($data, 'rack'),
+            Arr::get($data, 'device_status'),
+            Arr::get($data, 'uptime'),
+            Arr::get($data, 'ip_addresses'),
+            Arr::get($data, 'metadata')
         );
     }
 

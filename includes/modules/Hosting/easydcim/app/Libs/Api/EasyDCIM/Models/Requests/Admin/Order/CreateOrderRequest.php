@@ -9,15 +9,23 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class CreateOrderRequest
 {
-    public function __construct(
-        public string $module,
-        public int $client,
-        public bool $autoAccept = false,
-        public ?array $criteria = null,
-        public ?array $service = null,
-        public ?array $other = null,
-        public ?array $actions = null,
-    ) {}
+    public string $module;
+    public int $client;
+    public bool $autoAccept;
+    public ?array $criteria;
+    public ?array $service;
+    public ?array $other;
+    public ?array $actions;
+    public function __construct(string $module, int $client, bool $autoAccept = false, ?array $criteria = null, ?array $service = null, ?array $other = null, ?array $actions = null)
+    {
+        $this->module = $module;
+        $this->client = $client;
+        $this->autoAccept = $autoAccept;
+        $this->criteria = $criteria;
+        $this->service = $service;
+        $this->other = $other;
+        $this->actions = $actions;
+    }
 
     /**
      * @return array<string, mixed>

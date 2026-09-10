@@ -9,11 +9,15 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 abstract class BasePaginatedRequest
 {
-    public function __construct(
-        public ?int $perPage = null,
-        public ?int $page = null,
-        public ?string $search = null,
-    ) {}
+    public ?int $perPage;
+    public ?int $page;
+    public ?string $search;
+    public function __construct(?int $perPage = null, ?int $page = null, ?string $search = null)
+    {
+        $this->perPage = $perPage;
+        $this->page = $page;
+        $this->search = $search;
+    }
 
     /**
      * @return array<string, mixed>

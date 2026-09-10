@@ -9,12 +9,17 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class CreateItemTypeRequest
 {
-    public function __construct(
-        public string $name,
-        public ?string $description = null,
-        public ?string $group = null,
-        public ?string $color = null,
-    ) {}
+    public string $name;
+    public ?string $description;
+    public ?string $group;
+    public ?string $color;
+    public function __construct(string $name, ?string $description = null, ?string $group = null, ?string $color = null)
+    {
+        $this->name = $name;
+        $this->description = $description;
+        $this->group = $group;
+        $this->color = $color;
+    }
 
     /**
      * @return array<string, mixed>

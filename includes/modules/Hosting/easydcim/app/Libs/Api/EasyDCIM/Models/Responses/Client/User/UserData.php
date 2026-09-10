@@ -11,26 +11,45 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class UserData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $username,
-        public ?string $firstname,
-        public ?string $lastname,
-        public ?string $name,
-        public ?string $email,
-        public ?string $company,
-        public ?string $avatar,
-        public ?string $largeAvatar,
-        public ?string $gender,
-        public ?string $countryCode,
-        public ?string $countryName,
-        public ?int $active,
-        public ?string $status,
-        public ?string $lastLogin,
-        public ?string $locale,
-        public ?int $timezone,
-        public ?bool $twoFactorEnabled,
-    ) {}
+    public ?int $id;
+    public ?string $username;
+    public ?string $firstname;
+    public ?string $lastname;
+    public ?string $name;
+    public ?string $email;
+    public ?string $company;
+    public ?string $avatar;
+    public ?string $largeAvatar;
+    public ?string $gender;
+    public ?string $countryCode;
+    public ?string $countryName;
+    public ?int $active;
+    public ?string $status;
+    public ?string $lastLogin;
+    public ?string $locale;
+    public ?int $timezone;
+    public ?bool $twoFactorEnabled;
+    public function __construct(?int $id, ?string $username, ?string $firstname, ?string $lastname, ?string $name, ?string $email, ?string $company, ?string $avatar, ?string $largeAvatar, ?string $gender, ?string $countryCode, ?string $countryName, ?int $active, ?string $status, ?string $lastLogin, ?string $locale, ?int $timezone, ?bool $twoFactorEnabled)
+    {
+        $this->id = $id;
+        $this->username = $username;
+        $this->firstname = $firstname;
+        $this->lastname = $lastname;
+        $this->name = $name;
+        $this->email = $email;
+        $this->company = $company;
+        $this->avatar = $avatar;
+        $this->largeAvatar = $largeAvatar;
+        $this->gender = $gender;
+        $this->countryCode = $countryCode;
+        $this->countryName = $countryName;
+        $this->active = $active;
+        $this->status = $status;
+        $this->lastLogin = $lastLogin;
+        $this->locale = $locale;
+        $this->timezone = $timezone;
+        $this->twoFactorEnabled = $twoFactorEnabled;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -39,24 +58,24 @@ class UserData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            username: Arr::get($data, 'username', ''),
-            firstname: Arr::get($data, 'firstname', ''),
-            lastname: Arr::get($data, 'lastname', ''),
-            name: Arr::get($data, 'name', ''),
-            email: Arr::get($data, 'email', ''),
-            company: Arr::get($data, 'company'),
-            avatar: Arr::get($data, 'avatar', ''),
-            largeAvatar: Arr::get($data, 'large_avatar', ''),
-            gender: Arr::get($data, 'gender', ''),
-            countryCode: Arr::get($data, 'country_code'),
-            countryName: Arr::get($data, 'country_name', ''),
-            active: Arr::get($data, 'active', 0),
-            status: Arr::get($data, 'status', ''),
-            lastLogin: Arr::get($data, 'last_login'),
-            locale: Arr::get($data, 'locale'),
-            timezone: Arr::get($data, 'timezone', 0),
-            twoFactorEnabled: Arr::get($data, 'two_factor_enabled', false),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'username', ''),
+            Arr::get($data, 'firstname', ''),
+            Arr::get($data, 'lastname', ''),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'email', ''),
+            Arr::get($data, 'company'),
+            Arr::get($data, 'avatar', ''),
+            Arr::get($data, 'large_avatar', ''),
+            Arr::get($data, 'gender', ''),
+            Arr::get($data, 'country_code'),
+            Arr::get($data, 'country_name', ''),
+            Arr::get($data, 'active', 0),
+            Arr::get($data, 'status', ''),
+            Arr::get($data, 'last_login'),
+            Arr::get($data, 'locale'),
+            Arr::get($data, 'timezone', 0),
+            Arr::get($data, 'two_factor_enabled', false)
         );
     }
 

@@ -9,9 +9,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class VerifyTokenAbilityRequest
 {
-    public function __construct(
-        public string $ability,
-    ) {}
+    public string $ability;
+    public function __construct(string $ability)
+    {
+        $this->ability = $ability;
+    }
 
     /**
      * @return array<string, mixed>

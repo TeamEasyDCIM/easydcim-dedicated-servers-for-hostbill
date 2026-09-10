@@ -9,11 +9,15 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class CloseSessionRequest
 {
-    public function __construct(
-        public string $password,
-        public string $port,
-        public string $token,
-    ) {}
+    public string $password;
+    public string $port;
+    public string $token;
+    public function __construct(string $password, string $port, string $token)
+    {
+        $this->password = $password;
+        $this->port = $port;
+        $this->token = $token;
+    }
 
     /**
      * @return array<string, mixed>

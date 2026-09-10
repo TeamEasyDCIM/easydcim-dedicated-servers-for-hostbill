@@ -121,13 +121,7 @@ class Sensors
 
             $dates = $this->getStartAndEndDateTimestamps($getParams['interval'] ?? 'td');
 
-            $graphData = $this->api->client()->graphs()->export($sensorId, new ExportGraphRequest(
-                type: self::GRAPH_TYPE,
-                target: self::GRAPH_TARGET,
-                start: (string) $dates['start'],
-                end: (string) $dates['end'],
-                raw: false
-            ));
+            $graphData = $this->api->client()->graphs()->export($sensorId, new ExportGraphRequest(self::GRAPH_TYPE, self::GRAPH_TARGET, (string) $dates['start'], (string) $dates['end'], null, false));
 
             $data = $graphData->toArray();
             $data['unit'] = $this->getDateUnitForLabels((array) $graphData->labels);

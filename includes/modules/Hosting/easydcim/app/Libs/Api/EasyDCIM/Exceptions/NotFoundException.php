@@ -22,12 +22,12 @@ class NotFoundException extends EasyDCIMException
         ?array $requestContext = null
     ) {
         parent::__construct(
-            message: $message,
-            code: $code,
-            previous: $previous,
-            statusCode: 404,
-            responseBody: $responseBody,
-            requestContext: $requestContext
+            $message,
+            $code,
+            $previous,
+            404,
+            $responseBody,
+            $requestContext
         );
     }
 }

@@ -12,7 +12,7 @@ class ShowDeviceConfigurationResponse extends BaseResponse
 {
     public ?DeviceConfigurationData $data = null;
 
-    public static function fromArray(array $response): static
+    public static function fromArray(array $response)
     {
         $instance = parent::fromArray($response);
         $responseData = Arr::get($response, 'data');
@@ -23,7 +23,7 @@ class ShowDeviceConfigurationResponse extends BaseResponse
     public function toArray(): array
     {
         return array_merge(parent::toArray(), array_filter(
-            ['data' => $this->data?->toArray()],
+            ['data' => $this->data === null ? null : $this->data->toArray()],
             fn($v) => $v !== null
         ));
     }

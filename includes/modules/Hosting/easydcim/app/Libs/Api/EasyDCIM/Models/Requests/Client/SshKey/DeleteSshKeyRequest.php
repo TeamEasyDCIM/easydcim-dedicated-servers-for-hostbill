@@ -4,9 +4,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class DeleteSshKeyRequest
 {
-    public function __construct(
-        public int $id,
-    ) {}
+    public int $id;
+    public function __construct(int $id)
+    {
+        $this->id = $id;
+    }
 
     /**
      * @return array<string, mixed>
@@ -25,7 +27,7 @@ class DeleteSshKeyRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['id'] ?? 0,
+            $data['id'] ?? 0
         );
     }
 }

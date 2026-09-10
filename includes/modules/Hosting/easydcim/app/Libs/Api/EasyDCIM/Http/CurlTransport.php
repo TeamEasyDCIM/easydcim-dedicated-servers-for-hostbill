@@ -13,11 +13,14 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Exceptions\NetworkExc
  */
 class CurlTransport implements TransportInterface
 {
-    public function __construct(
-        protected int $timeout = 30,
-        protected int $connectTimeout = 10,
-        protected bool $verifySsl = false
-    ) {
+    protected int $timeout;
+    protected int $connectTimeout;
+    protected bool $verifySsl;
+    public function __construct(int $timeout = 30, int $connectTimeout = 10, bool $verifySsl = false)
+    {
+        $this->timeout = $timeout;
+        $this->connectTimeout = $connectTimeout;
+        $this->verifySsl = $verifySsl;
     }
 
     public function send(HttpRequest $request): HttpResponse

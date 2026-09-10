@@ -9,15 +9,23 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 abstract class BaseAdvancedPaginatedRequest
 {
-    public function __construct(
-        public ?int $perPage = null,
-        public ?int $page = null,
-        public ?string $sortBy = null,
-        public ?string $sortDir = null,
-        public ?string $searchTerm = null,
-        public ?string $searchOp = null,
-        public ?string $searchFields = null,
-    ) {}
+    public ?int $perPage;
+    public ?int $page;
+    public ?string $sortBy;
+    public ?string $sortDir;
+    public ?string $searchTerm;
+    public ?string $searchOp;
+    public ?string $searchFields;
+    public function __construct(?int $perPage = null, ?int $page = null, ?string $sortBy = null, ?string $sortDir = null, ?string $searchTerm = null, ?string $searchOp = null, ?string $searchFields = null)
+    {
+        $this->perPage = $perPage;
+        $this->page = $page;
+        $this->sortBy = $sortBy;
+        $this->sortDir = $sortDir;
+        $this->searchTerm = $searchTerm;
+        $this->searchOp = $searchOp;
+        $this->searchFields = $searchFields;
+    }
 
     /**
      * @return array<string, mixed>

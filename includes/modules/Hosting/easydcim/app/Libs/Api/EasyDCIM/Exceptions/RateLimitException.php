@@ -40,12 +40,12 @@ class RateLimitException extends EasyDCIMException
         ?int $remaining = null
     ) {
         parent::__construct(
-            message: $message,
-            code: $code,
-            previous: $previous,
-            statusCode: 429,
-            responseBody: $responseBody,
-            requestContext: $requestContext
+            $message,
+            $code,
+            $previous,
+            429,
+            $responseBody,
+            $requestContext
         );
         $this->retryAfter = $retryAfter;
         $this->rateLimit = $rateLimit;

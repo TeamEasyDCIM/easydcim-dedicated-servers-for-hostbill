@@ -7,7 +7,7 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class AutologinResponse extends BaseResponse
 {
-    public static function fromArray(array $response): static
+    public static function fromArray(array $response)
     {
         $instance = parent::fromArray($response);
         $instance->success = Arr::get($response, 'success', false) ?? true;

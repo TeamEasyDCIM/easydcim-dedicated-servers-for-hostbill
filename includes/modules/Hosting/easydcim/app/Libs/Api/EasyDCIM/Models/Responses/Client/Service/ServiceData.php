@@ -8,15 +8,23 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class ServiceData
 {
-    public function __construct(
-        public ?int $id,
-        public ?int $relatedId,
-        public ?ServiceRelated $related,
-        public ?string $type,
-        public ?string $status,
-        public ?string $createdAt,
-        public ?ServiceAccessLevel $accessLevel = null,
-    ) {}
+    public ?int $id;
+    public ?int $relatedId;
+    public ?ServiceRelated $related;
+    public ?string $type;
+    public ?string $status;
+    public ?string $createdAt;
+    public ?ServiceAccessLevel $accessLevel;
+    public function __construct(?int $id, ?int $relatedId, ?ServiceRelated $related, ?string $type, ?string $status, ?string $createdAt, ?ServiceAccessLevel $accessLevel = null)
+    {
+        $this->id = $id;
+        $this->relatedId = $relatedId;
+        $this->related = $related;
+        $this->type = $type;
+        $this->status = $status;
+        $this->createdAt = $createdAt;
+        $this->accessLevel = $accessLevel;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -28,13 +36,13 @@ class ServiceData
         $relatedData = Arr::get($data, 'related', []);
 
         return new self(
-            id: Arr::get($data, 'id', 0),
-            relatedId: Arr::get($data, 'related_id', 0),
-            related: ServiceRelated::fromArray($relatedData),
-            type: Arr::get($data, 'type', ''),
-            status: Arr::get($data, 'status', ''),
-            createdAt: Arr::get($data, 'created_at', ''),
-            accessLevel: $accessLevelData ? ServiceAccessLevel::fromArray($accessLevelData) : null,
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'related_id', 0),
+            ServiceRelated::fromArray($relatedData),
+            Arr::get($data, 'type', ''),
+            Arr::get($data, 'status', ''),
+            Arr::get($data, 'created_at', ''),
+            $accessLevelData ? ServiceAccessLevel::fromArray($accessLevelData) : null
         );
     }
 
@@ -50,7 +58,7 @@ class ServiceData
             'type' => $this->type,
             'status' => $this->status,
             'created_at' => $this->createdAt,
-            'access_level' => $this->accessLevel?->toArray(),
+            'access_level' => $this->accessLevel === null ? null : $this->accessLevel->toArray(),
         ];
     }
 }

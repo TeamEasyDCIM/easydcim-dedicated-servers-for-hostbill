@@ -8,18 +8,23 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class AccessLevelPermissions
 {
+    public ?array $baseFeatures;
+    public ?array $metadata;
+    public ?array $graphs;
+    public ?array $serverActions;
     /**
      * @param array<string> $baseFeatures
      * @param array<string> $metadata
      * @param array<string> $graphs
      * @param array<string> $serverActions
      */
-    public function __construct(
-        public ?array $baseFeatures,
-        public ?array $metadata,
-        public ?array $graphs,
-        public ?array $serverActions,
-    ) {}
+    public function __construct(?array $baseFeatures, ?array $metadata, ?array $graphs, ?array $serverActions)
+    {
+        $this->baseFeatures = $baseFeatures;
+        $this->metadata = $metadata;
+        $this->graphs = $graphs;
+        $this->serverActions = $serverActions;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -28,10 +33,10 @@ class AccessLevelPermissions
     public static function fromArray(array $data): self
     {
         return new self(
-            baseFeatures: Arr::get($data, 'base_features', []),
-            metadata: Arr::get($data, 'metadata', []),
-            graphs: Arr::get($data, 'graphs', []),
-            serverActions: Arr::get($data, 'server_actions', []),
+            Arr::get($data, 'base_features', []),
+            Arr::get($data, 'metadata', []),
+            Arr::get($data, 'graphs', []),
+            Arr::get($data, 'server_actions', [])
         );
     }
 

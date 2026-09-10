@@ -42,13 +42,13 @@ class ReverseDNS
 
         $device = $this->api->admin()->devices()->show($deviceId)->data;
 
-        if (!empty($device?->ipList))
+        if (!empty($device === null ? null : $device->ipList))
         {
             $ipAddresses = $device->ipList;
         }
         else
         {
-            $metadata = (array) ($device?->metadata ?? []);
+            $metadata = (array) (($device === null ? null : $device->metadata) ?? []);
             $additional = explode(',', (string) ($metadata['Additional IP Addresses'] ?? ''));
             $primary = [$metadata['IP Address'] ?? ''];
             $ipAddresses = array_filter(array_merge($primary, $additional));
@@ -108,7 +108,7 @@ class ReverseDNS
             {
                 $result = $this->api->client()->dnsManagement()->createRdnsRecord(
                     $serviceId,
-                    new CreateRdnsRecordRequest(ip: $data['reverseDNSIpAddress'], rdata: $hostname, ttl: $ttl)
+                    new CreateRdnsRecordRequest($data['reverseDNSIpAddress'], $hostname, $ttl)
                 );
 
                 if ($result->success === false)
@@ -132,7 +132,7 @@ class ReverseDNS
             {
                 $result = $this->api->client()->dnsManagement()->createRdnsRecord(
                     $serviceId,
-                    new CreateRdnsRecordRequest(ip: $value, rdata: $hostname, ttl: $ttl)
+                    new CreateRdnsRecordRequest($value, $hostname, $ttl)
                 );
 
                 if ($result->success === false)
@@ -174,7 +174,7 @@ class ReverseDNS
             $result = $this->api->client()->dnsManagement()->updateRdnsRecord(
                 $this->context->requireServiceId(),
                 $data['editId'],
-                new UpdateRdnsRecordRequest(rdata: $data['hostname'])
+                new UpdateRdnsRecordRequest($data['hostname'])
             );
 
             if ($result->success === false)

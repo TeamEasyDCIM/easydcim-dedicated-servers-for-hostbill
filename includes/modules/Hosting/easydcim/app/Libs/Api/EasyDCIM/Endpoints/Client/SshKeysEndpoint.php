@@ -31,7 +31,7 @@ class SshKeysEndpoint extends AbstractEndpoint
      */
     public function list(?ListSshKeysRequest $request = null): ListSshKeysResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('', $params);
         return ListSshKeysResponse::fromArray($response);
     }
@@ -52,9 +52,9 @@ class SshKeysEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListSshKeysRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                search: $request->search,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->search
             );
 
             $response = $this->list($request);
@@ -87,7 +87,7 @@ class SshKeysEndpoint extends AbstractEndpoint
      * @param UpdateSshKeyRequest $request
      * @return SshKeyResponse
      */
-    public function update(int|string $id, UpdateSshKeyRequest $request): SshKeyResponse
+    public function update($id, UpdateSshKeyRequest $request): SshKeyResponse
     {
         $data = $request->toArray();
         $response = $this->put((string) $id, $data);
@@ -100,7 +100,7 @@ class SshKeysEndpoint extends AbstractEndpoint
      * @param int|string $id
      * @return SshKeyResponse
      */
-    public function setAsDefault(int|string $id): SshKeyResponse
+    public function setAsDefault($id): SshKeyResponse
     {
         $response = $this->post($this->buildPath((string) $id, 'set-as-default'));
         return SshKeyResponse::fromArray($response);
@@ -112,7 +112,7 @@ class SshKeysEndpoint extends AbstractEndpoint
      * @param int|string $id
      * @return BaseResponse
      */
-    public function destroy(int|string $id): BaseResponse
+    public function destroy($id): BaseResponse
     {
         $response = $this->delete((string) $id);
         return BaseResponse::fromArray($response);

@@ -26,7 +26,7 @@ class PortsEndpoint extends AbstractEndpoint
      */
     public function list(?ListPortsRequest $request = null): ListPortsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('', $params);
         return ListPortsResponse::fromArray($response);
     }
@@ -38,13 +38,9 @@ class PortsEndpoint extends AbstractEndpoint
      * @return ListPortsResponse
      * @throws EasyDCIMException
      */
-    public function getByDeviceId(int|string $deviceId): ListPortsResponse
+    public function getByDeviceId($deviceId): ListPortsResponse
     {
-        $request = new ListPortsRequest(
-            searchTerm: (string) $deviceId,
-            searchFields: 'item_id',
-            perPage: 100
-        );
+        $request = new ListPortsRequest(100, null, null, null, (string) $deviceId, null, 'item_id');
 
         return $this->list($request);
     }
@@ -56,7 +52,7 @@ class PortsEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function enable(int|string $portId): SuccessResponse
+    public function enable($portId): SuccessResponse
     {
         $response = $this->post($this->buildPath((string) $portId, 'enable'), []);
         return SuccessResponse::fromArray($response);
@@ -69,7 +65,7 @@ class PortsEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function disable(int|string $portId): SuccessResponse
+    public function disable($portId): SuccessResponse
     {
         $response = $this->post($this->buildPath((string) $portId, 'disable'), []);
         return SuccessResponse::fromArray($response);

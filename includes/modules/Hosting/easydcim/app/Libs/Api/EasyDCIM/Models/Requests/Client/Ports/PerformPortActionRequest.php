@@ -9,10 +9,13 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class PerformPortActionRequest
 {
-    public function __construct(
-        public int|string $portId,
-        public string $action,
-    ) {}
+    public $portId;
+    public string $action;
+    public function __construct($portId, string $action)
+    {
+        $this->portId = $portId;
+        $this->action = $action;
+    }
 
     /**
      * @return array<string, mixed>

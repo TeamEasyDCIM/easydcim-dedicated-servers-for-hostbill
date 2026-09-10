@@ -7,9 +7,11 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class EnableTwoFactorRequest
 {
-    public function __construct(
-        public string $moduleName = 'Totp',
-    ) {}
+    public string $moduleName;
+    public function __construct(string $moduleName = 'Totp')
+    {
+        $this->moduleName = $moduleName;
+    }
 
     /**
      * @return array<string, mixed>
@@ -28,7 +30,7 @@ class EnableTwoFactorRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            moduleName: $data['module_name'] ?? $data['moduleName'] ?? 'Totp',
+            $data['module_name'] ?? $data['moduleName'] ?? 'Totp'
         );
     }
 }

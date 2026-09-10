@@ -9,12 +9,17 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class UpdateOrderRequest
 {
-    public function __construct(
-        public ?int $client = null,
-        public ?array $criteria = null,
-        public ?array $service = null,
-        public ?array $other = null,
-    ) {}
+    public ?int $client;
+    public ?array $criteria;
+    public ?array $service;
+    public ?array $other;
+    public function __construct(?int $client = null, ?array $criteria = null, ?array $service = null, ?array $other = null)
+    {
+        $this->client = $client;
+        $this->criteria = $criteria;
+        $this->service = $service;
+        $this->other = $other;
+    }
 
     /**
      * @return array<string, mixed>

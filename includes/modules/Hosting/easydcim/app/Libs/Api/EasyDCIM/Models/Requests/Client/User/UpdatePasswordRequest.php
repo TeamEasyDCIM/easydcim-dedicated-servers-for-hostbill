@@ -7,11 +7,15 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class UpdatePasswordRequest
 {
-    public function __construct(
-        public string $currentPassword,
-        public string $password,
-        public string $passwordConfirmation,
-    ) {}
+    public string $currentPassword;
+    public string $password;
+    public string $passwordConfirmation;
+    public function __construct(string $currentPassword, string $password, string $passwordConfirmation)
+    {
+        $this->currentPassword = $currentPassword;
+        $this->password = $password;
+        $this->passwordConfirmation = $passwordConfirmation;
+    }
 
     /**
      * @return array<string, mixed>
@@ -32,9 +36,9 @@ class UpdatePasswordRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            currentPassword: $data['current_password'] ?? $data['currentPassword'],
-            password: $data['password'],
-            passwordConfirmation: $data['password_confirmation'] ?? $data['passwordConfirmation'],
+            $data['current_password'] ?? $data['currentPassword'],
+            $data['password'],
+            $data['password_confirmation'] ?? $data['passwordConfirmation']
         );
     }
 }

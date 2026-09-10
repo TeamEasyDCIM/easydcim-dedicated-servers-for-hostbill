@@ -7,25 +7,43 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class CreateUserRequest
 {
-    public function __construct(
-        public string $email,
-        public string $password,
-        public ?string $username = null,
-        public ?string $firstname = null,
-        public ?string $lastname = null,
-        public ?string $company = null,
-        public ?string $dateOfBirth = null,
-        public ?string $address1 = null,
-        public ?string $address2 = null,
-        public ?string $city = null,
-        public ?string $state = null,
-        public ?string $postcode = null,
-        public ?string $countryCode = null,
-        public ?string $locale = null,
-        public ?string $timezone = null,
-        public int $role = 2,
-        public int $active = 1,
-    ) {}
+    public string $email;
+    public string $password;
+    public ?string $username;
+    public ?string $firstname;
+    public ?string $lastname;
+    public ?string $company;
+    public ?string $dateOfBirth;
+    public ?string $address1;
+    public ?string $address2;
+    public ?string $city;
+    public ?string $state;
+    public ?string $postcode;
+    public ?string $countryCode;
+    public ?string $locale;
+    public ?string $timezone;
+    public int $role;
+    public int $active;
+    public function __construct(string $email, string $password, ?string $username = null, ?string $firstname = null, ?string $lastname = null, ?string $company = null, ?string $dateOfBirth = null, ?string $address1 = null, ?string $address2 = null, ?string $city = null, ?string $state = null, ?string $postcode = null, ?string $countryCode = null, ?string $locale = null, ?string $timezone = null, int $role = 2, int $active = 1)
+    {
+        $this->email = $email;
+        $this->password = $password;
+        $this->username = $username;
+        $this->firstname = $firstname;
+        $this->lastname = $lastname;
+        $this->company = $company;
+        $this->dateOfBirth = $dateOfBirth;
+        $this->address1 = $address1;
+        $this->address2 = $address2;
+        $this->city = $city;
+        $this->state = $state;
+        $this->postcode = $postcode;
+        $this->countryCode = $countryCode;
+        $this->locale = $locale;
+        $this->timezone = $timezone;
+        $this->role = $role;
+        $this->active = $active;
+    }
 
     /**
      * @return array<string, mixed>

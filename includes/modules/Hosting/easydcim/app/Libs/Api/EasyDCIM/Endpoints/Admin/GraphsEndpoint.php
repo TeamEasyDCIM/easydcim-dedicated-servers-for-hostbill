@@ -24,7 +24,7 @@ class GraphsEndpoint extends AbstractEndpoint
      * @param ExportGraphRequest $request Export request with graph type, target, dates, etc.
      * @return GraphData Graph data with datasets, labels, and units
      */
-    public function export(int|string $serviceId, ExportGraphRequest $request): GraphData
+    public function export($serviceId, ExportGraphRequest $request): GraphData
     {
         $path = $this->buildPath((string) $serviceId, 'export');
 

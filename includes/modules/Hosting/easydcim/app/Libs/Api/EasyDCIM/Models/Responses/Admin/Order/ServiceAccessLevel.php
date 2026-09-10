@@ -6,22 +6,28 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class ServiceAccessLevel
 {
-    public function __construct(
-        public ?int    $id = null,
-        public ?string $name = null,
-        public ?string $type = null,
-        public ?bool   $default = null,
-        public ?array  $value = null,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $type;
+    public ?bool $default;
+    public ?array $value;
+    public function __construct(?int    $id = null, ?string $name = null, ?string $type = null, ?bool   $default = null, ?array  $value = null)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->type = $type;
+        $this->default = $default;
+        $this->value = $value;
+    }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id'),
-            name: Arr::get($data, 'name'),
-            type: Arr::get($data, 'type'),
-            default: Arr::get($data, 'default'),
-            value: Arr::get($data, 'value'),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'name'),
+            Arr::get($data, 'type'),
+            Arr::get($data, 'default'),
+            Arr::get($data, 'value')
         );
     }
 

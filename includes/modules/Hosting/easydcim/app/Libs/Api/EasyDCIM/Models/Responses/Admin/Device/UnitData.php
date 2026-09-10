@@ -11,10 +11,13 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class UnitData
 {
-    public function __construct(
-        public ?int $unitIndex,
-        public ?string $side,
-    ) {}
+    public ?int $unitIndex;
+    public ?string $side;
+    public function __construct(?int $unitIndex, ?string $side)
+    {
+        $this->unitIndex = $unitIndex;
+        $this->side = $side;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -23,8 +26,8 @@ class UnitData
     public static function fromArray(array $data): self
     {
         return new self(
-            unitIndex: Arr::get($data, 'unitIndex', 0),
-            side: Arr::get($data, 'side', ''),
+            Arr::get($data, 'unitIndex', 0),
+            Arr::get($data, 'side', '')
         );
     }
 

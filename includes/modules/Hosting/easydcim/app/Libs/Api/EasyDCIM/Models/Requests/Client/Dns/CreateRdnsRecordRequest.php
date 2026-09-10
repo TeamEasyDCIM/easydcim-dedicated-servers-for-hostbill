@@ -4,11 +4,15 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class CreateRdnsRecordRequest
 {
-    public function __construct(
-        public string $ip,
-        public string $rdata,
-        public int $ttl = 3600,
-    ) {}
+    public string $ip;
+    public string $rdata;
+    public int $ttl;
+    public function __construct(string $ip, string $rdata, int $ttl = 3600)
+    {
+        $this->ip = $ip;
+        $this->rdata = $rdata;
+        $this->ttl = $ttl;
+    }
 
     /**
      * @return array<string, mixed>
@@ -29,9 +33,9 @@ class CreateRdnsRecordRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            ip: $data['ip'],
-            rdata: $data['rdata'],
-            ttl: $data['ttl'] ?? 3600,
+            $data['ip'],
+            $data['rdata'],
+            $data['ttl'] ?? 3600
         );
     }
 }

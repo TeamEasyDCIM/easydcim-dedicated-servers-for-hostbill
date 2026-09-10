@@ -7,21 +7,35 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class UpdateLimitsRequest
 {
-    public function __construct(
-        public string $limitType = 'TrafficAggregation',
-        public ?float $bandwidth = null,
-        public ?string $bandwidthUnit = null,
-        public ?float $bandwidthIn = null,
-        public ?string $bandwidthInUnit = null,
-        public ?float $bandwidthOut = null,
-        public ?string $bandwidthOutUnit = null,
-        public ?float $percentile = null,
-        public ?int $disableTrafficAggregationPorts = null,
-        public ?string $intervalStartDay = null,
-        public ?bool $enableNotifications = null,
-        public ?int $timeUnit = null,
-        public ?int $warningNotificationThreshold = null,
-    ) {}
+    public string $limitType;
+    public ?float $bandwidth;
+    public ?string $bandwidthUnit;
+    public ?float $bandwidthIn;
+    public ?string $bandwidthInUnit;
+    public ?float $bandwidthOut;
+    public ?string $bandwidthOutUnit;
+    public ?float $percentile;
+    public ?int $disableTrafficAggregationPorts;
+    public ?string $intervalStartDay;
+    public ?bool $enableNotifications;
+    public ?int $timeUnit;
+    public ?int $warningNotificationThreshold;
+    public function __construct(string $limitType = 'TrafficAggregation', ?float $bandwidth = null, ?string $bandwidthUnit = null, ?float $bandwidthIn = null, ?string $bandwidthInUnit = null, ?float $bandwidthOut = null, ?string $bandwidthOutUnit = null, ?float $percentile = null, ?int $disableTrafficAggregationPorts = null, ?string $intervalStartDay = null, ?bool $enableNotifications = null, ?int $timeUnit = null, ?int $warningNotificationThreshold = null)
+    {
+        $this->limitType = $limitType;
+        $this->bandwidth = $bandwidth;
+        $this->bandwidthUnit = $bandwidthUnit;
+        $this->bandwidthIn = $bandwidthIn;
+        $this->bandwidthInUnit = $bandwidthInUnit;
+        $this->bandwidthOut = $bandwidthOut;
+        $this->bandwidthOutUnit = $bandwidthOutUnit;
+        $this->percentile = $percentile;
+        $this->disableTrafficAggregationPorts = $disableTrafficAggregationPorts;
+        $this->intervalStartDay = $intervalStartDay;
+        $this->enableNotifications = $enableNotifications;
+        $this->timeUnit = $timeUnit;
+        $this->warningNotificationThreshold = $warningNotificationThreshold;
+    }
 
     /**
      * @return array<string, mixed>

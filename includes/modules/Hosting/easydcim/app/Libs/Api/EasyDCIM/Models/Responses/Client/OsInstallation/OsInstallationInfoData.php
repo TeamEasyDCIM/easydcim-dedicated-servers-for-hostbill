@@ -15,18 +15,26 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class OsInstallationInfoData
 {
+    public ?int $id;
+    public ?int $deviceId;
+    public ?int $templateId;
+    public ?string $message;
+    public ?array $log;
+    public ?string $createdAt;
+    public ?string $updatedAt;
     /**
      * @param array<string, string>|null $log Datetime-keyed history of status messages.
      */
-    public function __construct(
-        public ?int $id = null,
-        public ?int $deviceId = null,
-        public ?int $templateId = null,
-        public ?string $message = null,
-        public ?array $log = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-    ) {}
+    public function __construct(?int $id = null, ?int $deviceId = null, ?int $templateId = null, ?string $message = null, ?array $log = null, ?string $createdAt = null, ?string $updatedAt = null)
+    {
+        $this->id = $id;
+        $this->deviceId = $deviceId;
+        $this->templateId = $templateId;
+        $this->message = $message;
+        $this->log = $log;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -37,13 +45,13 @@ class OsInstallationInfoData
         $log = Arr::get($data, 'log');
 
         return new self(
-            id: Arr::get($data, 'id'),
-            deviceId: Arr::get($data, 'device_id'),
-            templateId: Arr::get($data, 'template_id'),
-            message: Arr::get($data, 'message'),
-            log: is_array($log) ? $log : null,
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id'),
+            Arr::get($data, 'device_id'),
+            Arr::get($data, 'template_id'),
+            Arr::get($data, 'message'),
+            is_array($log) ? $log : null,
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 

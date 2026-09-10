@@ -31,7 +31,7 @@ class GroupsEndpoint extends AbstractEndpoint
      */
     public function list(?ListGroupsRequest $request = null): ListGroupsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('', $params);
         return ListGroupsResponse::fromArray($response);
     }
@@ -52,13 +52,13 @@ class GroupsEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListGroupsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->list($request);
@@ -78,7 +78,7 @@ class GroupsEndpoint extends AbstractEndpoint
      * @return ShowGroupResponse
      * @throws EasyDCIMException
      */
-    public function show(int|string $id): ShowGroupResponse
+    public function show($id): ShowGroupResponse
     {
         $response = $this->get((string) $id);
         return ShowGroupResponse::fromArray($response);
@@ -105,7 +105,7 @@ class GroupsEndpoint extends AbstractEndpoint
      * @return ShowGroupResponse
      * @throws EasyDCIMException
      */
-    public function update(int|string $id, UpdateGroupRequest $request): ShowGroupResponse
+    public function update($id, UpdateGroupRequest $request): ShowGroupResponse
     {
         $response = $this->put((string) $id, $request->toArray());
         return ShowGroupResponse::fromArray($response);
@@ -118,7 +118,7 @@ class GroupsEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function destroy(int|string $id): SuccessResponse
+    public function destroy($id): SuccessResponse
     {
         $response = $this->delete((string) $id);
         return SuccessResponse::fromArray($response);

@@ -11,17 +11,27 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class ItemTypeData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $description,
-        public ?int $hardware,
-        public ?int $software,
-        public ?int $predefined,
-        public ?string $color,
-        public ?string $createdAt,
-        public ?string $updatedAt,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $description;
+    public ?int $hardware;
+    public ?int $software;
+    public ?int $predefined;
+    public ?string $color;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?string $name, ?string $description, ?int $hardware, ?int $software, ?int $predefined, ?string $color, ?string $createdAt, ?string $updatedAt)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->description = $description;
+        $this->hardware = $hardware;
+        $this->software = $software;
+        $this->predefined = $predefined;
+        $this->color = $color;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -30,15 +40,15 @@ class ItemTypeData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            description: Arr::get($data, 'description', ''),
-            hardware: Arr::get($data, 'hardware', 0),
-            software: Arr::get($data, 'software', 0),
-            predefined: Arr::get($data, 'predefined', 0),
-            color: Arr::get($data, 'color', ''),
-            createdAt: Arr::get($data, 'created_at', ''),
-            updatedAt: Arr::get($data, 'updated_at', ''),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'description', ''),
+            Arr::get($data, 'hardware', 0),
+            Arr::get($data, 'software', 0),
+            Arr::get($data, 'predefined', 0),
+            Arr::get($data, 'color', ''),
+            Arr::get($data, 'created_at', ''),
+            Arr::get($data, 'updated_at', '')
         );
     }
 

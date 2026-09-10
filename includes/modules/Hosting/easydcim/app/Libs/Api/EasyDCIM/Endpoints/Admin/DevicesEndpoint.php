@@ -38,7 +38,7 @@ class DevicesEndpoint extends AbstractEndpoint
      */
     public function list(?ListDevicesRequest $request = null): ListDevicesResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get('', $params);
         return ListDevicesResponse::fromArray($response);
     }
@@ -59,13 +59,13 @@ class DevicesEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListDevicesRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                sortBy: $request->sortBy,
-                sortDir: $request->sortDir,
-                searchTerm: $request->searchTerm,
-                searchOp: $request->searchOp,
-                searchFields: $request->searchFields
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->sortBy,
+                $request->sortDir,
+                $request->searchTerm,
+                $request->searchOp,
+                $request->searchFields
             );
 
             $response = $this->list($request);
@@ -84,7 +84,7 @@ class DevicesEndpoint extends AbstractEndpoint
      * @param int|string $id Device ID
      * @return ShowDeviceResponse
      */
-    public function show(int|string $id): ShowDeviceResponse
+    public function show($id): ShowDeviceResponse
     {
         $response = $this->get((string) $id);
         return ShowDeviceResponse::fromArray($response);
@@ -111,7 +111,7 @@ class DevicesEndpoint extends AbstractEndpoint
      * @return ShowDeviceResponse
      * @throws EasyDCIMException
      */
-    public function update(int|string $id, UpdateDeviceRequest $request): ShowDeviceResponse
+    public function update($id, UpdateDeviceRequest $request): ShowDeviceResponse
     {
         $response = $this->put((string) $id, $request->toArray());
         return ShowDeviceResponse::fromArray($response);
@@ -124,7 +124,7 @@ class DevicesEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function destroy(int|string $id): SuccessResponse
+    public function destroy($id): SuccessResponse
     {
         $response = $this->delete((string) $id);
         return SuccessResponse::fromArray($response);
@@ -138,7 +138,7 @@ class DevicesEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function assignMetadata(int|string $id, AssignMetadataRequest $request): SuccessResponse
+    public function assignMetadata($id, AssignMetadataRequest $request): SuccessResponse
     {
         $response = $this->post($this->buildPath((string) $id, 'metadata/assign'), $request->toArray());
         return SuccessResponse::fromArray($response);
@@ -151,7 +151,7 @@ class DevicesEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function forcePoll(int|string $id): SuccessResponse
+    public function forcePoll($id): SuccessResponse
     {
         $response = $this->post($this->buildPath((string) $id, 'poll'), []);
         return SuccessResponse::fromArray($response);
@@ -165,7 +165,7 @@ class DevicesEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function discover(int|string $id, DiscoverDeviceRequest $request): SuccessResponse
+    public function discover($id, DiscoverDeviceRequest $request): SuccessResponse
     {
         $response = $this->post($this->buildPath((string) $id, 'discover'), $request->toArray());
         return SuccessResponse::fromArray($response);
@@ -179,7 +179,7 @@ class DevicesEndpoint extends AbstractEndpoint
      * @return SuccessResponse
      * @throws EasyDCIMException
      */
-    public function powerAction(int|string $id, DevicePowerActionRequest $request): SuccessResponse
+    public function powerAction($id, DevicePowerActionRequest $request): SuccessResponse
     {
         $response = $this->post($this->buildPath((string) $id, 'power/action'), $request->toArray());
         return SuccessResponse::fromArray($response);
@@ -193,7 +193,7 @@ class DevicesEndpoint extends AbstractEndpoint
      * @return GetPowerUsageResponse
      * @throws EasyDCIMException
      */
-    public function getPowerUsage(int|string $id, GetDevicePowerUsageRequest $request): GetPowerUsageResponse
+    public function getPowerUsage($id, GetDevicePowerUsageRequest $request): GetPowerUsageResponse
     {
         $response = $this->post($this->buildPath((string) $id, 'power/usage'), $request->toArray());
         return GetPowerUsageResponse::fromArray($response);
@@ -206,7 +206,7 @@ class DevicesEndpoint extends AbstractEndpoint
      * @param GetDeviceBandwidthRequest $request
      * @return GetBandwidthResponse
      */
-    public function getBandwidth(int|string $id, GetDeviceBandwidthRequest $request): GetBandwidthResponse
+    public function getBandwidth($id, GetDeviceBandwidthRequest $request): GetBandwidthResponse
     {
         $response = $this->post($this->buildPath((string) $id, 'bandwidth'), $request->toArray());
         return GetBandwidthResponse::fromArray($response);

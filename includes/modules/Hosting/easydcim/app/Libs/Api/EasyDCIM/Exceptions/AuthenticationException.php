@@ -23,12 +23,12 @@ class AuthenticationException extends EasyDCIMException
         ?array $requestContext = null
     ) {
         parent::__construct(
-            message: $message,
-            code: $code,
-            previous: $previous,
-            statusCode: 401,
-            responseBody: $responseBody,
-            requestContext: $requestContext
+            $message,
+            $code,
+            $previous,
+            401,
+            $responseBody,
+            $requestContext
         );
     }
 }

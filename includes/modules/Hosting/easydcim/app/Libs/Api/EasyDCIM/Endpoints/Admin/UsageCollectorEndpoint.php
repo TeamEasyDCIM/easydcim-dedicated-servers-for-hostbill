@@ -24,7 +24,7 @@ class UsageCollectorEndpoint extends AbstractEndpoint
      * @return GetLimitsResponse
      * @throws EasyDCIMException
      */
-    public function getLimits(int|string $deviceId): GetLimitsResponse
+    public function getLimits($deviceId): GetLimitsResponse
     {
         $response = $this->get($this->buildPath((string) $deviceId, 'limits'));
         return GetLimitsResponse::fromArray($response);
@@ -37,7 +37,7 @@ class UsageCollectorEndpoint extends AbstractEndpoint
      * @param UpdateLimitsRequest $request
      * @return SuccessResponse
      */
-    public function updateLimits(int|string $deviceId, UpdateLimitsRequest $request): SuccessResponse
+    public function updateLimits($deviceId, UpdateLimitsRequest $request): SuccessResponse
     {
         $response = $this->put($this->buildPath((string) $deviceId, 'limits'), $request->toArray());
         return SuccessResponse::fromArray($response);

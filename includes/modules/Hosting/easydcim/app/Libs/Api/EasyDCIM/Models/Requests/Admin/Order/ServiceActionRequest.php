@@ -9,10 +9,13 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class ServiceActionRequest
 {
-    public function __construct(
-        public ?string $reason = null,
-        public ?array $additionalData = null,
-    ) {}
+    public ?string $reason;
+    public ?array $additionalData;
+    public function __construct(?string $reason = null, ?array $additionalData = null)
+    {
+        $this->reason = $reason;
+        $this->additionalData = $additionalData;
+    }
 
     /**
      * @return array<string, mixed>

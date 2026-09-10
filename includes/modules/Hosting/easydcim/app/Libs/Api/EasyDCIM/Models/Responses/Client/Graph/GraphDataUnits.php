@@ -9,18 +9,22 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class GraphDataUnits
 {
-    public function __construct(
-        public ?string $traffic,
-        public ?string $ping,
-        public ?string $powerUsage,
-    ) {}
+    public ?string $traffic;
+    public ?string $ping;
+    public ?string $powerUsage;
+    public function __construct(?string $traffic, ?string $ping, ?string $powerUsage)
+    {
+        $this->traffic = $traffic;
+        $this->ping = $ping;
+        $this->powerUsage = $powerUsage;
+    }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            traffic:    Arr::get($data, 'traffic', 'Mbps'),
-            ping:       Arr::get($data, 'ping', 'ms'),
-            powerUsage: Arr::get($data, 'power_usage', 'Amps'),
+            Arr::get($data, 'traffic', 'Mbps'),
+            Arr::get($data, 'ping', 'ms'),
+            Arr::get($data, 'power_usage', 'Amps')
         );
     }
 

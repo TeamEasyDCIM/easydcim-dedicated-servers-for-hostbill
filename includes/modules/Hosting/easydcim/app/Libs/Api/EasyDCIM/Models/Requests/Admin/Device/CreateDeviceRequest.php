@@ -9,6 +9,31 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class CreateDeviceRequest
 {
+    public string $label;
+    public int $model;
+    public int $typeId;
+    public int $location;
+    public ?int $parent;
+    public ?int $client;
+    public ?int $rack;
+    public ?int $position;
+    public ?string $sizePosition;
+    public ?bool $isPart;
+    public ?string $manufacturer;
+    public ?string $serialnumber1;
+    public ?string $serviceTag;
+    public ?string $comments;
+    public ?string $description;
+    public ?string $purchaseDate;
+    public ?int $warrantyMonths;
+    public ?string $warrantyInfo;
+    public ?string $status;
+    public ?string $function;
+    public ?string $origin;
+    public ?float $buyPrice;
+    public ?array $appdata;
+    public ?string $notes;
+    public ?array $metadata;
     /**
      * @param string $label Device label
      * @param int $model Model ID
@@ -36,33 +61,34 @@ class CreateDeviceRequest
      * @param string|null $notes Notes
      * @param array<array>|null $metadata Array of metadata (metadata_id, value, raw_value)
      */
-    public function __construct(
-        public string $label,
-        public int $model,
-        public int $typeId,
-        public int $location,
-        public ?int $parent = null,
-        public ?int $client = null,
-        public ?int $rack = null,
-        public ?int $position = null,
-        public ?string $sizePosition = null,
-        public ?bool $isPart = null,
-        public ?string $manufacturer = null,
-        public ?string $serialnumber1 = null,
-        public ?string $serviceTag = null,
-        public ?string $comments = null,
-        public ?string $description = null,
-        public ?string $purchaseDate = null,
-        public ?int $warrantyMonths = null,
-        public ?string $warrantyInfo = null,
-        public ?string $status = null,
-        public ?string $function = null,
-        public ?string $origin = null,
-        public ?float $buyPrice = null,
-        public ?array $appdata = null,
-        public ?string $notes = null,
-        public ?array $metadata = null,
-    ) {}
+    public function __construct(string $label, int $model, int $typeId, int $location, ?int $parent = null, ?int $client = null, ?int $rack = null, ?int $position = null, ?string $sizePosition = null, ?bool $isPart = null, ?string $manufacturer = null, ?string $serialnumber1 = null, ?string $serviceTag = null, ?string $comments = null, ?string $description = null, ?string $purchaseDate = null, ?int $warrantyMonths = null, ?string $warrantyInfo = null, ?string $status = null, ?string $function = null, ?string $origin = null, ?float $buyPrice = null, ?array $appdata = null, ?string $notes = null, ?array $metadata = null)
+    {
+        $this->label = $label;
+        $this->model = $model;
+        $this->typeId = $typeId;
+        $this->location = $location;
+        $this->parent = $parent;
+        $this->client = $client;
+        $this->rack = $rack;
+        $this->position = $position;
+        $this->sizePosition = $sizePosition;
+        $this->isPart = $isPart;
+        $this->manufacturer = $manufacturer;
+        $this->serialnumber1 = $serialnumber1;
+        $this->serviceTag = $serviceTag;
+        $this->comments = $comments;
+        $this->description = $description;
+        $this->purchaseDate = $purchaseDate;
+        $this->warrantyMonths = $warrantyMonths;
+        $this->warrantyInfo = $warrantyInfo;
+        $this->status = $status;
+        $this->function = $function;
+        $this->origin = $origin;
+        $this->buyPrice = $buyPrice;
+        $this->appdata = $appdata;
+        $this->notes = $notes;
+        $this->metadata = $metadata;
+    }
 
     /**
      * @return array<string, mixed>

@@ -86,7 +86,7 @@ class ServiceContext
 
         $response = $this->api->admin()->orders()->show($orderId);
 
-        $resolved = $response->data?->service?->id;
+        $resolved = ($response->data === null ? null : $response->data->service) === null ? null : ($response->data === null ? null : $response->data->service)->id;
 
         if (empty($resolved)) {
             return null;

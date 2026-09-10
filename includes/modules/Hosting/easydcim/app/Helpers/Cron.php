@@ -122,9 +122,9 @@ class Cron
             $api = ApiClientFactory::fromClient($client);
 
             $response = $api->admin()->devices()->getBandwidth($serverID, new GetDeviceBandwidthRequest(
-                startDate: $startDate,
-                endDate: $endDate,
-                units: 'MB'
+                $startDate,
+                $endDate,
+                'MB'
             ));
 
             return $response->data;
@@ -155,11 +155,11 @@ class Cron
             $api = ApiClientFactory::fromClient($client);
 
             $response = $api->admin()->devices()->getPowerUsage($serverID, new GetDevicePowerUsageRequest(
-                startDate: $startDate,
-                endDate: $endDate
+                $startDate,
+                $endDate
             ));
 
-            return $response->data?->avgTotalUsage ?? 0;
+            return ($response->data === null ? null : $response->data->avgTotalUsage) ?? 0;
         }
         catch (Exception $ex)
         {
@@ -266,7 +266,7 @@ class Cron
 
     private function synchronizeActiveServices($hosting, OrderData $order)
     {
-        if (!empty($order->service?->related_id) && $order->service->status == 'aborted') {
+        if (!empty($order->service === null ? null : $order->service->related_id) && $order->service->status == 'aborted') {
             DB::table('hb_accounts')->where('id','=',$hosting->id)->update([
                 'status'=>'Pending'
             ]);
@@ -277,7 +277,7 @@ class Cron
     {
         $service = $order->service;
 
-        if (empty($service?->related_id)) {
+        if (empty($service === null ? null : $service->related_id)) {
             throw new Exception('Device is not assigned.');
         }
 
@@ -310,7 +310,7 @@ class Cron
         // "Full" activation waits for the OS install to finish before the
         // service is handed to the client.
         if ($this->getActivationCondition($hosting) === self::ACTIVATION_FULL
-            && (string) ($device?->osInstallation ?? '') !== '1') {
+            && (string) (($device === null ? null : $device->osInstallation) ?? '') !== '1') {
             throw new Exception('Waiting for the OS installation to finish.');
         }
 
@@ -321,7 +321,7 @@ class Cron
             $extraDetails['option9'] = $service->id;
         }
 
-        $extraDetails['option8'] = $device?->metadata['IP Address'] ?? '';
+        $extraDetails['option8'] = ($device === null ? null : $device->metadata)['IP Address'] ?? '';
 
         DB::table('hb_accounts')->where('id','=',$hosting->id)->update([
             'extra_details'=>serialize($extraDetails),
@@ -403,12 +403,7 @@ class Cron
 
             foreach (array_chunk(array_unique($orderIds), self::ORDER_CHUNK_SIZE) as $chunk) {
                 try {
-                    $result = $api->admin()->orders()->listAll(new ListOrdersRequest(
-                        perPage: self::ORDER_CHUNK_SIZE,
-                        searchTerm: implode(',', $chunk),
-                        searchOp: 'in',
-                        searchFields: 'id'
-                    ));
+                    $result = $api->admin()->orders()->listAll(new ListOrdersRequest(self::ORDER_CHUNK_SIZE, null, null, null, implode(',', $chunk), 'in', 'id'));
 
                     foreach ($result as $order) {
                         $orders[$order->id] = $order;

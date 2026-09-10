@@ -4,10 +4,13 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class UpdateRdnsRecordRequest
 {
-    public function __construct(
-        public string $rdata,
-        public int $ttl = 3600,
-    ) {}
+    public string $rdata;
+    public int $ttl;
+    public function __construct(string $rdata, int $ttl = 3600)
+    {
+        $this->rdata = $rdata;
+        $this->ttl = $ttl;
+    }
 
     /**
      * @return array<string, mixed>
@@ -27,8 +30,8 @@ class UpdateRdnsRecordRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            rdata: $data['rdata'],
-            ttl: $data['ttl'] ?? 3600,
+            $data['rdata'],
+            $data['ttl'] ?? 3600
         );
     }
 }

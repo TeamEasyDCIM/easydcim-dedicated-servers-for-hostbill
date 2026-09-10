@@ -54,29 +54,29 @@ class ServerInformation
         // API v3 reports the provisioning state as a message; there is no
         // separate status field the way v2 had one.
         $response = $this->api->admin()->osInstallation()->getOsInstallationInfo($deviceId);
-        $this->instalationStatus = (string) ($response->data?->message ?? '');
+        $this->instalationStatus = (string) (($response->data === null ? null : $response->data->message) ?? '');
     }
 
     public function getIPAddresses(): string
     {
-        $ipAddresses = implode('<br>', (array) ($this->generalInformations?->ipList ?? []));
+        $ipAddresses = implode('<br>', (array) (($this->generalInformations === null ? null : $this->generalInformations->ipList) ?? []));
 
         return $ipAddresses != '' ? $ipAddresses : '-';
     }
 
     public function getServiceStatus(): string
     {
-        return $this->generalInformations?->serviceStatus ? ucfirst($this->generalInformations->serviceStatus) : '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->serviceStatus) ? ucfirst($this->generalInformations->serviceStatus) : '-';
     }
 
     public function getDeviceStatus(): string
     {
-        return $this->generalInformations?->deviceStatus ? ucfirst($this->generalInformations->deviceStatus) : '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->deviceStatus) ? ucfirst($this->generalInformations->deviceStatus) : '-';
     }
 
     public function getLabel(): string
     {
-        return $this->generalInformations?->label ?: '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->label) ?: '-';
     }
 
     public function getHostname(): string
@@ -101,7 +101,7 @@ class ServerInformation
 
     public function getServerID(): string
     {
-        return $this->generalInformations?->id ? (string) $this->generalInformations->id : '-';
+        return ($this->generalInformations === null ? null : $this->generalInformations->id) ? (string) $this->generalInformations->id : '-';
     }
 
     public function getServerLink(): string
@@ -152,7 +152,7 @@ class ServerInformation
      */
     protected function getMetadataValue(string $key): string
     {
-        return (string) ($this->generalInformations?->metadata[$key] ?? '');
+        return (string) (($this->generalInformations === null ? null : $this->generalInformations->metadata)[$key] ?? '');
     }
 
     public function changeHostname($data)
@@ -161,7 +161,7 @@ class ServerInformation
 
         $result = $this->api->admin()->devices()->assignMetadata(
             $deviceId,
-            new AssignMetadataRequest(slug: 'hostname', value: (string) $data['changeHostname'])
+            new AssignMetadataRequest('hostname', (string) $data['changeHostname'])
         );
 
         if ($result->success === false)

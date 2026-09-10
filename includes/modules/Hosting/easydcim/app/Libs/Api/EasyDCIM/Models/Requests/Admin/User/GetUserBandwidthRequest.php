@@ -9,11 +9,15 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class GetUserBandwidthRequest
 {
-    public function __construct(
-        public ?string $dateFrom = null,
-        public ?string $dateTo = null,
-        public ?string $period = null,
-    ) {}
+    public ?string $dateFrom;
+    public ?string $dateTo;
+    public ?string $period;
+    public function __construct(?string $dateFrom = null, ?string $dateTo = null, ?string $period = null)
+    {
+        $this->dateFrom = $dateFrom;
+        $this->dateTo = $dateTo;
+        $this->period = $period;
+    }
 
     /**
      * @return array<string, mixed>

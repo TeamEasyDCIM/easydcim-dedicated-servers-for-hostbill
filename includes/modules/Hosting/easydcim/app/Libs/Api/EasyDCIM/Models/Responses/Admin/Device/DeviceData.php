@@ -17,67 +17,127 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class DeviceData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $label,
-        public ?int $productId,
-        public ?int $modelId,
-        public ?int $parentId,
-        public ?int $typeId,
-        public ?int $userId,
-        public ?int $orderId,
-        public ?int $locationId,
-        public ?int $rackId,
-        public ?int $bladeId,
-        public ?int $osInstallation,
-        public ?int $colocationId,
-        public ?int $provisioningId,
-        public ?string $image,
-        public ?string $tags,
-        public ?int $size,
-        public ?string $sizePosition,
-        public ?int $dataPorts,
-        public ?int $powerSupplies,
-        public ?string $manufacturer,
-        public ?string $serialnumber1,
-        public ?string $serialnumber2,
-        public ?string $serviceTag,
-        public ?string $comments,
-        public ?string $description,
-        public ?array $ipList,
-        public null|string|int $purchaseDate,
-        public ?int $warrantyMonths,
-        public ?string $warrantyInfo,
-        public ?string $status,
-        public ?int $isService,
-        public ?string $serviceStatus,
-        public ?string $deviceStatus,
-        public ?string $function,
-        public ?string $maintenanceInstruction,
-        public ?string $origin,
-        public null|int|float $buyPrice,
-        public array|bool|null $appdata,
-        public ?string $notes,
-        public ?int $locked,
-        public ?string $lastDiscovered,
-        public null|int|float $discoveryTime,
-        public ?string $lastPolled,
-        public ?int $pollerDisabled,
-        public null|int|float $pollerTime,
-        public null|int|float $lastHourTraffic,
-        public null|int|float $lastDayTraffic,
-        public null|int|float $lastWeekTraffic,
-        public null|int|float $lastMonthTraffic,
-        public null|int|float $currentMonthTraffic,
-        public ?string $labeledRackWithPosition,
-        public ?array $metadata = [],
-        public mixed $deviceTraffic = null,
-        public ?ItemTypeData $type = null,
-        public ?ItemModelData $model = null,
-        public ?UserData $user = null,
-        public ?LocationData $location = null,
-        public ?RackData $rack = null,
-    ) {}
+    public ?int $id;
+    public ?string $label;
+    public ?int $productId;
+    public ?int $modelId;
+    public ?int $parentId;
+    public ?int $typeId;
+    public ?int $userId;
+    public ?int $orderId;
+    public ?int $locationId;
+    public ?int $rackId;
+    public ?int $bladeId;
+    public ?int $osInstallation;
+    public ?int $colocationId;
+    public ?int $provisioningId;
+    public ?string $image;
+    public ?string $tags;
+    public ?int $size;
+    public ?string $sizePosition;
+    public ?int $dataPorts;
+    public ?int $powerSupplies;
+    public ?string $manufacturer;
+    public ?string $serialnumber1;
+    public ?string $serialnumber2;
+    public ?string $serviceTag;
+    public ?string $comments;
+    public ?string $description;
+    public ?array $ipList;
+    public $purchaseDate;
+    public ?int $warrantyMonths;
+    public ?string $warrantyInfo;
+    public ?string $status;
+    public ?int $isService;
+    public ?string $serviceStatus;
+    public ?string $deviceStatus;
+    public ?string $function;
+    public ?string $maintenanceInstruction;
+    public ?string $origin;
+    public $buyPrice;
+    public $appdata;
+    public ?string $notes;
+    public ?int $locked;
+    public ?string $lastDiscovered;
+    public $discoveryTime;
+    public ?string $lastPolled;
+    public ?int $pollerDisabled;
+    public $pollerTime;
+    public $lastHourTraffic;
+    public $lastDayTraffic;
+    public $lastWeekTraffic;
+    public $lastMonthTraffic;
+    public $currentMonthTraffic;
+    public ?string $labeledRackWithPosition;
+    public ?array $metadata;
+    public $deviceTraffic;
+    public ?ItemTypeData $type;
+    public ?ItemModelData $model;
+    public ?UserData $user;
+    public ?LocationData $location;
+    public ?RackData $rack;
+    public function __construct(?int $id, ?string $label, ?int $productId, ?int $modelId, ?int $parentId, ?int $typeId, ?int $userId, ?int $orderId, ?int $locationId, ?int $rackId, ?int $bladeId, ?int $osInstallation, ?int $colocationId, ?int $provisioningId, ?string $image, ?string $tags, ?int $size, ?string $sizePosition, ?int $dataPorts, ?int $powerSupplies, ?string $manufacturer, ?string $serialnumber1, ?string $serialnumber2, ?string $serviceTag, ?string $comments, ?string $description, ?array $ipList, $purchaseDate, ?int $warrantyMonths, ?string $warrantyInfo, ?string $status, ?int $isService, ?string $serviceStatus, ?string $deviceStatus, ?string $function, ?string $maintenanceInstruction, ?string $origin, $buyPrice, $appdata, ?string $notes, ?int $locked, ?string $lastDiscovered, $discoveryTime, ?string $lastPolled, ?int $pollerDisabled, $pollerTime, $lastHourTraffic, $lastDayTraffic, $lastWeekTraffic, $lastMonthTraffic, $currentMonthTraffic, ?string $labeledRackWithPosition, ?array $metadata = [], $deviceTraffic = null, ?ItemTypeData $type = null, ?ItemModelData $model = null, ?UserData $user = null, ?LocationData $location = null, ?RackData $rack = null)
+    {
+        $this->id = $id;
+        $this->label = $label;
+        $this->productId = $productId;
+        $this->modelId = $modelId;
+        $this->parentId = $parentId;
+        $this->typeId = $typeId;
+        $this->userId = $userId;
+        $this->orderId = $orderId;
+        $this->locationId = $locationId;
+        $this->rackId = $rackId;
+        $this->bladeId = $bladeId;
+        $this->osInstallation = $osInstallation;
+        $this->colocationId = $colocationId;
+        $this->provisioningId = $provisioningId;
+        $this->image = $image;
+        $this->tags = $tags;
+        $this->size = $size;
+        $this->sizePosition = $sizePosition;
+        $this->dataPorts = $dataPorts;
+        $this->powerSupplies = $powerSupplies;
+        $this->manufacturer = $manufacturer;
+        $this->serialnumber1 = $serialnumber1;
+        $this->serialnumber2 = $serialnumber2;
+        $this->serviceTag = $serviceTag;
+        $this->comments = $comments;
+        $this->description = $description;
+        $this->ipList = $ipList;
+        $this->purchaseDate = $purchaseDate;
+        $this->warrantyMonths = $warrantyMonths;
+        $this->warrantyInfo = $warrantyInfo;
+        $this->status = $status;
+        $this->isService = $isService;
+        $this->serviceStatus = $serviceStatus;
+        $this->deviceStatus = $deviceStatus;
+        $this->function = $function;
+        $this->maintenanceInstruction = $maintenanceInstruction;
+        $this->origin = $origin;
+        $this->buyPrice = $buyPrice;
+        $this->appdata = $appdata;
+        $this->notes = $notes;
+        $this->locked = $locked;
+        $this->lastDiscovered = $lastDiscovered;
+        $this->discoveryTime = $discoveryTime;
+        $this->lastPolled = $lastPolled;
+        $this->pollerDisabled = $pollerDisabled;
+        $this->pollerTime = $pollerTime;
+        $this->lastHourTraffic = $lastHourTraffic;
+        $this->lastDayTraffic = $lastDayTraffic;
+        $this->lastWeekTraffic = $lastWeekTraffic;
+        $this->lastMonthTraffic = $lastMonthTraffic;
+        $this->currentMonthTraffic = $currentMonthTraffic;
+        $this->labeledRackWithPosition = $labeledRackWithPosition;
+        $this->metadata = $metadata;
+        $this->deviceTraffic = $deviceTraffic;
+        $this->type = $type;
+        $this->model = $model;
+        $this->user = $user;
+        $this->location = $location;
+        $this->rack = $rack;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -86,65 +146,65 @@ class DeviceData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            label: Arr::get($data, 'label', ''),
-            productId: Arr::get($data, 'product_id', 0),
-            modelId: Arr::get($data, 'model_id', 0),
-            parentId: Arr::get($data, 'parent_id', 0),
-            typeId: Arr::get($data, 'type_id', 0),
-            userId: Arr::get($data, 'user_id', 0),
-            orderId: Arr::get($data, 'order_id', 0),
-            locationId: Arr::get($data, 'location_id', 0),
-            rackId: Arr::get($data, 'rack_id', 0),
-            bladeId: Arr::get($data, 'blade_id', 0),
-            osInstallation: Arr::get($data, 'os_installation', 0),
-            colocationId: Arr::get($data, 'colocation_id', 0),
-            provisioningId: Arr::get($data, 'provisioning_id', 0),
-            image: Arr::get($data, 'image'),
-            tags: Arr::get($data, 'tags'),
-            size: Arr::get($data, 'size', 0),
-            sizePosition: Arr::get($data, 'size_position', 'front'),
-            dataPorts: Arr::get($data, 'data_ports', 0),
-            powerSupplies: Arr::get($data, 'power_supplies', 0),
-            manufacturer: Arr::get($data, 'manufacturer'),
-            serialnumber1: Arr::get($data, 'serialnumber1'),
-            serialnumber2: Arr::get($data, 'serialnumber2'),
-            serviceTag: Arr::get($data, 'service_tag'),
-            comments: Arr::get($data, 'comments'),
-            description: Arr::get($data, 'description'),
-            ipList: Arr::get($data, 'ip_addresses'),
-            purchaseDate: Arr::get($data, 'purchase_date', 'Unassigned'),
-            warrantyMonths: Arr::get($data, 'warranty_months', 0),
-            warrantyInfo: Arr::get($data, 'warranty_info'),
-            status: Arr::get($data, 'status', ''),
-            isService: Arr::get($data, 'is_service', 0),
-            serviceStatus: Arr::get($data, 'service_status', ''),
-            deviceStatus: Arr::get($data, 'device_status', ''),
-            function: Arr::get($data, 'function'),
-            maintenanceInstruction: Arr::get($data, 'maintenance_instruction'),
-            origin: Arr::get($data, 'origin'),
-            buyPrice: Arr::get($data, 'buy_price', 0),
-            appdata: Arr::get($data, 'appdata'),
-            notes: Arr::get($data, 'notes'),
-            locked: Arr::get($data, 'locked', 0),
-            lastDiscovered: Arr::get($data, 'last_discovered', 'Never'),
-            discoveryTime: Arr::get($data, 'discovery_time', 0),
-            lastPolled: Arr::get($data, 'last_polled', ''),
-            pollerDisabled: Arr::get($data, 'poller_disabled', 0),
-            pollerTime: Arr::get($data, 'poller_time', 0),
-            lastHourTraffic: Arr::get($data, 'last_hour_traffic', 0),
-            lastDayTraffic: Arr::get($data, 'last_day_traffic', 0),
-            lastWeekTraffic: Arr::get($data, 'last_week_traffic', 0),
-            lastMonthTraffic: Arr::get($data, 'last_month_traffic', 0),
-            currentMonthTraffic: Arr::get($data, 'current_month_traffic', 0),
-            labeledRackWithPosition: strip_tags((string) Arr::get($data, 'labeledRackWithPosition', '')),
-            metadata: Arr::get($data, 'metadata', []),
-            deviceTraffic: Arr::get($data, 'device_traffic'),
-            type: isset($data['type']) && is_array($data['type']) ? ItemTypeData::fromArray($data['type']) : null,
-            model: isset($data['model']) && is_array($data['model']) ? ItemModelData::fromArray($data['model']) : null,
-            user: isset($data['user']) && is_array($data['user']) ? UserData::fromArray($data['user']) : null,
-            location: isset($data['location']) && is_array($data['location']) ? LocationData::fromArray($data['location']) : null,
-            rack: isset($data['rack']) && is_array($data['rack']) ? RackData::fromArray($data['rack']) : null,
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'label', ''),
+            Arr::get($data, 'product_id', 0),
+            Arr::get($data, 'model_id', 0),
+            Arr::get($data, 'parent_id', 0),
+            Arr::get($data, 'type_id', 0),
+            Arr::get($data, 'user_id', 0),
+            Arr::get($data, 'order_id', 0),
+            Arr::get($data, 'location_id', 0),
+            Arr::get($data, 'rack_id', 0),
+            Arr::get($data, 'blade_id', 0),
+            Arr::get($data, 'os_installation', 0),
+            Arr::get($data, 'colocation_id', 0),
+            Arr::get($data, 'provisioning_id', 0),
+            Arr::get($data, 'image'),
+            Arr::get($data, 'tags'),
+            Arr::get($data, 'size', 0),
+            Arr::get($data, 'size_position', 'front'),
+            Arr::get($data, 'data_ports', 0),
+            Arr::get($data, 'power_supplies', 0),
+            Arr::get($data, 'manufacturer'),
+            Arr::get($data, 'serialnumber1'),
+            Arr::get($data, 'serialnumber2'),
+            Arr::get($data, 'service_tag'),
+            Arr::get($data, 'comments'),
+            Arr::get($data, 'description'),
+            Arr::get($data, 'ip_addresses'),
+            Arr::get($data, 'purchase_date', 'Unassigned'),
+            Arr::get($data, 'warranty_months', 0),
+            Arr::get($data, 'warranty_info'),
+            Arr::get($data, 'status', ''),
+            Arr::get($data, 'is_service', 0),
+            Arr::get($data, 'service_status', ''),
+            Arr::get($data, 'device_status', ''),
+            Arr::get($data, 'function'),
+            Arr::get($data, 'maintenance_instruction'),
+            Arr::get($data, 'origin'),
+            Arr::get($data, 'buy_price', 0),
+            Arr::get($data, 'appdata'),
+            Arr::get($data, 'notes'),
+            Arr::get($data, 'locked', 0),
+            Arr::get($data, 'last_discovered', 'Never'),
+            Arr::get($data, 'discovery_time', 0),
+            Arr::get($data, 'last_polled', ''),
+            Arr::get($data, 'poller_disabled', 0),
+            Arr::get($data, 'poller_time', 0),
+            Arr::get($data, 'last_hour_traffic', 0),
+            Arr::get($data, 'last_day_traffic', 0),
+            Arr::get($data, 'last_week_traffic', 0),
+            Arr::get($data, 'last_month_traffic', 0),
+            Arr::get($data, 'current_month_traffic', 0),
+            strip_tags((string) Arr::get($data, 'labeledRackWithPosition', '')),
+            Arr::get($data, 'metadata', []),
+            Arr::get($data, 'device_traffic'),
+            isset($data['type']) && is_array($data['type']) ? ItemTypeData::fromArray($data['type']) : null,
+            isset($data['model']) && is_array($data['model']) ? ItemModelData::fromArray($data['model']) : null,
+            isset($data['user']) && is_array($data['user']) ? UserData::fromArray($data['user']) : null,
+            isset($data['location']) && is_array($data['location']) ? LocationData::fromArray($data['location']) : null,
+            isset($data['rack']) && is_array($data['rack']) ? RackData::fromArray($data['rack']) : null
         );
     }
 
@@ -208,11 +268,11 @@ class DeviceData
             'labeledRackWithPosition' => $this->labeledRackWithPosition,
             'metadata' => $this->metadata,
             'device_traffic' => $this->deviceTraffic,
-            'type' => $this->type?->toArray(),
-            'model' => $this->model?->toArray(),
-            'user' => $this->user?->toArray(),
-            'location' => $this->location?->toArray(),
-            'rack' => $this->rack?->toArray(),
+            'type' => $this->type === null ? null : $this->type->toArray(),
+            'model' => $this->model === null ? null : $this->model->toArray(),
+            'user' => $this->user === null ? null : $this->user->toArray(),
+            'location' => $this->location === null ? null : $this->location->toArray(),
+            'rack' => $this->rack === null ? null : $this->rack->toArray(),
         ];
     }
 }

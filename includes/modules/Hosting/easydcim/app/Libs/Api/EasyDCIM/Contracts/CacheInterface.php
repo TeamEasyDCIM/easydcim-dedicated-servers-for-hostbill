@@ -16,7 +16,7 @@ interface CacheInterface
      * @param mixed $default Default value if key not found
      * @return mixed
      */
-    public function get(string $key, mixed $default = null): mixed;
+    public function get(string $key, $default = null);
 
     /**
      * Store an item in the cache
@@ -26,7 +26,7 @@ interface CacheInterface
      * @param int|null $ttl Time to live in seconds (null for default)
      * @return bool Success status
      */
-    public function set(string $key, mixed $value, ?int $ttl = null): bool;
+    public function set(string $key, $value, ?int $ttl = null): bool;
 
     /**
      * Check if an item exists in the cache
@@ -57,7 +57,7 @@ interface CacheInterface
      * @param mixed $default Default value for missing keys
      * @return array<string, mixed>
      */
-    public function getMultiple(array $keys, mixed $default = null): array;
+    public function getMultiple(array $keys, $default = null): array;
 
     /**
      * Store multiple items in the cache

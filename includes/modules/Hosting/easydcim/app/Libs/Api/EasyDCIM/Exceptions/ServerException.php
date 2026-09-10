@@ -24,12 +24,12 @@ class ServerException extends EasyDCIMException
         ?array $requestContext = null
     ) {
         parent::__construct(
-            message: $message,
-            code: $code,
-            previous: $previous,
-            statusCode: $statusCode,
-            responseBody: $responseBody,
-            requestContext: $requestContext
+            $message,
+            $code,
+            $previous,
+            $statusCode,
+            $responseBody,
+            $requestContext
         );
     }
 }

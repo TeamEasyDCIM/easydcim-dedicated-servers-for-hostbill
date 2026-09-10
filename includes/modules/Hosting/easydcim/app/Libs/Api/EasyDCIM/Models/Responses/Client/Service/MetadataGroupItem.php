@@ -8,11 +8,15 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class MetadataGroupItem
 {
-    public function __construct(
-        public ?string $label,
-        public ?string $value,
-        public ?bool $encrypted,
-    ) {}
+    public ?string $label;
+    public ?string $value;
+    public ?bool $encrypted;
+    public function __construct(?string $label, ?string $value, ?bool $encrypted)
+    {
+        $this->label = $label;
+        $this->value = $value;
+        $this->encrypted = $encrypted;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -21,9 +25,9 @@ class MetadataGroupItem
     public static function fromArray(array $data): self
     {
         return new self(
-            label: Arr::get($data, 'label', ''),
-            value: Arr::get($data, 'value', ''),
-            encrypted: Arr::get($data, 'encrypted', false),
+            Arr::get($data, 'label', ''),
+            Arr::get($data, 'value', ''),
+            Arr::get($data, 'encrypted', false)
         );
     }
 

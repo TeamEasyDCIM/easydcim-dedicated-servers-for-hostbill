@@ -4,11 +4,15 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class CreateSshKeyRequest
 {
-    public function __construct(
-        public string $name,
-        public string $sshKey,
-        public ?bool $default = null,
-    ) {}
+    public string $name;
+    public string $sshKey;
+    public ?bool $default;
+    public function __construct(string $name, string $sshKey, ?bool $default = null)
+    {
+        $this->name = $name;
+        $this->sshKey = $sshKey;
+        $this->default = $default;
+    }
 
     /**
      * @return array<string, mixed>
@@ -29,9 +33,9 @@ class CreateSshKeyRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            name: $data['name'],
-            sshKey: $data['ssh_key'] ?? $data['sshKey'],
-            default: $data['default'] ?? null,
+            $data['name'],
+            $data['ssh_key'] ?? $data['sshKey'],
+            $data['default'] ?? null
         );
     }
 }

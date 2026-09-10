@@ -7,13 +7,16 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class StoreTwoFactorRequest
 {
+    public string $moduleName;
+    public array $configuration;
     /**
      * @param array<string, string> $configuration
      */
-    public function __construct(
-        public string $moduleName,
-        public array $configuration,
-    ) {}
+    public function __construct(string $moduleName, array $configuration)
+    {
+        $this->moduleName = $moduleName;
+        $this->configuration = $configuration;
+    }
 
     /**
      * @return array<string, mixed>
@@ -33,8 +36,8 @@ class StoreTwoFactorRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            moduleName: $data['module_name'] ?? $data['moduleName'],
-            configuration: $data['configuration'] ?? [],
+            $data['module_name'] ?? $data['moduleName'],
+            $data['configuration'] ?? []
         );
     }
 }

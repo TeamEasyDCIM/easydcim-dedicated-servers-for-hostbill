@@ -6,12 +6,14 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
 
 class PowerActionRequest
 {
+    public string $action;
     /**
      * @param string $action Action to perform (boot, reboot, shutdown, etc.)
      */
-    public function __construct(
-        public string $action,
-    ) {}
+    public function __construct(string $action)
+    {
+        $this->action = $action;
+    }
 
     /**
      * @return array<string, mixed>
@@ -28,7 +30,7 @@ class PowerActionRequest
     public static function fromArray(array $data): self
     {
         return new self(
-            action: $data['action'],
+            $data['action']
         );
     }
 }

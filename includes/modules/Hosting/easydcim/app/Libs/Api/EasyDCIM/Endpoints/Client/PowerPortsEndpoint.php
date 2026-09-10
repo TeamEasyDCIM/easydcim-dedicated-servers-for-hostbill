@@ -25,9 +25,9 @@ class PowerPortsEndpoint extends AbstractEndpoint
      * @param ListServicePowerPortsRequest|null $request
      * @return ListServicePowerPortsResponse
      */
-    public function listServicePowerPorts(int|string $serviceId, ?ListServicePowerPortsRequest $request = null): ListServicePowerPortsResponse
+    public function listServicePowerPorts($serviceId, ?ListServicePowerPortsRequest $request = null): ListServicePowerPortsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get($this->buildPath((string) $serviceId, 'power-ports'), $params);
         return ListServicePowerPortsResponse::fromArray($response);
     }
@@ -39,7 +39,7 @@ class PowerPortsEndpoint extends AbstractEndpoint
      * @param ListServicePowerPortsRequest|null $request
      * @return array Array of all power ports across all pages
      */
-    public function listAllServicePowerPorts(int|string $serviceId, ?ListServicePowerPortsRequest $request = null): array
+    public function listAllServicePowerPorts($serviceId, ?ListServicePowerPortsRequest $request = null): array
     {
         $allPowerPorts = [];
         $currentPage = 1;
@@ -48,9 +48,9 @@ class PowerPortsEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListServicePowerPortsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                search: $request->search,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->search
             );
 
             $response = $this->listServicePowerPorts($serviceId, $request);
@@ -69,7 +69,7 @@ class PowerPortsEndpoint extends AbstractEndpoint
      * @param PerformPortActionRequest $request
      * @return PerformPortActionResponse
      */
-    public function performPortAction(int|string $serviceId, PerformPortActionRequest $request): PerformPortActionResponse
+    public function performPortAction($serviceId, PerformPortActionRequest $request): PerformPortActionResponse
     {
         $response = $this->post(
             $this->buildPath((string) $serviceId, 'power-ports/action'),

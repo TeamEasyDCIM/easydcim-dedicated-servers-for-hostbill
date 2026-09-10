@@ -23,9 +23,9 @@ class PortsEndpoint extends AbstractEndpoint
      * @param ListServicePortsRequest|null $request
      * @return ListServicePortsResponse
      */
-    public function listServicePorts(int|string $serviceId, ?ListServicePortsRequest $request = null): ListServicePortsResponse
+    public function listServicePorts($serviceId, ?ListServicePortsRequest $request = null): ListServicePortsResponse
     {
-        $params = $request?->toArray() ?? [];
+        $params = ($request === null ? null : $request->toArray()) ?? [];
         $response = $this->get($this->buildPath((string) $serviceId, 'ports'), $params);
         return ListServicePortsResponse::fromArray($response);
     }
@@ -37,7 +37,7 @@ class PortsEndpoint extends AbstractEndpoint
      * @param ListServicePortsRequest|null $request
      * @return array Array of all ports across all pages
      */
-    public function listAllServicePorts(int|string $serviceId, ?ListServicePortsRequest $request = null): array
+    public function listAllServicePorts($serviceId, ?ListServicePortsRequest $request = null): array
     {
         $allPorts = [];
         $currentPage = 1;
@@ -46,10 +46,10 @@ class PortsEndpoint extends AbstractEndpoint
         do {
             // Set the current page
             $request = new ListServicePortsRequest(
-                perPage: $request->perPage ?? 100,
-                page: $currentPage,
-                withTraffic: $request->withTraffic,
-                search: $request->search,
+                $request->withTraffic,
+                $request->perPage ?? 100,
+                $currentPage,
+                $request->search
             );
 
             $response = $this->listServicePorts($serviceId, $request);

@@ -7,12 +7,14 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests
  */
 class ShowOsTemplateRequest
 {
+    public ?int $withAddons;
     /**
      * @param int|null $withAddons Include addons (1/0)
      */
-    public function __construct(
-        public ?int $withAddons = null,
-    ) {}
+    public function __construct(?int $withAddons = null)
+    {
+        $this->withAddons = $withAddons;
+    }
 
     /**
      * @return array<string, mixed>

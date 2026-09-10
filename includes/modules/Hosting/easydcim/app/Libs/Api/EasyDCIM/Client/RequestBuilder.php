@@ -246,7 +246,7 @@ class RequestBuilder
      * @param int|string $user
      * @return self
      */
-    public function withImpersonation(int|string $user): self
+    public function withImpersonation($user): self
     {
         $instance = clone $this;
         $instance->config->setImpersonateUser($user);

@@ -48,42 +48,42 @@ class LocationInformation
 
     public function getLocationName(): string
     {
-        return $this->locationInformations?->location?->name ?: '-';
+        return (($this->locationInformations === null ? null : $this->locationInformations->location) === null ? null : ($this->locationInformations === null ? null : $this->locationInformations->location)->name) ?: '-';
     }
 
     public function getAddress(): string
     {
-        return $this->locationInformations?->location?->address ?: '-';
+        return (($this->locationInformations === null ? null : $this->locationInformations->location) === null ? null : ($this->locationInformations === null ? null : $this->locationInformations->location)->address) ?: '-';
     }
 
     public function getPhoneNumber(): string
     {
-        return $this->locationInformations?->location?->phone ?: '-';
+        return (($this->locationInformations === null ? null : $this->locationInformations->location) === null ? null : ($this->locationInformations === null ? null : $this->locationInformations->location)->phone) ?: '-';
     }
 
     public function getDescription(): string
     {
-        return $this->locationInformations?->location?->description ?: '-';
+        return (($this->locationInformations === null ? null : $this->locationInformations->location) === null ? null : ($this->locationInformations === null ? null : $this->locationInformations->location)->description) ?: '-';
     }
 
     public function getRackWithPosition(): string
     {
-        return $this->locationInformations?->labeledRackWithPosition ?: '-';
+        return ($this->locationInformations === null ? null : $this->locationInformations->labeledRackWithPosition) ?: '-';
     }
 
     public function getFloor(): string
     {
-        return $this->locationInformations?->rack?->floorId ? (string) $this->locationInformations->rack->floorId : '-';
+        return (($this->locationInformations === null ? null : $this->locationInformations->rack) === null ? null : ($this->locationInformations === null ? null : $this->locationInformations->rack)->floorId) ? (string) $this->locationInformations->rack->floorId : '-';
     }
 
     public function getRackName(): string
     {
-        return $this->locationInformations?->rack?->name ?: '-';
+        return (($this->locationInformations === null ? null : $this->locationInformations->rack) === null ? null : ($this->locationInformations === null ? null : $this->locationInformations->rack)->name) ?: '-';
     }
 
     public function getRackLink(): string
     {
-        $rackId = $this->locationInformations?->rack?->id;
+        $rackId = ($this->locationInformations === null ? null : $this->locationInformations->rack) === null ? null : ($this->locationInformations === null ? null : $this->locationInformations->rack)->id;
 
         if (empty($rackId))
         {
@@ -98,7 +98,7 @@ class LocationInformation
 
     public function getLocationLink(): string
     {
-        $locationId = $this->locationInformations?->location?->id;
+        $locationId = ($this->locationInformations === null ? null : $this->locationInformations->location) === null ? null : ($this->locationInformations === null ? null : $this->locationInformations->location)->id;
 
         if (empty($locationId))
         {

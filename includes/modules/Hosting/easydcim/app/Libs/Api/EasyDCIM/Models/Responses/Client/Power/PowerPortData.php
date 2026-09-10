@@ -6,15 +6,23 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class PowerPortData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?string $status,
-        public ?string $type = null,
-        public ?string $description = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?string $status;
+    public ?string $type;
+    public ?string $description;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?string $name, ?string $status, ?string $type = null, ?string $description = null, ?string $createdAt = null, ?string $updatedAt = null)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->status = $status;
+        $this->type = $type;
+        $this->description = $description;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -23,13 +31,13 @@ class PowerPortData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            status: Arr::get($data, 'status', ''),
-            type: Arr::get($data, 'type'),
-            description: Arr::get($data, 'description'),
-            createdAt: Arr::get($data, 'created_at'),
-            updatedAt: Arr::get($data, 'updated_at'),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'status', ''),
+            Arr::get($data, 'type'),
+            Arr::get($data, 'description'),
+            Arr::get($data, 'created_at'),
+            Arr::get($data, 'updated_at')
         );
     }
 

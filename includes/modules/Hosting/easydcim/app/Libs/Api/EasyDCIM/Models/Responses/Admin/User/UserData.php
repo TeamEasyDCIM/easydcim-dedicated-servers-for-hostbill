@@ -6,56 +6,79 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
 
 class UserData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $username,
-        public ?string $email,
-        public ?string $name,
-        public ?string $firstname,
-        public ?string $lastname,
-        public null|string|int $gender,
-        public ?string $avatar,
-        public ?string $largeAvatar,
-        public ?string $company,
-        public ?int $active,
-        public ?string $status,
-        public ?string $address1,
-        public ?string $address2,
-        public ?string $city,
-        public ?string $state,
-        public ?string $postcode,
-        public ?string $countryCode,
-        public ?string $countryName,
-        public ?string $locale,
-        public ?int $timezone,
-        public ?string $lastLogin,
-    ) {}
+    public ?int $id;
+    public ?string $username;
+    public ?string $email;
+    public ?string $name;
+    public ?string $firstname;
+    public ?string $lastname;
+    public $gender;
+    public ?string $avatar;
+    public ?string $largeAvatar;
+    public ?string $company;
+    public ?int $active;
+    public ?string $status;
+    public ?string $address1;
+    public ?string $address2;
+    public ?string $city;
+    public ?string $state;
+    public ?string $postcode;
+    public ?string $countryCode;
+    public ?string $countryName;
+    public ?string $locale;
+    public ?int $timezone;
+    public ?string $lastLogin;
+    public function __construct(?int $id, ?string $username, ?string $email, ?string $name, ?string $firstname, ?string $lastname, $gender, ?string $avatar, ?string $largeAvatar, ?string $company, ?int $active, ?string $status, ?string $address1, ?string $address2, ?string $city, ?string $state, ?string $postcode, ?string $countryCode, ?string $countryName, ?string $locale, ?int $timezone, ?string $lastLogin)
+    {
+        $this->id = $id;
+        $this->username = $username;
+        $this->email = $email;
+        $this->name = $name;
+        $this->firstname = $firstname;
+        $this->lastname = $lastname;
+        $this->gender = $gender;
+        $this->avatar = $avatar;
+        $this->largeAvatar = $largeAvatar;
+        $this->company = $company;
+        $this->active = $active;
+        $this->status = $status;
+        $this->address1 = $address1;
+        $this->address2 = $address2;
+        $this->city = $city;
+        $this->state = $state;
+        $this->postcode = $postcode;
+        $this->countryCode = $countryCode;
+        $this->countryName = $countryName;
+        $this->locale = $locale;
+        $this->timezone = $timezone;
+        $this->lastLogin = $lastLogin;
+    }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            username: Arr::get($data, 'username', ''),
-            email: Arr::get($data, 'email', ''),
-            name: Arr::get($data, 'name', ''),
-            firstname: Arr::get($data, 'firstname', ''),
-            lastname: Arr::get($data, 'lastname', ''),
-            gender: Arr::get($data, 'gender', ''),
-            avatar: Arr::get($data, 'avatar', ''),
-            largeAvatar: Arr::get($data, 'large_avatar', ''),
-            company: Arr::get($data, 'company'),
-            active: Arr::get($data, 'active', 0),
-            status: Arr::get($data, 'status', ''),
-            address1: Arr::get($data, 'address1'),
-            address2: Arr::get($data, 'address2'),
-            city: Arr::get($data, 'city'),
-            state: Arr::get($data, 'state'),
-            postcode: Arr::get($data, 'postcode'),
-            countryCode: Arr::get($data, 'country_code'),
-            countryName: Arr::get($data, 'country_name', ''),
-            locale: Arr::get($data, 'locale'),
-            timezone: Arr::get($data, 'timezone', 0),
-            lastLogin: Arr::get($data, 'last_login'),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'username', ''),
+            Arr::get($data, 'email', ''),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'firstname', ''),
+            Arr::get($data, 'lastname', ''),
+            Arr::get($data, 'gender', ''),
+            Arr::get($data, 'avatar', ''),
+            Arr::get($data, 'large_avatar', ''),
+            Arr::get($data, 'company'),
+            Arr::get($data, 'active', 0),
+            Arr::get($data, 'status', ''),
+            Arr::get($data, 'address1'),
+            Arr::get($data, 'address2'),
+            Arr::get($data, 'city'),
+            Arr::get($data, 'state'),
+            Arr::get($data, 'postcode'),
+            Arr::get($data, 'country_code'),
+            Arr::get($data, 'country_name', ''),
+            Arr::get($data, 'locale'),
+            Arr::get($data, 'timezone', 0),
+            Arr::get($data, 'last_login')
         );
     }
 

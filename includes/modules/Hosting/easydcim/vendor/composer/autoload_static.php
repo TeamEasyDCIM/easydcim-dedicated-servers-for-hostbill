@@ -9,15 +9,15 @@ class ComposerStaticInita553897aeeab67cc0ad3b80926d12d38
     public static $prefixLengthsPsr4 = array (
         'M' => 
         array (
-            'ModulesGarden\\Servers\\EasyDCIMv2\\App\\' => 37,
-        ),
+            'ModulesGarden\\Servers\\EasyDCIMv2\\App\\' => 37
+        )
     );
 
     public static $prefixDirsPsr4 = array (
         'ModulesGarden\\Servers\\EasyDCIMv2\\App\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/app',
-        ),
+            0 => __DIR__ . '/../..' . '/app'
+        )
     );
 
     public static function getInitializer(ClassLoader $loader)

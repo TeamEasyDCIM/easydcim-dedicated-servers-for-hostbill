@@ -11,16 +11,25 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Arr;
  */
 class FloorData
 {
-    public function __construct(
-        public ?int $id,
-        public ?string $name,
-        public ?int $number,
-        public ?int $rows,
-        public ?int $columns,
-        public ?array $racks,
-        public ?string $createdAt,
-        public ?string $updatedAt,
-    ) {}
+    public ?int $id;
+    public ?string $name;
+    public ?int $number;
+    public ?int $rows;
+    public ?int $columns;
+    public ?array $racks;
+    public ?string $createdAt;
+    public ?string $updatedAt;
+    public function __construct(?int $id, ?string $name, ?int $number, ?int $rows, ?int $columns, ?array $racks, ?string $createdAt, ?string $updatedAt)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->number = $number;
+        $this->rows = $rows;
+        $this->columns = $columns;
+        $this->racks = $racks;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+    }
 
     /**
      * @param array<string, mixed> $data
@@ -29,14 +38,14 @@ class FloorData
     public static function fromArray(array $data): self
     {
         return new self(
-            id: Arr::get($data, 'id', 0),
-            name: Arr::get($data, 'name', ''),
-            number: Arr::get($data, 'number', 0),
-            rows: Arr::get($data, 'rows', 0),
-            columns: Arr::get($data, 'columns', 0),
-            racks: Arr::get($data, 'racks', []),
-            createdAt: Arr::get($data, 'created_at', ''),
-            updatedAt: Arr::get($data, 'updated_at', ''),
+            Arr::get($data, 'id', 0),
+            Arr::get($data, 'name', ''),
+            Arr::get($data, 'number', 0),
+            Arr::get($data, 'rows', 0),
+            Arr::get($data, 'columns', 0),
+            Arr::get($data, 'racks', []),
+            Arr::get($data, 'created_at', ''),
+            Arr::get($data, 'updated_at', '')
         );
     }
 

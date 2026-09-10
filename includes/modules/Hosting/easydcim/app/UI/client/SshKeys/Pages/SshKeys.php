@@ -105,9 +105,9 @@ class SshKeys
             }
 
             $result = $this->api->client()->sshKeys()->create(new CreateSshKeyRequest(
-                name: $name,
-                sshKey: $sshKey,
-                default: !empty($data['default'])
+                $name,
+                $sshKey,
+                !empty($data['default'])
             ));
 
             if ($result->success === false)
@@ -151,9 +151,9 @@ class SshKeys
             }
 
             $result = $this->api->client()->sshKeys()->update($id, new UpdateSshKeyRequest(
-                name: $name,
-                sshKey: $sshKey !== '' ? $sshKey : null,
-                default: !empty($data['default'])
+                $name,
+                $sshKey !== '' ? $sshKey : null,
+                !empty($data['default'])
             ));
 
             if ($result->success === false)
