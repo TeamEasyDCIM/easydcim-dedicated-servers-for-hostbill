@@ -199,7 +199,7 @@ class OsInstallationEndpoint extends AbstractEndpoint
             $request = new ListAddonsRequest(
                 perPage: $request->perPage ?? 100,
                 page: $currentPage,
-                search: $request->search,
+                searchTerm: $request->searchTerm,
             );
 
             $response = $this->listAddons($serviceId, $request);
