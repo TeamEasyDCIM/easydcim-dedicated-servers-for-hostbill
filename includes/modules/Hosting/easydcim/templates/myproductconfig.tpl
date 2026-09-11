@@ -246,6 +246,7 @@
                             </label></div>
                         <div id="orderActionsRow" {if $moduleConfiguration->OrderActions != 'on'}style="display:none;"{/if}>
                             {foreach from=$orderActionsList key=event item=actions}
+                                {assign var=eventActionsKey value=$event|capitalize|cat:'Actions'}
                                 <div class="lu-form-group">
                                     <label class="lu-form-label">
                                         {$lang.serverAA.productConfig.mainContainer.configForm.easyDCIMAutomationSettings.igRow.OrderActions.events[$event]}
@@ -254,7 +255,7 @@
                                             id="{$event}Actions" class="mg-select2" tabindex="-1">
                                         {foreach from=$actions key=actionKey item=actionLabel}
                                             <option value="{$actionKey}"
-                                                    {if $actionKey|in_array:$moduleConfiguration->{$event|capitalize}Actions}selected{/if}>{$actionLabel}</option>
+                                                    {if isset($moduleConfiguration->$eventActionsKey) && $actionKey|in_array:$moduleConfiguration->$eventActionsKey}selected{/if}>{$actionLabel}</option>
                                         {/foreach}
                                     </select>
                                     <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>
