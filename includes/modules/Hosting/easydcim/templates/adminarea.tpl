@@ -362,7 +362,7 @@
                                 </div>
                             </div>
                             <div class="lu-widget__body">
-                                <div id="aggregateTraffic" class="lu-graph"></div>
+                                <div id="aggregateTraffic" class="lu-graph" data-edc-height-scale="0.667"></div>
                             </div>
                         </div>
                     </div>
@@ -383,7 +383,7 @@
                                 </div>
                             </div>
                             <div class="lu-widget__body">
-                                <div id="pingGraph" class="lu-graph"></div>
+                                <div id="pingGraph" class="lu-graph" data-edc-height-scale="0.667"></div>
                             </div>
                         </div>
                     </div>
@@ -404,7 +404,7 @@
                                 </div>
                             </div>
                             <div class="lu-widget__body">
-                                <div id="statusGraph" class="lu-graph"></div>
+                                <div id="statusGraph" class="lu-graph" data-edc-height-scale="0.667"></div>
                             </div>
                         </div>
                     </div>

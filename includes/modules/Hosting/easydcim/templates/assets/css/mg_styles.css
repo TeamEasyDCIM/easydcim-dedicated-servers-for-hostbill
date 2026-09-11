@@ -654,6 +654,9 @@ progress {
 #layers .lu-graph.edc-graph--loading {
     min-height: 300px;
 }
+#layers .lu-graph[data-edc-height-scale].edc-graph--loading {
+    min-height: 200px;
+}
 #layers .sensorGraph.edc-graph--loading {
     min-height: 35px;
     min-width: 150px;

@@ -891,7 +891,15 @@ var EdcUi = (function ($) {
             graphLoading('#' + o.element, true);
             $.ajax({type: 'GET', url: pageUrl() + '&graphs=' + o.graph + periodQuery(loadSettings(o.store, GRAPH_NAMES), GRAPH_NAMES)})
                 .done(function (data) {
-                    EasyDCIMGraphs.draw(o.element, EasyDCIMGraphs.parse(data));
+                    var options = EasyDCIMGraphs.parse(data);
+                    var element = document.getElementById(o.element);
+                    var scale = parseFloat(element.getAttribute('data-edc-height-scale'));
+                    if (options && scale > 0) {
+                        // ApexCharts' own "auto" height is width / 1.61; the admin page asks for a share of it.
+                        options.chart = options.chart || {};
+                        options.chart.height = Math.round(element.clientWidth / 1.61 * scale);
+                    }
+                    EasyDCIMGraphs.draw(o.element, options);
                 })
                 .fail(function () {
                     EasyDCIMGraphs.clear(o.element);
