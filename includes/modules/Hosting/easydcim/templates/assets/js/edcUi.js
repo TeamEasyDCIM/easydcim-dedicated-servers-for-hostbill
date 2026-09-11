@@ -89,14 +89,16 @@ var EdcUi = (function ($) {
      */
     function reload(selector, after) {
         $.get(pageUrl(), function (html) {
-            var fresh = $('<div></div>').append($.parseHTML(html)).find(selector).first();
-            if (fresh.length) {
-                $(selector).first().replaceWith(fresh);
+            // DOMParser runs no scripts and does not depend on the page's jQuery version.
+            var fresh = new DOMParser().parseFromString(html, 'text/html').querySelector(selector);
+            var current = $(selector).first();
+            if (fresh && current.length) {
+                current.replaceWith(document.importNode(fresh, true));
             }
             if (after) {
                 after();
             }
-        });
+        }, 'text');
     }
 
     /* ------------------------------------------------------------------ */
@@ -210,10 +212,11 @@ var EdcUi = (function ($) {
 
     /**
      * The libraries behind the fields: flatpickr for the date-time pickers (WHMCS
-     * uses vue2-datepicker) and select2 for every dropdown (WHMCS uses
-     * selectize). dropdownParent keeps select2's list inside a modal.
+     * uses vue2-datepicker) and Tom Select, the successor of the selectize WHMCS
+     * uses, for every dropdown. Neither depends on the page's jQuery version -
+     * HostBill themes ship jQuery 1.7 to 1.9, too old for select2 4.
      */
-    function initFields(scope, dropdownParent) {
+    function initFields(scope) {
         scope = $(scope);
         if (window.flatpickr) {
             scope.find('input[data-edc-datetime]').each(function () {
@@ -246,13 +249,22 @@ var EdcUi = (function ($) {
                 });
             });
         }
-        if ($.fn.select2) {
+        if (window.TomSelect) {
             scope.find('select').each(function () {
-                var select = $(this);
-                if (select.hasClass('select2-hidden-accessible')) {
+                if (this.tomselect) {
                     return;
                 }
-                select.select2({width: '100%', dropdownParent: dropdownParent ? $(dropdownParent) : $(document.body)});
+                var multiple = this.multiple;
+                // Tom Select copies the select's classes onto its wrapper; the
+                // form-control frame belongs on its inner control instead.
+                $(this).removeClass('lu-form-control');
+                new window.TomSelect(this, {
+                    plugins: multiple ? ['remove_button'] : [],
+                    create: false,
+                    maxOptions: null,
+                    allowEmptyOption: true,
+                    closeAfterSelect: !multiple
+                });
             });
         }
     }
@@ -391,7 +403,7 @@ var EdcUi = (function ($) {
 
         var container = $('#layers');
         (container.length ? container.first() : $('body')).append(el);
-        initFields(form, el);
+        initFields(form);
         if (options.onOpen) {
             options.onOpen(api);
         }
@@ -489,8 +501,9 @@ var EdcUi = (function ($) {
         if (!root.length) {
             return null;
         }
-        if (root.data('edcTable')) {
-            return root.data('edcTable');
+        // Not "edcTable": jQuery's data() would also read the data-edc-table attribute.
+        if (root.data('edcTableApi')) {
+            return root.data('edcTableApi');
         }
         options = $.extend({search: false, searchable: [], perPage: 10, pagination: true, mass: null, onDraw: null}, options || {});
         var state = $.extend({offset: 0, perPage: options.perPage, search: false, previousSearch: false}, previous || {});
@@ -541,9 +554,14 @@ var EdcUi = (function ($) {
         var massAll = null;
         if (options.mass) {
             massCount = $('<span class="lu-badge lu-badge--primary lu-value">0</span>');
+            var massToolbar = $('<div class="lu-top__toolbar"></div>');
+            // One at a time: jQuery before 1.8 cannot append an array of jQuery objects.
+            $.each(options.mass.buttons || [], function (i, button) {
+                massToolbar.append(button);
+            });
             massBar = $('<div class="lu-t-c__mass-actions lu-top"></div>')
                 .append($('<div class="lu-top__title"></div>').append(massCount, ' ', document.createTextNode(t('items_selected'))))
-                .append($('<div class="lu-top__toolbar"></div>').append(options.mass.buttons));
+                .append(massToolbar);
             if (topBar) {
                 topBar.after(massBar);
             } else {
@@ -743,7 +761,7 @@ var EdcUi = (function ($) {
                 return $.extend({}, state);
             }
         };
-        root.data('edcTable', api);
+        root.data('edcTableApi', api);
         return api;
     }
 
@@ -851,6 +869,16 @@ var EdcUi = (function ($) {
 
     var GRAPH_NAMES = {mode: 'period', scope: 'graphScope', start: 'start_date', end: 'end_date'};
 
+    // A spinner over the graph's place while it loads, as the WHMCS Graph component shows one.
+    function graphLoading(element, on) {
+        var el = $(element);
+        el.toggleClass('edc-graph--loading', !!on);
+        el.children('.edc-graph-loader').remove();
+        if (on) {
+            el.append('<div class="edc-graph-loader lu-preloader-container"><div class="lu-preloader lu-preloader--sm"></div></div>');
+        }
+    }
+
     /**
      * An Aggregate Traffic / Ping / Status graph: drawn for the saved period,
      * and redrawn after the "Filter Graph" modal is saved.
@@ -860,12 +888,16 @@ var EdcUi = (function ($) {
             return;
         }
         function load() {
+            graphLoading('#' + o.element, true);
             $.ajax({type: 'GET', url: pageUrl() + '&graphs=' + o.graph + periodQuery(loadSettings(o.store, GRAPH_NAMES), GRAPH_NAMES)})
                 .done(function (data) {
                     EasyDCIMGraphs.draw(o.element, EasyDCIMGraphs.parse(data));
                 })
                 .fail(function () {
                     EasyDCIMGraphs.clear(o.element);
+                })
+                .always(function () {
+                    graphLoading('#' + o.element, false);
                 });
         }
         $(document).on('click', o.button, function (e) {
@@ -985,6 +1017,7 @@ var EdcUi = (function ($) {
     return {
         initInfoTables: initInfoTables,
         initFields: initFields,
+        graphLoading: graphLoading,
         t: t,
         notify: notify,
         request: request,

@@ -60,7 +60,7 @@ var RebuildPage = (function ($) {
         });
     }
 
-    function templateFields(container, data, dropdownParent) {
+    function templateFields(container, data) {
         var windows = !!data.isWindows;
         container.append(
             EdcUi.field.text({name: 'rebuildUsername', label: t('username'), value: windows ? 'Administrator' : (data.username || ''), readonly: windows}),
@@ -86,7 +86,7 @@ var RebuildPage = (function ($) {
         if (data.extras && data.extras.length) {
             container.append(EdcUi.field.select({name: 'rebuildExtras', label: t('extras'), multiple: true, options: options(data.extras)}));
         }
-        EdcUi.initFields(container, dropdownParent);
+        EdcUi.initFields(container);
     }
 
     function formErrors(values) {
@@ -142,7 +142,7 @@ var RebuildPage = (function ($) {
             modal.busy(true);
             EdcUi.request('&ajax=1&osTemplateID=' + encodeURIComponent(id), function (data) {
                 modal.busy(false);
-                templateFields(extra, data, modal.el);
+                templateFields(extra, data);
             }, function (data) {
                 modal.busy(false);
                 EdcUi.notify('error', data.error || '');

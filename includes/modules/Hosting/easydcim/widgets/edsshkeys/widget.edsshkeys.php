@@ -5,13 +5,17 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\client\SshKeys\Pages\SshKeys;
 
-class widget_sshkeys extends HostingWidget
+/**
+ * HostBill names a widget after its class (widget_<name>), and ships its own
+ * "sshkeys" widget - hence "edsshkeys", like "edreversedns".
+ */
+class widget_edsshkeys extends HostingWidget
 {
     protected $widgetfullname = 'SSH Keys';
 
     protected $config = [
-        "smallimg" => "includes/modules/Hosting/easydcim/widgets/sshkeys/small.png",
-        "bigimg"   => "includes/modules/Hosting/easydcim/widgets/sshkeys/big.png",
+        "smallimg" => "includes/modules/Hosting/easydcim/widgets/edsshkeys/small.png",
+        "bigimg"   => "includes/modules/Hosting/easydcim/widgets/edsshkeys/big.png",
     ];
 
     protected $client;
@@ -93,6 +97,6 @@ class widget_sshkeys extends HostingWidget
             'edcLang'   => \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\UiLang::json(),
         ];
 
-        return array('sshkeys.tpl', $variables);
+        return array('edsshkeys.tpl', $variables);
     }
 }

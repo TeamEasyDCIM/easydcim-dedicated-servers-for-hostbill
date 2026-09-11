@@ -619,27 +619,51 @@ progress {
     z-index: 100002;
 }
 
-/* select2 dropdowns (WHMCS: selectize) sized like the other form controls */
-#layers .lu-form-group .select2-container--default .select2-selection--single {
-    height: 36px;
+/* Tom Select dropdowns (WHMCS: selectize) framed like the other form controls */
+#layers .ts-wrapper .ts-control {
+    min-height: 36px;
+    padding: 6px 15px;
     border: 1px solid #dadde6;
     border-radius: 3px;
-}
-#layers .lu-form-group .select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 34px;
-    padding-left: 15px;
+    box-shadow: none;
     font-size: 13px;
     color: #505459;
 }
-#layers .lu-form-group .select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 34px;
-    right: 6px;
+#layers .ts-wrapper.single .ts-control {
+    padding-right: 32px;
 }
-#layers .lu-form-group .select2-container--default .select2-selection--multiple {
-    min-height: 36px;
-    border: 1px solid #dadde6;
-    border-radius: 3px;
+#layers .ts-wrapper.focus .ts-control {
+    border-color: #2368AD;
+    box-shadow: none;
 }
-#layers .lu-modal .select2-dropdown {
+#layers .ts-wrapper.multi .ts-control > .item {
+    background: #e9ebf0;
+    border: 0;
+    border-radius: 2px;
+    color: #505459;
+}
+#layers .ts-dropdown {
     z-index: 100001;
+    font-size: 13px;
+}
+
+/* Graph loading: the widget body keeps its place with a centred spinner */
+#layers .lu-graph {
+    position: relative;
+}
+#layers .lu-graph.edc-graph--loading {
+    min-height: 300px;
+}
+#layers .sensorGraph.edc-graph--loading {
+    min-height: 35px;
+    min-width: 150px;
+}
+#layers .edc-graph-loader {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.86);
 }

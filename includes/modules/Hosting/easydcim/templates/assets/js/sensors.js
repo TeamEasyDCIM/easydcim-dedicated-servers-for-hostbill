@@ -21,6 +21,7 @@ var SensorsPage = (function ($) {
                 return;
             }
             element.data('drawnFor', query);
+            EdcUi.graphLoading(element, true);
             $.ajax({
                 type: 'GET',
                 url: window.location.href.split('#')[0] + '&ajax=1&sensorGraph=1&sensorId=' + encodeURIComponent(element.data('sensorId')) +
@@ -30,6 +31,9 @@ var SensorsPage = (function ($) {
                 },
                 error: function () {
                     EasyDCIMGraphs.clear(element.attr('id'));
+                },
+                complete: function () {
+                    EdcUi.graphLoading(element, false);
                 }
             });
         });

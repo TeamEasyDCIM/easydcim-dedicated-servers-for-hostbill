@@ -1,8 +1,8 @@
 <link href="{$assetsURL}/css/fonts.css" rel="stylesheet">
 <link rel="stylesheet" href="{$assetsURL}/css/layers-ui.css">
 <link rel="stylesheet" href="{$assetsURL}/css/mg_styles.css">
-<link rel="stylesheet" href="{$assetsURL}/css/select2.css">
-<script src="{$assetsURL}/js/select2.js"></script>
+<link rel="stylesheet" href="{$assetsURL}/css/tom-select.min.css">
+<script src="{$assetsURL}/js/tom-select.complete.min.js"></script>
 <script src="{$assetsURL}/js/index.js"></script>
 <script>window.EdcLang = {$edcLang|default:'null'};</script>
 <script src="{$assetsURL}/js/edcUi.js"></script>
