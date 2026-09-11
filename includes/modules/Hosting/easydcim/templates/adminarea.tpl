@@ -5,8 +5,8 @@
 <script src="{$assetsURL}/js/select2.js"></script>
 <script src="{$assetsURL}/js/index.js"></script>
 <script src="{$assetsURL}/js/showcustomfn.js"></script>
-<script src="{$assetsURL}/js/chart.js"></script>
-<script src="{$assetsURL}/js/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="{$assetsURL}/js/apexcharts.min.js"></script>
+<script src="{$assetsURL}/js/easydcimGraphs.js"></script>
 <script src="{$assetsURL}/js/aggregateTraffic.js"></script>
 <script src="{$assetsURL}/js/ping.js"></script>
 <script src="{$assetsURL}/js/status.js"></script>
@@ -401,7 +401,7 @@
                                 </div>
                             </div>
                             <div class="lu-widget__body">
-                                <canvas id="aggregateTraffic" style="height: 400px;"></canvas>
+                                <div id="aggregateTraffic" class="lu-graph"></div>
                             </div>
                         </div>
                     </div>
@@ -424,7 +424,7 @@
                                 </div>
                             </div>
                             <div class="lu-widget__body">
-                                <canvas id="pingGraph" style="height: 400px;"></canvas>
+                                <div id="pingGraph" class="lu-graph"></div>
                             </div>
                         </div>
                     </div>
@@ -447,7 +447,7 @@
                                 </div>
                             </div>
                             <div class="lu-widget__body">
-                                <canvas id="statusGraph" style="height: 400px;"></canvas>
+                                <div id="statusGraph" class="lu-graph"></div>
                             </div>
                         </div>
                     </div>
@@ -480,8 +480,8 @@
                     <option value="custom">{$lang.serverAA.adminServicesTabFields.custom_dates}</option>
                 </select>
                 <div id="scopeRange" style="display: none; margin-top: 10px;">
-                    <input type="date" id="scopeStart" class="lu-form-control" style="display: inline-block; width: auto;">
-                    <input type="date" id="scopeEnd" class="lu-form-control" style="display: inline-block; width: auto;">
+                    <input type="datetime-local" id="scopeStart" class="lu-form-control" style="display: inline-block; width: auto;">
+                    <input type="datetime-local" id="scopeEnd" class="lu-form-control" style="display: inline-block; width: auto;">
                 </div>
             </div>
             <div class="modal-footer">
@@ -513,8 +513,8 @@
                     <option value="custom">{$lang.serverAA.adminServicesTabFields.custom_dates}</option>
                 </select>
                 <div id="scope2Range" style="display: none; margin-top: 10px;">
-                    <input type="date" id="scope2Start" class="lu-form-control" style="display: inline-block; width: auto;">
-                    <input type="date" id="scope2End" class="lu-form-control" style="display: inline-block; width: auto;">
+                    <input type="datetime-local" id="scope2Start" class="lu-form-control" style="display: inline-block; width: auto;">
+                    <input type="datetime-local" id="scope2End" class="lu-form-control" style="display: inline-block; width: auto;">
                 </div>
             </div>
             <div class="modal-footer">
@@ -546,8 +546,8 @@
                     <option value="custom">{$lang.serverAA.adminServicesTabFields.custom_dates}</option>
                 </select>
                 <div id="scope3Range" style="display: none; margin-top: 10px;">
-                    <input type="date" id="scope3Start" class="lu-form-control" style="display: inline-block; width: auto;">
-                    <input type="date" id="scope3End" class="lu-form-control" style="display: inline-block; width: auto;">
+                    <input type="datetime-local" id="scope3Start" class="lu-form-control" style="display: inline-block; width: auto;">
+                    <input type="datetime-local" id="scope3End" class="lu-form-control" style="display: inline-block; width: auto;">
                 </div>
             </div>
             <div class="modal-footer">
@@ -578,8 +578,8 @@
                     <option value="custom">{$lang.serverAA.adminServicesTabFields.custom_dates}</option>
                 </select>
                 <div id="bandwidthRange" style="display: none; margin-top: 10px;">
-                    <input type="date" id="bandwidthStart" class="lu-form-control" style="display: inline-block; width: auto;">
-                    <input type="date" id="bandwidthEnd" class="lu-form-control" style="display: inline-block; width: auto;">
+                    <input type="datetime-local" id="bandwidthStart" class="lu-form-control" style="display: inline-block; width: auto;">
+                    <input type="datetime-local" id="bandwidthEnd" class="lu-form-control" style="display: inline-block; width: auto;">
                 </div>
             </div>
             <div class="modal-footer">

@@ -2,12 +2,12 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\client\Sensors\Pages;
 
-use Carbon\Carbon;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\ServiceContext;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Graph\ExportGraphRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Sensors\ListSensorsRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\DateRange;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\GraphOptions;
 
 /**
  * Hardware sensor readings for the account's service.
@@ -113,24 +113,27 @@ class Sensors
      */
     public function getGraph($getParams)
     {
+        $sensorId = $getParams['sensorId'] ?? null;
+
+        if (empty($sensorId)) {
+            $this->fail('Sensor ID is required.');
+        }
+
+        $name = (string) ($getParams['name'] ?? '');
+        $unit = (string) ($getParams['unit'] ?? '');
+
+        // As the WHMCS SensorGraph: a failed export still draws the empty graph.
         try {
-            $sensorId = $getParams['sensorId'] ?? null;
-
-            if (empty($sensorId)) {
-                $this->fail('Sensor ID is required.');
-            }
-
             $dates = DateRange::resolve((string) ($getParams['interval'] ?? 'td'), $getParams['start'] ?? null, $getParams['end'] ?? null);
 
             $graphData = $this->api->client()->graphs()->export($sensorId, new ExportGraphRequest(self::GRAPH_TYPE, self::GRAPH_TARGET, (string) $dates['start'], (string) $dates['end'], null, false));
 
-            $data = $graphData->toArray();
-            $data['unit'] = $this->getDateUnitForLabels((array) $graphData->labels);
-
-            self::jsonEncode($data);
+            $options = GraphOptions::sensor($graphData->toArray(), $name, $unit);
         } catch (\Exception $e) {
-            $this->fail($e->getMessage() ?: 'The sensor graph could not be loaded.');
+            $options = GraphOptions::sensor([], $name, $unit);
         }
+
+        self::jsonEncode(['options' => $options]);
     }
 
     protected function fail(string $message): void
@@ -148,36 +151,5 @@ class Sensors
         die;
     }
 
-    /**
-     * Chart.js time axis unit that suits the span the labels cover.
-     */
-    protected function getDateUnitForLabels(array $labels): string
-    {
-        if (empty($labels)) {
-            return 'day';
-        }
-
-        $startDate = new Carbon(reset($labels));
-        $endDate = new Carbon(end($labels));
-        $diffHours = $startDate->diffInHours($endDate);
-
-        if ($diffHours > 0 && $diffHours <= 48) {
-            return 'hour';
-        }
-
-        if ($diffHours <= 168) {
-            return 'day';
-        }
-
-        if ($diffHours <= 744) {
-            return 'week';
-        }
-
-        if ($diffHours <= 8760) {
-            return 'month';
-        }
-
-        return 'year';
-    }
 
 }

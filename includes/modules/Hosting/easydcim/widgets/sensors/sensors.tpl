@@ -4,8 +4,8 @@
 <link rel="stylesheet" href="{$assetsURL}/css/mg_styles.css">
 <script src="{$assetsURL}/js/datatables.js"></script>
 <script src="{$assetsURL}/js/index.js"></script>
-<script src="{$assetsURL}/js/chart.js"></script>
-<script src="{$assetsURL}/js/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="{$assetsURL}/js/apexcharts.min.js"></script>
+<script src="{$assetsURL}/js/easydcimGraphs.js"></script>
 <script src="{$assetsURL}/js/sensors.js"></script>
 <div id="layers">
     <div class="lu-row">
@@ -15,6 +15,14 @@
                     <div class="lu-widget__top lu-top">
                         <div class="lu-top__title">
                             {$lang.serverCA.sensors.mainContainer.sensorsTable.sensorsTable}
+                        </div>
+                        <div class="lu-top__toolbar">
+                            <a href="javascript:;" onclick="showSensorsScopeModal()" data-toggle="lu-tooltip"
+                               class="lu-btn lu-btn--sm lu-btn--link lu-btn--icon lu-btn--plain lu-btn--default lu-tooltip drop-target
+                               drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center"
+                               data-title="{$lang.serverCA.sensors.mainContainer.sensorsTable.scopeButton.button.scopeButton}">
+                                <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -26,17 +34,11 @@
                                        class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
                                     <thead>
                                     <tr role="row">
-                                        <th aria-sort="descending" name="name" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.sensors.mainContainer.sensorsTable.table.name}</span></th>
-                                        <th aria-sort="descending" name="type" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.sensors.mainContainer.sensorsTable.table.type}</span></th>
-                                        <th aria-sort="descending" name="class" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.sensors.mainContainer.sensorsTable.table.class}</span></th>
-                                        <th aria-sort="descending" name="reading" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.sensors.mainContainer.sensorsTable.table.reading}</span></th>
-                                        <th aria-sort="descending" name="lastPolled" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.sensors.mainContainer.sensorsTable.table.lastPolled}</span></th>
-                                        <th name="actionsCol" class="mgTableActionsHeader"></th>
+                                        <th name="name"><span class="lu-table__text">{$lang.serverCA.sensors.mainContainer.sensorsTable.table.name}</span></th>
+                                        <th name="type"><span class="lu-table__text">{$lang.serverCA.sensors.mainContainer.sensorsTable.table.type}</span></th>
+                                        <th name="class"><span class="lu-table__text">{$lang.serverCA.sensors.mainContainer.sensorsTable.table.class}</span></th>
+                                        <th name="reading"><span class="lu-table__text">{$lang.serverCA.sensors.mainContainer.sensorsTable.table.reading}</span></th>
+                                        <th name="graph"><span class="lu-table__text">{$lang.serverCA.sensors.mainContainer.sensorsTable.table.graph}</span></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -56,17 +58,9 @@
                                                 {$i.reading}
                                             </td>
                                             <td>
-                                                {$i.lastPolled}
-                                            </td>
-                                            <td class="lu-cell-actions mgTableActions">
-                                                <a href="javascript:;"
-                                                   onclick="showSensorGraph('{$i.id}','{$i.name|escape:'javascript'}','{$i.unit|escape:'javascript'}')"
-                                                   data-toggle="lu-tooltip"
-                                                   class="lu-btn lu-btn--sm lu-btn--link lu-btn--icon lu-btn--plain lu-btn--default lu-tooltip drop-target
-                                                   drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center"
-                                                   data-title="{$lang.serverCA.sensors.mainContainer.sensorsTable.graphButton.button.graphButton}">
-                                                    <i class="lu-btn__icon lu-zmdi lu-zmdi-chart"></i>
-                                                </a>
+                                                {* inline 150x35 graph, as the WHMCS sensors table draws one per sensor *}
+                                                <div id="sensorGraph_{$i.id}" class="lu-graph sensorGraph" data-sensor-id="{$i.id}"
+                                                     data-unit="{$i.unit|escape}" data-name="{$i.name|escape}"></div>
                                             </td>
                                         </tr>
                                     {/foreach}

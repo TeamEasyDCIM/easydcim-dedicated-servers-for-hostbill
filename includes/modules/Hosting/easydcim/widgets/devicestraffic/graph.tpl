@@ -4,8 +4,8 @@
 <link rel="stylesheet" href="{$assetsURL}/css/select2.css">
 <script src="{$assetsURL}/js/select2.js"></script>
 <script src="{$assetsURL}/js/index.js"></script>
-<script src="{$assetsURL}/js/chart.js"></script>
-<script src="{$assetsURL}/js/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="{$assetsURL}/js/apexcharts.min.js"></script>
+<script src="{$assetsURL}/js/easydcimGraphs.js"></script>
 <script src="{$assetsURL}/js/aggregateTraffic.js"></script>
 <script src="{$assetsURL}/js/ping.js"></script>
 <script src="{$assetsURL}/js/status.js"></script>
@@ -27,7 +27,7 @@
                         </div>
                     </div>
                     <div class="lu-widget__body">
-                        <canvas id="aggregateTraffic" style="height: 400px;"></canvas>
+                        <div id="aggregateTraffic" class="lu-graph"></div>
                     </div>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                         </div>
                     </div>
                     <div class="lu-widget__body">
-                        <canvas id="pingGraph" style="height: 400px;"></canvas>
+                        <div id="pingGraph" class="lu-graph"></div>
                     </div>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                         </div>
                     </div>
                     <div class="lu-widget__body">
-                        <canvas id="statusGraph" style="height: 400px;"></canvas>
+                        <div id="statusGraph" class="lu-graph"></div>
                     </div>
                 </div>
             </div>

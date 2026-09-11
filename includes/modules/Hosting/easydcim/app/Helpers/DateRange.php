@@ -16,7 +16,7 @@ class DateRange
 
     /**
      * @param string      $interval  td, yd, tw, lw, tm, lm, ty, ly or "custom"
-     * @param string|null $startDate custom range start, any date Carbon parses
+     * @param string|null $startDate custom range start: a date, or a date and time
      * @param string|null $endDate   custom range end
      * @return array{start: int, end: int}
      */
@@ -24,16 +24,19 @@ class DateRange
     {
         if ($interval === self::CUSTOM && !empty($startDate) && !empty($endDate))
         {
-            $start = Carbon::parse($startDate)->startOfDay();
-            $end   = Carbon::parse($endDate)->endOfDay();
+            // [moment, has a time of day] - the pickers send a date, or a date and time as WHMCS does
+            $from = [Carbon::parse($startDate), strpos($startDate, ':') !== false];
+            $to   = [Carbon::parse($endDate), strpos($endDate, ':') !== false];
 
-            // Tolerate the two dates being picked the wrong way round.
-            if ($end->lessThan($start))
+            // Tolerate the two being picked the wrong way round.
+            if ($to[0]->lessThan($from[0]))
             {
-                $later = $start->copy();
-                $start = $end->copy()->startOfDay();
-                $end   = $later->endOfDay();
+                list($from, $to) = [$to, $from];
             }
+
+            // A bare date covers its whole day; a date with a time is taken as given.
+            $start = $from[1] ? $from[0] : $from[0]->startOfDay();
+            $end   = $to[1] ? $to[0] : $to[0]->endOfDay();
 
             return ['start' => $start->timestamp, 'end' => $end->timestamp];
         }

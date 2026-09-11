@@ -464,3 +464,18 @@
 progress {
     vertical-align: baseline;
 }
+
+/* ApexCharts - the same legend/tooltip tweaks as the WHMCS module */
+#layers .lu-graph .apexcharts-legend-marker {
+    margin-right: 6px;
+    height: 15px !important;
+    width: 15px !important;
+}
+#layers .lu-graph .apexcharts-tooltip-marker::before {
+    line-height: 12px;
+    font-family: inherit;
+    font-weight: inherit;
+}
+#layers .lu-graph .apexcharts-legend .apexcharts-legend-series {
+    margin: 4px 10px !important;
+}

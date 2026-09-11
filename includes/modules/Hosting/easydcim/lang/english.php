@@ -851,11 +851,9 @@ $lang['serverCA']['sensors']['mainContainer']['sensorsTable']['sensorsTable'] = 
 $lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['name'] = 'Name';
 $lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['type'] = 'Type';
 $lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['class'] = 'Class';
-$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['reading'] = 'Reading';
-$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['lastPolled'] = 'Last Polled';
-$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['graphButton']['button']['graphButton'] = 'View Graph';
-$lang['serverCA']['sensors']['graphModal']['modal']['graphModal'] = 'Sensor Readings';
-$lang['serverCA']['sensors']['graphModal']['interval']['interval'] = 'Interval';
+$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['reading'] = 'Sensor Reading';
+$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['table']['graph'] = 'Sensor Graph';
+$lang['serverCA']['sensors']['mainContainer']['sensorsTable']['scopeButton']['button']['scopeButton'] = 'Sensor Filters';
 
 
 

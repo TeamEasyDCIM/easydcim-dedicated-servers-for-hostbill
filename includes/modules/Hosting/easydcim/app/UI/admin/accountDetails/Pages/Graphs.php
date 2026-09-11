@@ -2,11 +2,11 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\accountDetails\Pages;
 
-use Carbon\Carbon;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Graph\ExportGraphRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\DateRange;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\GraphOptions;
 
 class Graphs
 {
@@ -31,25 +31,27 @@ class Graphs
         $this->client = $client;
     }
 
+    /**
+     * Answer the graph script with ready ApexCharts options - see GraphOptions.
+     * Like the WHMCS graph pages, a failed or empty export still gets the
+     * chart's options, just without series.
+     */
     public function manageEasyDCIMGraphs($getParams)
     {
+        $graph = (string) ($getParams['graphs'] ?? '');
+
         try {
             $deviceId = $this->client->getEasyServerID();
-
-            if (empty($deviceId)) {
-                self::jsonEncode(['labels' => [], 'datasets' => []]);
-            }
-
             $dates = DateRange::resolve((string) ($getParams['interval'] ?? 'td'), $getParams['start'] ?? null, $getParams['end'] ?? null);
 
-            $graphData = $this->api->admin()->graphs()->export($deviceId, new ExportGraphRequest($getParams['graphs'], self::TARGET_DEVICE, (string) $dates['start'], (string) $dates['end'], null, false));
+            $graphData = $this->api->admin()->graphs()->export($deviceId, new ExportGraphRequest($graph, self::TARGET_DEVICE, (string) $dates['start'], (string) $dates['end'], null, false));
 
-            $data = $graphData->toArray();
-            $data['unit'] = $this->getDateUnitForLabels((array) $graphData->labels);
-
-            self::jsonEncode($data);
-        } catch (\RuntimeException $e) {
+            $options = GraphOptions::forDeviceGraph($graph, $graphData->toArray());
+        } catch (\Exception $e) {
+            $options = GraphOptions::forDeviceGraph($graph, []);
         }
+
+        self::jsonEncode(['options' => $options]);
     }
 
     public static function jsonEncode(array $data)
@@ -61,31 +63,5 @@ class Graphs
         die;
     }
 
-    protected function getDateUnitForLabels(array $labels): string
-    {
-        $unit = 'day';
-
-        if (empty($labels)) {
-            return $unit;
-        }
-
-        $startDate = new Carbon(reset($labels));
-        $endDate = new Carbon(end($labels));
-        $diffHours = $startDate->diffInHours($endDate);
-
-        if($diffHours > 0 && $diffHours <= 48) {
-            $unit = 'hour';
-        } elseif($diffHours > 48 && $diffHours <= 168) {
-            $unit = 'day';
-        } elseif($diffHours > 168 && $diffHours <= 744) {
-            $unit = 'week';
-        }elseif($diffHours > 744 && $diffHours <= 8760) {
-            $unit = 'month';
-        }elseif($diffHours > 8760) {
-            $unit = 'year';
-        }
-
-        return $unit;
-    }
 
 }

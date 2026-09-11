@@ -1,160 +1,156 @@
-var sensorChart = null;
+/**
+ * The sensors table as the WHMCS module shows it: an inline graph per sensor,
+ * five sensors a page, and one scope - a preset period or custom dates - for
+ * every graph, set from the table toolbar. WHMCS keeps the scope per service
+ * on the server; here it is kept per service in this browser.
+ */
+var SENSOR_SCOPE_DEFAULT = {period: '0', bandwidthPeriod: 'td', dateStart: '', dateStop: ''};
 
 $(document).ready(function () {
-    $('#sensors').DataTable({
+    var table = $('#sensors').DataTable({
         lengthChange: false,
         ordering: false,
-        searching: false,
-        info: false
+        searching: true,
+        info: false,
+        pageLength: 5
     });
+
+    table.on('draw', drawVisibleSensorGraphs);
+    drawVisibleSensorGraphs();
 });
 
-function closeSensorGraphModal() {
-    if (sensorChart !== null) {
-        sensorChart.destroy();
-        sensorChart = null;
-    }
-    $('#sensorGraphModal').remove();
+function sensorScopeKey() {
+    return 'easydcimSensorScope_' + (getUrlParameter('id') || '');
 }
 
-function showSensorGraph(sensorId, name, unit) {
-    $('#layers').append('<div id="sensorGraphModal" class="lu-modal show lu-modal--lg">\n' +
+function getSensorScope() {
+    try {
+        return $.extend({}, SENSOR_SCOPE_DEFAULT, JSON.parse(localStorage.getItem(sensorScopeKey()) || '{}'));
+    } catch (e) {
+        return $.extend({}, SENSOR_SCOPE_DEFAULT);
+    }
+}
+
+function sensorScopeParams(scope) {
+    if (scope.period === '1') {
+        return '&interval=custom&start=' + encodeURIComponent(scope.dateStart) + '&end=' + encodeURIComponent(scope.dateStop);
+    }
+
+    return '&interval=' + encodeURIComponent(scope.bandwidthPeriod);
+}
+
+// Only the rows of the current page are in the DOM; each graph loads once per scope.
+function drawVisibleSensorGraphs() {
+    var params = sensorScopeParams(getSensorScope());
+
+    $('#sensors tbody .sensorGraph').each(function () {
+        var element = $(this);
+
+        if (element.data('drawnFor') === params) {
+            return;
+        }
+
+        element.data('drawnFor', params);
+
+        $.ajax({
+            type: 'GET',
+            url: window.location.href + '&ajax=1&sensorGraph=1&sensorId=' + encodeURIComponent(element.data('sensorId')) +
+                '&unit=' + encodeURIComponent(element.data('unit')) + '&name=' + encodeURIComponent(element.data('name')) + params,
+            success: function (data) {
+                EasyDCIMGraphs.draw(element.attr('id'), EasyDCIMGraphs.parse(data));
+            },
+            error: function () {
+                EasyDCIMGraphs.clear(element.attr('id'));
+            }
+        });
+    });
+}
+
+// "Sensor Filters" - the WHMCS SensorsScope form: filter mode, period, dates.
+function showSensorsScopeModal() {
+    var scope = getSensorScope();
+    var periods = [['td', 'Today'], ['yd', 'Yesterday'], ['tw', 'This Week'], ['lw', 'Last Week'],
+        ['tm', 'This Month'], ['lm', 'Last Month'], ['ty', 'This Year'], ['ly', 'Last Year']];
+    var periodOptions = periods.map(function (period) {
+        return '<option value="' + period[0] + '"' + (scope.bandwidthPeriod === period[0] ? ' selected' : '') + '>' + period[1] + '</option>';
+    }).join('');
+
+    $('#layers').append('<div id="sensorsScopeModal" class="lu-modal show lu-modal--md">\n' +
         '    <div class="lu-modal__dialog">\n' +
-        '        <div id="mgModalContainer" class="lu-modal__content">\n' +
+        '        <div class="lu-modal__content">\n' +
         '            <div class="lu-modal__top lu-top">\n' +
-        '                <div class="lu-top__title lu-type-6"><span class="lu-text-faded lu-font-weight-normal">' + name + '</span></div>\n' +
+        '                <div class="lu-top__title lu-type-6"><span class="lu-text-faded lu-font-weight-normal">Sensors Scope</span></div>\n' +
         '                <div class="lu-top__toolbar">\n' +
-        '                    <button onclick="closeSensorGraphModal()" data-dismiss="lu-modal" aria-label="Close"\n' +
+        '                    <button onclick="closeSensorsScopeModal()" aria-label="Close"\n' +
         '                            class="lu-btn lu-btn--xs lu-btn--default lu-btn--icon lu-btn--link lu-btn--plain closeModal">\n' +
         '                        <i class="lu-btn__icon lu-zmdi lu-zmdi-close"></i></button>\n' +
         '                </div>\n' +
         '            </div>\n' +
         '            <div class="lu-modal__body">\n' +
+        '                <div id="sensorsScopeError" class="lu-alert lu-alert--danger" style="display: none;"></div>\n' +
         '                <div class="lu-form-group">\n' +
-        '                    <select id="sensorGraphInterval" class="lu-form-control"\n' +
-        '                            onchange="changeSensorGraphInterval(\'' + sensorId + '\',\'' + unit + '\')">\n' +
-        '                        <option value="td">Today</option>\n' +
-        '                        <option value="yd">Yesterday</option>\n' +
-        '                        <option value="tw">This Week</option>\n' +
-        '                        <option value="lw">Last Week</option>\n' +
-        '                        <option value="tm">This Month</option>\n' +
-        '                        <option value="lm">Last Month</option>\n' +
-        '                        <option value="ty">This Year</option>\n' +
-        '                        <option value="ly">Last Year</option>\n' +
-        '                        <option value="custom">Custom Dates</option>\n' +
+        '                    <label class="lu-form-label">Filter Mode</label>\n' +
+        '                    <select id="sensorsScopePeriod" class="lu-form-control" onchange="toggleSensorsScopeMode()">\n' +
+        '                        <option value="0"' + (scope.period !== '1' ? ' selected' : '') + '>Predefined Period</option>\n' +
+        '                        <option value="1"' + (scope.period === '1' ? ' selected' : '') + '>From-To Date</option>\n' +
         '                    </select>\n' +
         '                </div>\n' +
-        '                <div id="sensorGraphRange" class="lu-form-group" style="display: none;">\n' +
-        '                    <input type="date" id="sensorGraphStart" class="lu-form-control" style="display: inline-block; width: auto;">\n' +
-        '                    <input type="date" id="sensorGraphEnd" class="lu-form-control" style="display: inline-block; width: auto;">\n' +
-        '                    <button type="button" class="lu-btn lu-btn--primary" onclick="loadSensorGraph(\'' + sensorId + '\',\'' + unit + '\')">Apply</button>\n' +
+        '                <div id="sensorsScopePredefined" class="lu-form-group">\n' +
+        '                    <label class="lu-form-label">Period</label>\n' +
+        '                    <select id="sensorsScopeBandwidthPeriod" class="lu-form-control">' + periodOptions + '</select>\n' +
         '                </div>\n' +
-        '                <canvas id="sensorGraphCanvas" height="120"></canvas>\n' +
+        '                <div id="sensorsScopeDates">\n' +
+        '                    <div class="lu-form-group">\n' +
+        '                        <label class="lu-form-label">Start Date</label>\n' +
+        '                        <input type="datetime-local" id="sensorsScopeDateStart" class="lu-form-control" value="' + scope.dateStart + '">\n' +
+        '                    </div>\n' +
+        '                    <div class="lu-form-group">\n' +
+        '                        <label class="lu-form-label">End Date</label>\n' +
+        '                        <input type="datetime-local" id="sensorsScopeDateStop" class="lu-form-control" value="' + scope.dateStop + '">\n' +
+        '                    </div>\n' +
+        '                </div>\n' +
         '            </div>\n' +
         '            <div class="lu-modal__actions">\n' +
-        '                <button onclick="closeSensorGraphModal()" class="lu-btn lu-btn--default lu-btn--outline lu-btn--plain closeModal">Close</button>\n' +
+        '                <button onclick="saveSensorsScope()" class="lu-btn lu-btn--success">Save Changes</button>\n' +
+        '                <button onclick="closeSensorsScopeModal()" class="lu-btn lu-btn--danger lu-btn--outline lu-btn--plain closeModal">Cancel</button>\n' +
         '            </div>\n' +
         '        </div>\n' +
         '    </div>\n' +
         '</div>');
 
-    loadSensorGraph(sensorId, unit);
+    toggleSensorsScopeMode();
 }
 
-function changeSensorGraphInterval(sensorId, unit) {
-    var custom = $('#sensorGraphInterval').val() === 'custom';
+function toggleSensorsScopeMode() {
+    var custom = $('#sensorsScopePeriod').val() === '1';
 
-    $('#sensorGraphRange').toggle(custom);
-
-    // A custom range waits for both dates and the Apply button.
-    if (!custom) {
-        loadSensorGraph(sensorId, unit);
-    }
+    $('#sensorsScopePredefined').toggle(!custom);
+    $('#sensorsScopeDates').toggle(custom);
 }
 
-function loadSensorGraph(sensorId, unit) {
-    var interval = $('#sensorGraphInterval').val() || 'td';
-    var range = interval === 'custom'
-        ? '&start=' + encodeURIComponent($('#sensorGraphStart').val() || '') + '&end=' + encodeURIComponent($('#sensorGraphEnd').val() || '')
-        : '';
+function saveSensorsScope() {
+    var scope = {
+        period: $('#sensorsScopePeriod').val(),
+        bandwidthPeriod: $('#sensorsScopeBandwidthPeriod').val(),
+        dateStart: $('#sensorsScopeDateStart').val() || '',
+        dateStop: $('#sensorsScopeDateStop').val() || ''
+    };
 
-    $.ajax({
-        type: 'GET',
-        url: window.location.href + '&ajax=1&sensorGraph=1&sensorId=' + encodeURIComponent(sensorId) +
-            '&interval=' + encodeURIComponent(interval) + range,
-        success: function (data) {
-            renderSensorGraph(JSON.parse(data).data, unit);
-        },
-        error: function (data) {
-            var message = 'The sensor graph could not be loaded.';
-            try {
-                message = JSON.parse(data.responseText).data.error || message;
-            } catch (e) {
-            }
-            $('#sensorGraphCanvas').replaceWith('<div class="alert alert-error">' + message + '</div>');
-        }
-    });
-}
-
-function renderSensorGraph(graphData, unit) {
-    var canvas = document.getElementById('sensorGraphCanvas');
-
-    if (!canvas) {
+    // Same check as the WHMCS SensorsScopeProvider.
+    if (scope.period === '1' && scope.dateStart && scope.dateStop && scope.dateStart > scope.dateStop) {
+        $('#sensorsScopeError').text('Start date must be before end date').show();
         return;
     }
 
-    if (sensorChart !== null) {
-        sensorChart.destroy();
-        sensorChart = null;
+    try {
+        localStorage.setItem(sensorScopeKey(), JSON.stringify(scope));
+    } catch (e) {
     }
 
-    var datasets = [];
+    closeSensorsScopeModal();
+    drawVisibleSensorGraphs();
+}
 
-    $(graphData.datasets).each(function (index, value) {
-        datasets.push({
-            label: value.dataset_name || ('Series ' + (index + 1)),
-            data: value.data,
-            borderColor: '#5396F4',
-            backgroundColor: 'rgba(83,150,244,0.2)',
-            borderWidth: 2,
-            pointRadius: 0,
-            fill: true,
-            tension: 0.3
-        });
-    });
-
-    sensorChart = new Chart(canvas.getContext('2d'), {
-        type: 'line',
-        data: {
-            labels: graphData.labels,
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {display: datasets.length > 1},
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            return context.formattedValue + ' ' + unit;
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {unit: graphData.unit}
-                },
-                y: {
-                    ticks: {
-                        callback: function (value) {
-                            return value + ' ' + unit;
-                        }
-                    }
-                }
-            }
-        }
-    });
+function closeSensorsScopeModal() {
+    $('#sensorsScopeModal').remove();
 }
