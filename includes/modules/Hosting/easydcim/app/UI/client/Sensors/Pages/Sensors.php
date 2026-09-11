@@ -126,7 +126,7 @@ class Sensors
         try {
             $dates = DateRange::resolve((string) ($getParams['interval'] ?? 'td'), $getParams['start'] ?? null, $getParams['end'] ?? null);
 
-            $graphData = $this->api->client()->graphs()->export($sensorId, new ExportGraphRequest(self::GRAPH_TYPE, self::GRAPH_TARGET, (string) $dates['start'], (string) $dates['end'], null, false));
+            $graphData = $this->api->client()->graphs()->export($sensorId, new ExportGraphRequest(self::GRAPH_TYPE, self::GRAPH_TARGET, date('Y-m-d H:i:s', $dates['start']), date('Y-m-d H:i:s', $dates['end']), null, false));
 
             $options = GraphOptions::sensor($graphData->toArray(), $name, $unit);
         } catch (\Throwable $e) {

@@ -44,7 +44,8 @@ class Graphs
             $deviceId = $this->client->getEasyServerID();
             $dates = DateRange::resolve((string) ($getParams['interval'] ?? 'td'), $getParams['start'] ?? null, $getParams['end'] ?? null);
 
-            $graphData = $this->api->admin()->graphs()->export($deviceId, new ExportGraphRequest($graph, self::TARGET_DEVICE, (string) $dates['start'], (string) $dates['end'], null, false));
+            // EasyDCIM accepts only "Y-m-d H:i:s" here (date_format rule); a timestamp is refused.
+            $graphData = $this->api->admin()->graphs()->export($deviceId, new ExportGraphRequest($graph, self::TARGET_DEVICE, date('Y-m-d H:i:s', $dates['start']), date('Y-m-d H:i:s', $dates['end']), null, false));
 
             $options = GraphOptions::forDeviceGraph($graph, $graphData->toArray());
         } catch (\Throwable $e) {

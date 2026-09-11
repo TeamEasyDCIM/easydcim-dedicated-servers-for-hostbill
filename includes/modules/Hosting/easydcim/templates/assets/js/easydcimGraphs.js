@@ -85,7 +85,8 @@ var EasyDCIMGraphs = (function () {
         }
 
         try {
-            return JSON.parse(response).data.options || null;
+            // jQuery hands over an object instead when the answer is sent as JSON.
+            return (typeof response === 'string' ? JSON.parse(response) : response).data.options || null;
         } catch (e) {
             return null;
         }
