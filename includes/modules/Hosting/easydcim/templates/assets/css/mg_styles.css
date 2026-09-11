@@ -724,3 +724,14 @@ progress {
     animation: edc-btn-spin 0.75s linear infinite;
 }
 @keyframes edc-btn-spin { to { transform: rotate(360deg); } }
+
+/* A Metered service's admin page loads HostBill's old DataTables demo_table.css
+   (includes/types/widgets/meteredwidget), whose global .dataTables_wrapper rule
+   frames the wrapper with a grey border, a gradient band and extra spacing. The
+   WHMCS table markup uses that class too, so take those back off. */
+#layers .dataTables_wrapper {
+    margin: 0;
+    padding-bottom: 0;
+    border: 0;
+    background: none;
+}
