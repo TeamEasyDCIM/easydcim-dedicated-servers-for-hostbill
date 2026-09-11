@@ -670,3 +670,57 @@ progress {
     z-index: 5;
     background: rgba(255, 255, 255, 0.86);
 }
+
+/* Buttons and alerts in the WHMCS module's colours (layers2: mg_colors.css, mg_variables.css).
+   The older layers-ui.css shipped here declares the grey .lu-btn--plain after the type colours, so a
+   "plain success" button (the modals' submit, the toolbars' Create) came out grey, and it draws alerts
+   solid; WHMCS draws typed plain buttons in their colour and alerts tinted with coloured text. */
+#layers .lu-btn--plain.lu-btn--primary:not(.lu-btn--link):not(.lu-btn--outline) { color: #FFFFFF; background: #2368AD; }
+#layers .lu-btn--plain.lu-btn--primary:not(.lu-btn--link):not(.lu-btn--outline):hover { background: #2E82D5; }
+#layers .lu-btn--plain.lu-btn--primary:not(.lu-btn--link):not(.lu-btn--outline):active,
+#layers .lu-btn--plain.lu-btn--primary:not(.lu-btn--link):not(.lu-btn--outline):focus,
+#layers .lu-btn--plain.lu-btn--primary:not(.lu-btn--link):not(.lu-btn--outline).is-active { background: #1A4F83; }
+#layers .lu-btn--plain.lu-btn--success:not(.lu-btn--link):not(.lu-btn--outline) { color: #FFFFFF; background: #62CA5F; }
+#layers .lu-btn--plain.lu-btn--success:not(.lu-btn--link):not(.lu-btn--outline):hover { background: #88D785; }
+#layers .lu-btn--plain.lu-btn--success:not(.lu-btn--link):not(.lu-btn--outline):active,
+#layers .lu-btn--plain.lu-btn--success:not(.lu-btn--link):not(.lu-btn--outline):focus,
+#layers .lu-btn--plain.lu-btn--success:not(.lu-btn--link):not(.lu-btn--outline).is-active { background: #41B93D; }
+#layers .lu-btn--plain.lu-btn--info:not(.lu-btn--link):not(.lu-btn--outline) { color: #FFFFFF; background: #50BFFF; }
+#layers .lu-btn--plain.lu-btn--info:not(.lu-btn--link):not(.lu-btn--outline):hover { background: #83D2FF; }
+#layers .lu-btn--plain.lu-btn--info:not(.lu-btn--link):not(.lu-btn--outline):active,
+#layers .lu-btn--plain.lu-btn--info:not(.lu-btn--link):not(.lu-btn--outline):focus,
+#layers .lu-btn--plain.lu-btn--info:not(.lu-btn--link):not(.lu-btn--outline).is-active { background: #1DACFF; }
+#layers .lu-btn--plain.lu-btn--warning:not(.lu-btn--link):not(.lu-btn--outline) { color: #FFFFFF; background: #FF8F33; }
+#layers .lu-btn--plain.lu-btn--warning:not(.lu-btn--link):not(.lu-btn--outline):hover { background: #FFAB66; }
+#layers .lu-btn--plain.lu-btn--warning:not(.lu-btn--link):not(.lu-btn--outline):active,
+#layers .lu-btn--plain.lu-btn--warning:not(.lu-btn--link):not(.lu-btn--outline):focus,
+#layers .lu-btn--plain.lu-btn--warning:not(.lu-btn--link):not(.lu-btn--outline).is-active { background: #FF7300; }
+#layers .lu-btn--plain.lu-btn--danger:not(.lu-btn--link):not(.lu-btn--outline) { color: #FFFFFF; background: #F55656; }
+#layers .lu-btn--plain.lu-btn--danger:not(.lu-btn--link):not(.lu-btn--outline):hover { background: #F66E6E; }
+#layers .lu-btn--plain.lu-btn--danger:not(.lu-btn--link):not(.lu-btn--outline):active,
+#layers .lu-btn--plain.lu-btn--danger:not(.lu-btn--link):not(.lu-btn--outline):focus,
+#layers .lu-btn--plain.lu-btn--danger:not(.lu-btn--link):not(.lu-btn--outline).is-active { background: #F43E3E; }
+#layers .lu-alert--success { color: #62CA5F; background: #D3F0D2; }
+#layers .lu-alert--info { color: #50BFFF; background: #DFF3FF; }
+#layers .lu-alert--warning { color: #FF8F33; background: #FFE3CC; }
+#layers .lu-alert--danger { color: #F55656; background: #FEE6E6; }
+
+/* A busy button keeps its label and its size: the content is hidden in place
+   and a spinner in the button's text colour is laid over it (buttonLoader,
+   modal submit buttons). */
+.lu-btn.edc-btn-loading { position: relative; pointer-events: none; cursor: progress; }
+.lu-btn.edc-btn-loading > :not(.edc-btn-spinner) { visibility: hidden; }
+.lu-btn > .edc-btn-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    box-sizing: border-box;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: edc-btn-spin 0.75s linear infinite;
+}
+@keyframes edc-btn-spin { to { transform: rotate(360deg); } }

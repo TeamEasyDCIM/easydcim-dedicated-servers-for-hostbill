@@ -337,6 +337,7 @@ $lang['serverAA']['configOptions']['addOptionsModal']['modal']['addOptionsModalT
 $lang['serverAA']['configOptions']['addOptionsModal']['baseAcceptButton']['title'] = 'Create';
 $lang['serverAA']['configOptions']['addOptionsModal']['baseCancelButton']['title'] = 'Cancel';
 $lang['serverAA']['configOptions']['addOptionsModal']['addOptionsForm']['configurableOptionsNameInfo'] = 'Below you can choose which configurable options will be generated for this product. Please note that these options are divided into two parts separated by a | sign, where the part on the left indicates the sent variable and the part on the right the friendly name displayed to customers. After generating these options you can edit the friendly part on the right, but not the variable part on the left. More information about configurable options and their editing can be found :configurableOptionsNameUrl:.';
+$lang['serverAA']['configOptions']['addOptionsModal']['addOptionsForm']['configurableOptionsNameUrlText'] = 'here';
 
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['osInstallationActions']['osInstallationActions'] = 'OS Installation Actions';
 $lang['serverAA']['productConfig']['mainContainer']['configForm']['clientAreaFeaturesSection']['rightSection']['osInstallationActions']['osInstallationActionsSelectAll']['osInstallationActionsSelectAll'] = 'Select All';

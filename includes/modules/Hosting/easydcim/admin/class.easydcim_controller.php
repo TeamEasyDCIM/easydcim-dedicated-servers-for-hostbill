@@ -123,6 +123,7 @@ class easydcim_controller extends HBController
             $this->template->assign('clientEmailTemplateList',$this->emailNotifications->getClientEmailTemplates());
             $this->template->assign('moduleConfiguration',$config);
             $this->template->assign('configurableOptions',$this->configFieldsModel->exportData($params['id']));
+            $this->template->assign('defaultConfigOptionsJson',json_encode($this->getDefaultConfigOptions()));
             $this->template->assign('productId',$params['id']);
         }
 
@@ -282,79 +283,114 @@ class easydcim_controller extends HBController
         return  $file->get();
     }
 
+    /**
+     * The options "Create Default Options" offers in its modal, in the order
+     * configurableOptions.json creates them.
+     */
+    private function getDefaultConfigOptions(): array
+    {
+        $options = [];
+
+        foreach ($this->getConfiguration() as $field)
+        {
+            $options[] = ['variable' => $field['variable'], 'name' => trim($field['name'])];
+        }
+
+        return $options;
+    }
+
+    /**
+     * The values of one list option, read from EasyDCIM; null for the quantity
+     * fields, which keep the items configurableOptions.json gives them.
+     */
+    private function getDefaultConfigOptionItems(string $variable, $configuration)
+    {
+        switch ($variable)
+        {
+            case 'location':
+                $list = $this->defaultOptions->getLocationList();
+                break;
+            case 'model':
+                $list = $this->defaultOptions->getModelList('Server');
+                break;
+            case 'osTemplate':
+                $list = $this->defaultOptions->getTemplateList($configuration->LocationID);
+                break;
+            case 'disk_layout':
+            case 'extras':
+                $list = [];
+                foreach ($this->defaultOptions->getAddonsList(null, $configuration->LocationID) as $addon)
+                {
+                    if (($addon->type == "disklayout") === ($variable === 'disk_layout'))
+                    {
+                        $list[] = $addon;
+                    }
+                }
+                break;
+            default:
+                return null;
+        }
+
+        $items = [];
+
+        foreach ($list as $value)
+        {
+            $items[] = [
+                "id" => $value->id,
+                "category_id" => 9,
+                // OS addons carry their label as the description.
+                "name" => in_array($variable, ['disk_layout', 'extras'], true) ? $value->description : $value->name,
+                "variable_id" => $value->id,
+            ];
+        }
+
+        return $items;
+    }
+
+    /**
+     * Create the default configurable options switched on in the modal, as the
+     * WHMCS CreateConfigurableOptions provider does: only those picked, and none
+     * the product already has. A request without a pick creates them all.
+     */
     private function createConfigurableOptions($productId)
     {
-        $config = $this->getConfiguration();
-
+        $picked = isset($_GET['formdata']) && is_array($_GET['formdata']) ? $_GET['formdata'] : null;
         $configuration = $this->parseConfig();
+        $configFields = HBLoader::LoadModel("ConfigFields");
+        $fields = [];
+        $existing = 0;
 
-        foreach ($this->defaultOptions->getLocationList() as $key=>$value)
+        foreach ($this->getConfiguration() as $field)
         {
-            $locationItems[] = [
-                "id" => $value->id,
-                "category_id" => 9,
-                "name" => $value->name,
-                "variable_id" => $value->id,
-            ];
-        }
-        foreach ($this->defaultOptions->getModelList('Server') as $key=>$value)
-        {
-            $modelItems[] = [
-                "id" => $value->id,
-                "category_id" => 9,
-                "name" => $value->name,
-                "variable_id" => $value->id,
-            ];
-        }
-        foreach ($this->defaultOptions->getTemplateList($configuration->LocationID) as $key=>$value)
-        {
-            $templateItems[] = [
-                "id" => $value->id,
-                "category_id" => 9,
-                "name" => $value->name,
-                "variable_id" => $value->id,
-            ];
-        }
-        foreach ($this->defaultOptions->getAddonsList(null,$configuration->LocationID) as $key=>$value)
-        {
-            if ($value->type == "disklayout")
+            if ($picked !== null && empty($picked[$field['variable']]))
             {
-                $diskLayoutItems[] = [
-                    "id" => $value->id,
-                    "category_id" => 9,
-                    "name" => $value->description,
-                    "variable_id" => $value->id,
-                ];
+                continue;
             }
-        }
-        foreach ($this->defaultOptions->getAddonsList(null,$configuration->LocationID) as $key=>$value)
-        {
-            if ($value->type != "disklayout")
+
+            if ($configFields->getFieldByVar($productId, $field['variable']) !== false)
             {
-                $extrasItems[] = [
-                    "id" => $value->id,
-                    "category_id" => 9,
-                    "name" => $value->description,
-                    "variable_id" => $value->id,
-                ];
+                $existing++;
+                continue;
             }
+
+            $items = $this->getDefaultConfigOptionItems($field['variable'], $configuration);
+
+            if ($items !== null)
+            {
+                $field['items'] = $items;
+            }
+
+            $fields[] = $field;
         }
 
-        $config[0]['items'] = $diskLayoutItems;
-        $config[1]['items'] = $extrasItems;
-        $config[2]['items'] = $modelItems;
-        $config[3]['items'] = $locationItems;
-        $config[4]['items'] = $templateItems;
-
-        $c = HBLoader::LoadModel("ConfigFields");
-
-        if($c->getFieldByVar($productId,'extras') !== false || $c->getFieldByVar($productId,'disk_layout') !== false || $c->getFieldByVar($productId,'model') !== false || $c->getFieldByVar($productId,'location') !== false || $c->getFieldByVar($productId,'osTemplate') !== false || $c->getFieldByVar($productId,'numberOfAdditionalIpAddresses') !== false || $c->getFieldByVar($productId,'bandwidth') !== false)
+        if (empty($fields))
         {
             header('HTTP/1.1 400 Bad Request');
-            self::jsonEncode(['error'=>"Configurable Options Were Already Created"]);
+            self::jsonEncode(['error' => $existing > 0 ? "Configurable Options Were Already Created" : "No Configurable Options Were Selected"]);
         }
-        $c->importJson($productId,json_encode($config));
-        self::jsonEncode(['success'=>"Configurable Options Created Successfully"]);
+
+        $configFields->importJson($productId, json_encode($fields));
+        self::jsonEncode(['success' => "Configurable Options Created Successfully"]);
     }
 
     protected function createConfigurableOptionsForParts($productId,$type,$model,$typeName,$modelName)

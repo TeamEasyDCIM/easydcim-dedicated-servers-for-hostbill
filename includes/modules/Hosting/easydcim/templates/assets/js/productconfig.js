@@ -108,58 +108,47 @@ function addLoader(element)
     element.siblings('.select2-container').html('');
     element.siblings('.select2-container').append(selectizeInput);
 }
-function createConfigurableOptions(e){
-    let btn = $(e);
-    $(btn).buttonLoader('start');
-    let url = window.location.href;
-    let data = {
-        "ajax": "1",
-        "createConfigurableOptions": "1",
+/**
+ * "Create Default Options" - the WHMCS CreateConfigurableOptions modal: the
+ * naming note, then one switch per option, all on. Only the options left on
+ * are created and those the product already has are skipped, as in WHMCS,
+ * which then goes on to the product's configurable options.
+ */
+function createConfigurableOptions(e) {
+    var btn = $(e);
+    var url = btn.attr('data-edc-options-url');
+    var options = [];
+    try {
+        options = JSON.parse(btn.attr('data-edc-options') || '[]') || [];
+    } catch (err) {
+        options = [];
     }
-    $.ajax({
-        type: "GET",
-        url: url,
-        data: data,
-        success: function(data){
-            let message = JSON.parse(data).data.success
-            $(btn).buttonLoader('stop');
-            $('body').append('<ul class="messenger messenger-fixed messenger-on-bottom messenger-on-right messenger-theme-flat">\n' +
-                '    <li class="messenger-message-slot messenger-shown messenger-first">\n' +
-                '        <div class="messenger-message message alert info message-info alert-info">\n' +
-                '            <button type="button" class="messenger-close" data-dismiss="alert">×</button>\n' +
-                '            <div class="messenger-message-inner">'+message+'</div>\n' +
-                '            <div class="messenger-spinner">\n' +
-                '    <span class="messenger-spinner-side messenger-spinner-side-left">\n' +
-                '        <span class="messenger-spinner-fill"></span>\n' +
-                '    </span>\n' +
-                '                <span class="messenger-spinner-side messenger-spinner-side-right">\n' +
-                '        <span class="messenger-spinner-fill"></span>\n' +
-                '    </span>\n' +
-                '            </div>\n' +
-                '        </div>\n' +
-                '    </li>\n' +
-                '</ul>')
-        },
-        error: function(error) {
-            let errorMessage = JSON.parse(error.responseText).data.error;
-            $(btn).buttonLoader('stop');
-
-            $('body').append('<ul class="messenger messenger-fixed messenger-on-bottom messenger-on-right messenger-theme-flat">\n' +
-                '    <li class="messenger-message-slot messenger-shown messenger-first">\n' +
-                '        <div class="messenger-message message alert alert-error">\n' +
-                '            <button type="button" class="messenger-close" data-dismiss="alert">×</button>\n' +
-                '            <div class="messenger-message-inner">'+errorMessage+'</div>\n' +
-                '            <div class="messenger-spinner">\n' +
-                '    <span class="messenger-spinner-side messenger-spinner-side-left">\n' +
-                '        <span class="messenger-spinner-fill"></span>\n' +
-                '    </span>\n' +
-                '                <span class="messenger-spinner-side messenger-spinner-side-right">\n' +
-                '        <span class="messenger-spinner-fill"></span>\n' +
-                '    </span>\n' +
-                '            </div>\n' +
-                '        </div>\n' +
-                '    </li>\n' +
-                '</ul>')
+    var info = (btn.attr('data-edc-info') || '').split(':configurableOptionsNameUrl:');
+    var note = $('<div></div>').text(info[0]);
+    if (info.length > 1) {
+        note.append($('<a class="lu-font-weight-bold" target="_blank"></a>').attr('href', url).text(btn.attr('data-edc-info-link')));
+        note.append(document.createTextNode(info.slice(1).join('')));
+    }
+    var body = [EdcUi.alert('info', note.html())];
+    $.each(options, function (i, option) {
+        body.push(EdcUi.field.switcher({name: option.variable, label: option.variable + '|' + option.name, checked: true}));
+    });
+    EdcUi.modal({
+        type: 'edit',
+        title: btn.attr('data-edc-title'),
+        submit: btn.attr('data-edc-submit'),
+        cancel: btn.attr('data-edc-cancel'),
+        body: body,
+        onSubmit: function (modal) {
+            modal.busy(true);
+            EdcUi.request('&ajax=1&createConfigurableOptions=1&' + $.param({formdata: modal.values()}), function (data) {
+                modal.close();
+                EdcUi.notify('info', data.success);
+                window.location.href = url;
+            }, function (data) {
+                modal.busy(false);
+                EdcUi.notify('error', data.error || '');
+            });
         }
     });
 }

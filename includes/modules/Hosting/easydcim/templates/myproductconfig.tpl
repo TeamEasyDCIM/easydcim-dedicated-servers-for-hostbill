@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{$assetsURL}/css/buttonLoader.css">
 <script src="{$assetsURL}/js/select2.js"></script>
 <script src="{$assetsURL}/js/index.js"></script>
+<script src="{$assetsURL}/js/edcUi.js"></script>
 <script src="{$assetsURL}/js/productconfig.js"></script>
 <script src="{$assetsURL}/js/jquery.buttonLoader.js"></script>
 <div id="layers">
@@ -1336,7 +1337,15 @@
                 </div>
 
                 <div class="col-md-12 confirm-row">
-                    <a id="first" href="javascript:;" class="lu-btn lu-btn--success has-spinner" onclick="createConfigurableOptions(this)">
+                    {* Opens the WHMCS "Create Configurable Options" modal: one switch per option. *}
+                    <a id="first" href="javascript:;" class="lu-btn lu-btn--success" onclick="createConfigurableOptions(this)"
+                       data-edc-options="{$defaultConfigOptionsJson|escape}"
+                       data-edc-title="{$lang.serverAA.configOptions.addOptionsModal.modal.addOptionsModalTitle|escape}"
+                       data-edc-submit="{$lang.serverAA.configOptions.addOptionsModal.baseAcceptButton.title|escape}"
+                       data-edc-cancel="{$lang.serverAA.configOptions.addOptionsModal.baseCancelButton.title|escape}"
+                       data-edc-info="{$lang.serverAA.configOptions.addOptionsModal.addOptionsForm.configurableOptionsNameInfo|escape}"
+                       data-edc-info-link="{$lang.serverAA.configOptions.addOptionsModal.addOptionsForm.configurableOptionsNameUrlText|escape}"
+                       data-edc-options-url="?cmd=services&amp;action=product&amp;id={$productId}&amp;picked_tab=4">
                         <i class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i>
                         <span class="lu-btn__text">{$lang.serverAA.productConfig.mainContainer.optionsWidget.addOptionsButton.button.addOptionButtonsTitle}</span>
                     </a>

@@ -375,9 +375,10 @@ var EdcUi = (function ($) {
             },
             busy: function (on) {
                 preloader.toggle(!!on);
-                submit.prop('disabled', !!on).find('.lu-preloader').remove();
+                // The label stays, and the width with it: the spinner is laid over it (mg_styles.css).
+                submit.prop('disabled', !!on).toggleClass('edc-btn-loading', !!on).children('.edc-btn-spinner').remove();
                 if (on) {
-                    submit.prepend('<i class="lu-btn__icon lu-preloader lu-preloader--sm"></i>');
+                    submit.append('<span class="edc-btn-spinner" aria-hidden="true"></span>');
                 }
             },
             close: function () {
