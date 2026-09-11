@@ -76,29 +76,34 @@ class GeneralInformation
         return ($this->generalInformations === null ? null : $this->generalInformations->purchaseDate) ? (string) $this->generalInformations->purchaseDate : '-';
     }
 
+    /**
+     * Warranty as "N Years M Months", leaving out a zero part - the wording
+     * the WHMCS module uses.
+     */
     public function getWarrantyMonths(): string
     {
         $warrantyMonths = (int) (($this->generalInformations === null ? null : $this->generalInformations->warrantyMonths) ?? 0);
 
-        if ($warrantyMonths === 0)
+        if ($warrantyMonths <= 0)
         {
             return 'Expired';
         }
 
-        $years = 'Year';
-        $months = 'Month';
+        $years  = (int) floor($warrantyMonths / 12);
+        $months = $warrantyMonths % 12;
+        $parts  = [];
 
-        if (floor($warrantyMonths / 12) > 1 || floor($warrantyMonths / 12) == 0)
+        if ($years > 0)
         {
-            $years = 'Years';
+            $parts[] = $years . ' ' . ($years === 1 ? 'Year' : 'Years');
         }
 
-        if ($warrantyMonths % 12 > 1 || $warrantyMonths % 12 == 0)
+        if ($months > 0)
         {
-            $months = 'Months';
+            $parts[] = $months . ' ' . ($months === 1 ? 'Month' : 'Months');
         }
 
-        return floor($warrantyMonths / 12) . ' ' . $years . ' ' . $warrantyMonths % 12 . ' ' . $months;
+        return implode(' ', $parts);
     }
 
     public function getOrderID(): string

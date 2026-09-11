@@ -49,7 +49,8 @@ class widget_sensors extends HostingWidget
     {
         $this->params = $module->getAccount();
 
-        if ($this->params['options']['Sensors'] != 'on')
+        // Sensors sit under "Device Statistics", as in the WHMCS module.
+        if (($this->params['options']['TrafficStatistics'] ?? '') != 'on' || ($this->params['options']['Sensors'] ?? '') != 'on')
         {
             return array('disabledPage.tpl', []);
         }

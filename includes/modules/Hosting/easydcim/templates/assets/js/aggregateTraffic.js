@@ -147,10 +147,13 @@ $(document).ready(function () {
         e.preventDefault();
         hideTrafficModal();
         let option = $('#scope3 option:selected').val();
+        let range = option === 'custom'
+            ? '&start=' + encodeURIComponent($('#scope3Start').val() || '') + '&end=' + encodeURIComponent($('#scope3End').val() || '')
+            : '';
         let url = window.location.href;
         $.ajax({
             type: "GET",
-            url: url + '&graphs=AggregateTraffic&interval='+option,
+            url: url + '&graphs=AggregateTraffic&interval='+option+range,
             success: function (data) {
                 let graphData
                 if (data != '')

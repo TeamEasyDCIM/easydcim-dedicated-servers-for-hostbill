@@ -158,6 +158,10 @@ class easydcim_controller extends HBController
             {
                 $this->graphs->manageEasyDCIMGraphs($_GET);
             }
+            if (isset($_GET['bandwidthPeriod']))
+            {
+                $this->bandwidth->managePeriod($_GET);
+            }
             if (isset($_GET['deviceButtonsAction']))
             {
                 $this->serviceActions->manageServiceActions($_GET['deviceButtonsAction']);
@@ -168,7 +172,11 @@ class easydcim_controller extends HBController
             $this->template->assign('custom_template',$path);
             $this->template->assign('assetsURL',$assetsUrl);
             $this->template->assign('rawObject',$this);
-            $this->template->assign('metadata',$this->serverInformation->getMetadata($params['account']));
+            $options = $params['account']['options'];
+            $this->template->assign('configuration', $options);
+            // As in WHMCS: when set, the client-area feature switches also decide what this page shows.
+            $this->template->assign('applyFeatures', ($options['ApplyFeatureSettingsToAdminArea'] ?? '') == 'on');
+            $this->template->assign('metadata',$this->serverInformation->getMetadata($params['account'], 'caMetadataAdmin'));
             $this->template->assign('lang',$lang);
         }
 

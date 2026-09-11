@@ -229,6 +229,62 @@ class ReverseDNS
     }
 
     /**
+     * Delete several records in one go. The API has no bulk call, so each is
+     * removed on its own and the failures are reported together.
+     */
+    public function massDelete($ids)
+    {
+        $deleted = [];
+        $failed  = [];
+
+        try
+        {
+            $serviceId = $this->context->requireServiceId();
+        }
+        catch (\Exception $exc)
+        {
+            header('HTTP/1.1 400 Bad Request');
+            self::jsonEncode([
+                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Records cannot be deleted"
+            ]);
+        }
+
+        foreach (array_unique(array_filter(array_map('intval', (array) $ids))) as $recordId)
+        {
+            try
+            {
+                $result = $this->api->client()->dnsManagement()->deleteRdnsRecord($serviceId, $recordId);
+
+                if ($result->success === false)
+                {
+                    $failed[] = $result->message != '' ? $result->message : "Record cannot be deleted";
+                    continue;
+                }
+
+                $deleted[] = $recordId;
+            }
+            catch (\Exception $exc)
+            {
+                $failed[] = $exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be deleted";
+            }
+        }
+
+        if (!empty($failed))
+        {
+            header('HTTP/1.1 400 Bad Request');
+            self::jsonEncode([
+                'error'   => sprintf('%d of %d records could not be deleted: %s', count($failed), count($failed) + count($deleted), implode('; ', array_unique($failed))),
+                'deleted' => $deleted,
+            ]);
+        }
+
+        self::jsonEncode([
+            'message' => sprintf('%d records deleted successfully', count($deleted)),
+            'deleted' => $deleted,
+        ]);
+    }
+
+    /**
      * v3 create returns no record body, so the new record is located by its IP
      * in order to be able to roll a partial pool back.
      */

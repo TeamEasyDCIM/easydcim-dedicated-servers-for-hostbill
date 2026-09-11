@@ -77,6 +77,12 @@ class easydcim extends HostingModule implements Observer
             'value' => '',
             'type'=> 'input',
             'default'=>false
+        ),
+        'option10' =>array (
+            'name'=> 'Additional IP Addresses',
+            'value' => '',
+            'type'=> 'input',
+            'default'=>false
         )
     );
 
@@ -180,9 +186,35 @@ class easydcim extends HostingModule implements Observer
             case 'EasyServiceID':
                 $this->details['option9']['value'] = $value;
                 break;
+            case 'AdditionalIPs':
+                $this->details['option10']['value'] = $value;
+                break;
         }
         $acc = HBLoader::LoadModel("Accounts");
         $acc->updateExtraDetails($this->account_details['id'], $this->getDetails());
+    }
+
+    /**
+     * Write what DeviceDetailsSync picked up from the device: the extra details,
+     * and the domain, which lives in its own hb_accounts column.
+     *
+     * @param array{details: array<string, string>, domain: string|null} $changes
+     */
+    public function applyDeviceDetails(array $changes)
+    {
+        foreach ($changes['details'] as $option => $value) {
+            $this->details[$option]['value'] = $value;
+        }
+
+        if (!empty($changes['details'])) {
+            $acc = HBLoader::LoadModel("Accounts");
+            $acc->updateExtraDetails($this->account_details['id'], $this->getDetails());
+        }
+
+        if ($changes['domain'] !== null) {
+            $this->addDomain($changes['domain']);
+            DB::table('hb_accounts')->where('id', '=', $this->account_details['id'])->update(['domain' => $changes['domain']]);
+        }
     }
 
     public function changeAccountStatus($status)
@@ -204,6 +236,8 @@ class easydcim extends HostingModule implements Observer
                 return $this->details['option8']['value'];
             case 'EasyServiceID':
                 return $this->details['option9']['value'];
+            case 'AdditionalIPs':
+                return $this->details['option10']['value'];
         }
     }
 

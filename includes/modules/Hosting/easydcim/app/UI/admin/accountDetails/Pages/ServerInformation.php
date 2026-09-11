@@ -99,6 +99,11 @@ class ServerInformation
         return $this->instalationStatus;
     }
 
+    public function getServiceID(): string
+    {
+        return (string) ($this->client->getEasyServiceID() ?? '-');
+    }
+
     public function getServerID(): string
     {
         return ($this->generalInformations === null ? null : $this->generalInformations->id) ? (string) $this->generalInformations->id : '-';
@@ -115,9 +120,23 @@ class ServerInformation
     /**
      * Metadata rows the product is configured to surface.
      */
-    public function getMetadata($productSettings)
+    /**
+     * @param string $selection option holding the chosen fields - "caMetadata" for
+     *                          the client area, "caMetadataAdmin" for the admin area
+     */
+    public function getMetadata($productSettings, string $selection = 'caMetadata')
     {
-        $caMetadata = $productSettings['options']['caMetadata'];
+        $options = $productSettings['options'];
+
+        // The admin selection came later; until a product is saved with it, the
+        // admin area keeps showing the client-area fields.
+        if (!isset($options[$selection]))
+        {
+            $selection = 'caMetadata';
+        }
+
+        // The product page posts an empty entry so "nothing selected" still saves.
+        $caMetadata = array_filter((array) ($options[$selection] ?? []), 'strlen');
         $data = [];
 
         foreach ($caMetadata as $key => $value)

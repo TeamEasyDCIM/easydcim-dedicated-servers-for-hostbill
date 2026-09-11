@@ -32,14 +32,22 @@ function showSensorGraph(sensorId, name, unit) {
         '            <div class="lu-modal__body">\n' +
         '                <div class="lu-form-group">\n' +
         '                    <select id="sensorGraphInterval" class="lu-form-control"\n' +
-        '                            onchange="loadSensorGraph(\'' + sensorId + '\',\'' + unit + '\')">\n' +
+        '                            onchange="changeSensorGraphInterval(\'' + sensorId + '\',\'' + unit + '\')">\n' +
         '                        <option value="td">Today</option>\n' +
         '                        <option value="yd">Yesterday</option>\n' +
         '                        <option value="tw">This Week</option>\n' +
         '                        <option value="lw">Last Week</option>\n' +
         '                        <option value="tm">This Month</option>\n' +
         '                        <option value="lm">Last Month</option>\n' +
+        '                        <option value="ty">This Year</option>\n' +
+        '                        <option value="ly">Last Year</option>\n' +
+        '                        <option value="custom">Custom Dates</option>\n' +
         '                    </select>\n' +
+        '                </div>\n' +
+        '                <div id="sensorGraphRange" class="lu-form-group" style="display: none;">\n' +
+        '                    <input type="date" id="sensorGraphStart" class="lu-form-control" style="display: inline-block; width: auto;">\n' +
+        '                    <input type="date" id="sensorGraphEnd" class="lu-form-control" style="display: inline-block; width: auto;">\n' +
+        '                    <button type="button" class="lu-btn lu-btn--primary" onclick="loadSensorGraph(\'' + sensorId + '\',\'' + unit + '\')">Apply</button>\n' +
         '                </div>\n' +
         '                <canvas id="sensorGraphCanvas" height="120"></canvas>\n' +
         '            </div>\n' +
@@ -53,13 +61,27 @@ function showSensorGraph(sensorId, name, unit) {
     loadSensorGraph(sensorId, unit);
 }
 
+function changeSensorGraphInterval(sensorId, unit) {
+    var custom = $('#sensorGraphInterval').val() === 'custom';
+
+    $('#sensorGraphRange').toggle(custom);
+
+    // A custom range waits for both dates and the Apply button.
+    if (!custom) {
+        loadSensorGraph(sensorId, unit);
+    }
+}
+
 function loadSensorGraph(sensorId, unit) {
     var interval = $('#sensorGraphInterval').val() || 'td';
+    var range = interval === 'custom'
+        ? '&start=' + encodeURIComponent($('#sensorGraphStart').val() || '') + '&end=' + encodeURIComponent($('#sensorGraphEnd').val() || '')
+        : '';
 
     $.ajax({
         type: 'GET',
         url: window.location.href + '&ajax=1&sensorGraph=1&sensorId=' + encodeURIComponent(sensorId) +
-            '&interval=' + encodeURIComponent(interval),
+            '&interval=' + encodeURIComponent(interval) + range,
         success: function (data) {
             renderSensorGraph(JSON.parse(data).data, unit);
         },

@@ -7,6 +7,7 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Api\ServiceContext;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Graph\ExportGraphRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Sensors\ListSensorsRequest;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\DateRange;
 
 /**
  * Hardware sensor readings for the account's service.
@@ -119,7 +120,7 @@ class Sensors
                 $this->fail('Sensor ID is required.');
             }
 
-            $dates = $this->getStartAndEndDateTimestamps($getParams['interval'] ?? 'td');
+            $dates = DateRange::resolve((string) ($getParams['interval'] ?? 'td'), $getParams['start'] ?? null, $getParams['end'] ?? null);
 
             $graphData = $this->api->client()->graphs()->export($sensorId, new ExportGraphRequest(self::GRAPH_TYPE, self::GRAPH_TARGET, (string) $dates['start'], (string) $dates['end'], null, false));
 
@@ -179,44 +180,4 @@ class Sensors
         return 'year';
     }
 
-    /**
-     * Each bound comes from its own copy of "now" - Carbon mutates in place.
-     */
-    protected function getStartAndEndDateTimestamps($interval): array
-    {
-        $now = Carbon::now();
-
-        switch ($interval)
-        {
-            case 'yd':
-                $start = $now->copy()->subDay()->startOfDay()->timestamp;
-                $end = $now->copy()->subDay()->endOfDay()->timestamp;
-                break;
-            case 'tw':
-                $start = $now->copy()->startOfWeek()->timestamp;
-                $end = $now->copy()->endOfWeek()->timestamp;
-                break;
-            case 'lw':
-                $start = $now->copy()->subWeek()->startOfWeek()->timestamp;
-                $end = $now->copy()->subWeek()->endOfWeek()->timestamp;
-                break;
-            case 'tm':
-                $start = $now->copy()->startOfMonth()->timestamp;
-                $end = $now->copy()->endOfMonth()->timestamp;
-                break;
-            case 'lm':
-                $start = $now->copy()->subMonth()->startOfMonth()->timestamp;
-                $end = $now->copy()->subMonth()->endOfMonth()->timestamp;
-                break;
-            default:
-                $start = $now->copy()->startOfDay()->timestamp;
-                $end = $now->copy()->endOfDay()->timestamp;
-                break;
-        }
-
-        return [
-            'start' => $start,
-            'end'   => $end
-        ];
-    }
 }

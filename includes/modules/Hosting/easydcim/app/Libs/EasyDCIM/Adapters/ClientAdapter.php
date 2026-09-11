@@ -39,6 +39,13 @@ class ClientAdapter implements IClient
      * @var integer $accountID
      */
     private $serviceID;
+
+    /**
+     * EasyDCIM service ID (account detail option9), filled once the order has one.
+     *
+     * @var integer|null
+     */
+    private $easyServiceID;
     /*
      * @var integer $serviceID
      */
@@ -340,6 +347,7 @@ class ClientAdapter implements IClient
          */
         $this->easyOrderID  = $params['config']['extra_details']['option4'];
         $this->easyServerID = $params['config']['extra_details']['option5'];
+        $this->easyServiceID = $params['config']['extra_details']['option9'] ?? null;
     }
 
     /**
@@ -778,6 +786,17 @@ class ClientAdapter implements IClient
             throw new FatalError('Order Id is empty');
         }
         return $this->easyOrderID;
+    }
+
+    /**
+     * EasyDCIM service ID, or null until the order has produced one - unlike
+     * getEasyServerID() this does not throw, since it is display-only.
+     *
+     * @return integer|null
+     */
+    public function getEasyServiceID()
+    {
+        return empty($this->easyServiceID) ? null : $this->easyServiceID;
     }
 
     /**

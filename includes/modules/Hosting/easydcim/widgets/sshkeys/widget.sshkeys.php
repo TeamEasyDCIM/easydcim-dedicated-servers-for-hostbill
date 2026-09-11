@@ -48,7 +48,8 @@ class widget_sshkeys extends HostingWidget
     {
         $this->params = $module->getAccount();
 
-        if ($this->params['options']['SshKeys'] != 'on')
+        // SSH keys sit under "OS Installation", as in the WHMCS module.
+        if (($this->params['options']['OsInstallation'] ?? '') != 'on' || ($this->params['options']['SshKeys'] ?? '') != 'on')
         {
             return array('disabledPage.tpl', []);
         }

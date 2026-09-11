@@ -48,7 +48,15 @@ class widget_devicestraffic extends HostingWidget
      */
     public function clientFunction(&$module) {
         $this->params = $module->getAccount();
-        if ($this->params['options']['AggregateTraffic'] != 'on' && $this->params['options']['Ping'] != 'on' && $this->params['options']['Status'] != 'on')
+        $options = $this->params['options'];
+        // Graphs sit under "Device Statistics" and its "View Graphs" switch, as in
+        // the WHMCS module; a product saved before "View Graphs" existed keeps them.
+        if (($options['TrafficStatistics'] ?? '') != 'on'
+            || (isset($options['ViewGraphs']) && $options['ViewGraphs'] != 'on'))
+        {
+            return 'This page is disabled';
+        }
+        if (($options['AggregateTraffic'] ?? '') != 'on' && ($options['Ping'] ?? '') != 'on' && ($options['Status'] ?? '') != 'on')
         {
             return 'This page is disabled';
         }

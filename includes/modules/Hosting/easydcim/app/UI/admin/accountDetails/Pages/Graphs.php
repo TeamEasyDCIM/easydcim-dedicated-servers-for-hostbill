@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Graph\ExportGraphRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\DateRange;
 
 class Graphs
 {
@@ -39,7 +40,7 @@ class Graphs
                 self::jsonEncode(['labels' => [], 'datasets' => []]);
             }
 
-            $dates = $this->getStartAndEndDateTimestamps($getParams['interval']);
+            $dates = DateRange::resolve((string) ($getParams['interval'] ?? 'td'), $getParams['start'] ?? null, $getParams['end'] ?? null);
 
             $graphData = $this->api->admin()->graphs()->export($deviceId, new ExportGraphRequest($getParams['graphs'], self::TARGET_DEVICE, (string) $dates['start'], (string) $dates['end'], null, false));
 
@@ -87,56 +88,4 @@ class Graphs
         return $unit;
     }
 
-    /**
-     * Start/end timestamps for a named interval.
-     *
-     * Carbon mutates in place, so each bound is taken from its own copy of
-     * "now" - v2 chained both off one instance, which made the end of every
-     * "yesterday"-style range land a day before its start.
-     */
-    private function getStartAndEndDateTimestamps($interval): array
-    {
-        $now = Carbon::now();
-
-        switch ($interval)
-        {
-            case 'yd':
-                $start = $now->copy()->subDay()->startOfDay()->timestamp;
-                $end = $now->copy()->subDay()->endOfDay()->timestamp;
-                break;
-            case 'tw':
-                $start = $now->copy()->startOfWeek()->timestamp;
-                $end = $now->copy()->endOfWeek()->timestamp;
-                break;
-            case 'lw':
-                $start = $now->copy()->subWeek()->startOfWeek()->timestamp;
-                $end = $now->copy()->subWeek()->endOfWeek()->timestamp;
-                break;
-            case 'tm':
-                $start = $now->copy()->startOfMonth()->timestamp;
-                $end = $now->copy()->endOfMonth()->timestamp;
-                break;
-            case 'lm':
-                $start = $now->copy()->subMonth()->startOfMonth()->timestamp;
-                $end = $now->copy()->subMonth()->endOfMonth()->timestamp;
-                break;
-            case 'ty':
-                $start = $now->copy()->startOfYear()->timestamp;
-                $end = $now->copy()->endOfYear()->timestamp;
-                break;
-            case 'ly':
-                $start = $now->copy()->subYear()->startOfYear()->timestamp;
-                $end = $now->copy()->subYear()->endOfYear()->timestamp;
-                break;
-            default:
-                $start = $now->copy()->startOfDay()->timestamp;
-                $end = $now->copy()->endOfDay()->timestamp;
-                break;
-        }
-
-        return [
-            'start' => $start,
-            'end'   => $end
-        ];
-    }
 }

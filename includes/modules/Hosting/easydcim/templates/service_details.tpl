@@ -243,7 +243,7 @@
                         <script src="{$assetsURL}/js/overview.js"></script>
 
                         <div id="layers">
-                            {if $configuration.BootServer == 'on' || $configuration.ShutdownServer == 'on' || $configuration.RebootServer == 'on' || $configuration.BMCColdReset == 'on' || $configuration.RescueMode == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.noVNCKVMConsole == 'on'}
+                            {if $configuration.BootServer == 'on' || $configuration.ShutdownServer == 'on' || $configuration.RebootServer == 'on' || $configuration.BMCColdReset == 'on' || $configuration.RescueMode == 'on' || $configuration.noVNCKVMConsole == 'on'}
                                 <div class="lu-col-md-12">
                                     <div class="lu-h5 lu-m-b-3x lu-m-t-2x">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.statusWidgetTitle}</div>
                                     <div class="lu-tiles lu-row lu-row--eq-height">
@@ -297,16 +297,6 @@
                                                 </a>
                                             </div>
                                         {/if}
-                                        {if $configuration.KVMJavaConsole == 'on'}
-                                            <div class="lu-col-xs-6 lu-col-md-20p">
-                                                <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.kVMJavaConsoleForm.confirmKVMJavaConsoleInstance}','kvmConsole')">
-                                                    <div class="lu-i-c-6x">
-                                                        <img class="serviceActionsImages" src="{$assetsURL}/img/vnc.png" alt="">
-                                                    </div>
-                                                    <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.modal.kVMJavaConsoleInstance}</span>
-                                                </a>
-                                            </div>
-                                        {/if}
                                         {if $configuration.noVNCKVMConsole == 'on'}
                                             <div class="lu-col-xs-6 lu-col-md-20p">
                                                 <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.noVNCKVMConsoleForm.confirmNoVNCKVMConsoleInstance}','noVNCConsole')">
@@ -330,7 +320,7 @@
                                     </div>
                                 </div>
                             {/if}
-                            {if ($configuration.ServerId == 'on' || $configuration.Label == 'on' || $configuration.ServerStatus == 'on' || $configuration.CurrentOS == 'on' || $configuration.Hostname == 'on' || $configuration.IPAddresses == 'on' || $configuration.MacAddress == 'on' || !empty($metadata)) && $configuration.BlockServerInformationTable != 'on'}
+                            {if ($configuration.ServiceID == 'on' || $configuration.ServerId == 'on' || $configuration.Label == 'on' || $configuration.ServerStatus == 'on' || $configuration.CurrentOS == 'on' || $configuration.Hostname == 'on' || $configuration.IPAddresses == 'on' || $configuration.MacAddress == 'on' || !empty($metadata)) && $configuration.BlockServerInformationTable != 'on'}
                                 <div class="lu-row">
                                     <div class="lu-col-md-12">
                                         <div class="lu-widget widgetActionComponent vueDatatableTable">
@@ -363,6 +353,13 @@
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
+                                                                {if $configuration.ServiceID == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.serviceID}</td>
+                                                                        <td>{$rawObject->serverInformation->getServiceID()}</td>
+                                                                    </tr>
+                                                                {/if}
+
                                                                 {if $configuration.ServerId == 'on'}
                                                                     <tr role="row">
                                                                         <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serverID}</td>
@@ -387,7 +384,7 @@
                                                                 {if $configuration.CurrentOS == 'on'}
                                                                     <tr role="row">
                                                                         <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.os}</td>
-                                                                        <td>{$rawObject->serverInformation->getCurrentOS()}{if $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
+                                                                        <td>{$rawObject->serverInformation->getCurrentOS()}{if $configuration.InstallationStatus == 'on' && $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
                                                                     </tr>
                                                                 {/if}
 
@@ -451,7 +448,7 @@
                                     </div>
                                 </div>
                             {/if}
-                            {if ($configuration.Status == 'on' || $configuration.OrderId == 'on' || $configuration.ServiceStatus == 'on' || $configuration.Model == 'on' || $configuration.SerialNumber == 'on' || $configuration.PurchaseDate == 'on' || $configuration.WarrantyMonths == 'on') && $configuration.BlockGeneralInformationTable != 'on'}
+                            {if ($configuration.StatusInformation == 'on' || $configuration.OrderId == 'on' || $configuration.ServiceStatus == 'on' || $configuration.Model == 'on' || $configuration.SerialNumber == 'on' || $configuration.PurchaseDate == 'on' || $configuration.WarrantyMonths == 'on') && $configuration.BlockGeneralInformationTable != 'on'}
                                 <div class="lu-row">
                                     <div  class="lu-col-md-12">
                                         <div class="lu-widget widgetActionComponent vueDatatableTable">
@@ -467,7 +464,7 @@
                                                         <div>
                                                             <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
                                                                 <tbody>
-                                                                {if $configuration.Status == 'on'}
+                                                                {if $configuration.StatusInformation == 'on'}
                                                                     <tr role="row">
                                                                         <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>
                                                                         <td>{$rawObject->generalInformation->getStatus()}</td>
@@ -922,7 +919,7 @@
                         <script src="{$assetsURL}/js/overview.js"></script>
 
                         <div id="layers">
-                            {if $configuration.BootServer == 'on' || $configuration.ShutdownServer == 'on' || $configuration.RebootServer == 'on' || $configuration.BMCColdReset == 'on' || $configuration.RescueMode == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.noVNCKVMConsole == 'on'}
+                            {if $configuration.BootServer == 'on' || $configuration.ShutdownServer == 'on' || $configuration.RebootServer == 'on' || $configuration.BMCColdReset == 'on' || $configuration.RescueMode == 'on' || $configuration.noVNCKVMConsole == 'on'}
                                 <div class="lu-col-md-12">
                                     <div class="lu-h5 lu-m-b-3x lu-m-t-2x">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.statusWidgetTitle}</div>
                                     <div class="lu-tiles lu-row lu-row--eq-height">
@@ -976,16 +973,6 @@
                                                 </a>
                                             </div>
                                         {/if}
-                                        {if $configuration.KVMJavaConsole == 'on'}
-                                            <div class="lu-col-xs-6 lu-col-md-20p">
-                                                <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.kVMJavaConsoleForm.confirmKVMJavaConsoleInstance}','kvmConsole')">
-                                                    <div class="lu-i-c-6x">
-                                                        <img class="serviceActionsImages" src="{$assetsURL}/img/vnc.png" alt="">
-                                                    </div>
-                                                    <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.modal.kVMJavaConsoleInstance}</span>
-                                                </a>
-                                            </div>
-                                        {/if}
                                         {if $configuration.noVNCKVMConsole == 'on'}
                                             <div class="lu-col-xs-6 lu-col-md-20p">
                                                 <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.noVNCKVMConsoleForm.confirmNoVNCKVMConsoleInstance}','noVNCConsole')">
@@ -1009,7 +996,7 @@
                                     </div>
                                 </div>
                             {/if}
-                            {if ($configuration.ServerId == 'on' || $configuration.Label == 'on' || $configuration.ServerStatus == 'on' || $configuration.CurrentOS == 'on' || $configuration.Hostname == 'on' || $configuration.IPAddresses == 'on' || $configuration.MacAddress == 'on' || !empty($metadata)) && $configuration.BlockServerInformationTable != 'on'}
+                            {if ($configuration.ServiceID == 'on' || $configuration.ServerId == 'on' || $configuration.Label == 'on' || $configuration.ServerStatus == 'on' || $configuration.CurrentOS == 'on' || $configuration.Hostname == 'on' || $configuration.IPAddresses == 'on' || $configuration.MacAddress == 'on' || !empty($metadata)) && $configuration.BlockServerInformationTable != 'on'}
                                 <div class="lu-row">
                                     <div class="lu-col-md-12">
                                         <div class="lu-widget widgetActionComponent vueDatatableTable">
@@ -1042,6 +1029,13 @@
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
+                                                                {if $configuration.ServiceID == 'on'}
+                                                                    <tr role="row">
+                                                                        <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.serviceID}</td>
+                                                                        <td>{$rawObject->serverInformation->getServiceID()}</td>
+                                                                    </tr>
+                                                                {/if}
+
                                                                 {if $configuration.ServerId == 'on'}
                                                                     <tr role="row">
                                                                         <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serverID}</td>
@@ -1066,7 +1060,7 @@
                                                                 {if $configuration.CurrentOS == 'on'}
                                                                     <tr role="row">
                                                                         <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.os}</td>
-                                                                        <td>{$rawObject->serverInformation->getCurrentOS()}{if $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
+                                                                        <td>{$rawObject->serverInformation->getCurrentOS()}{if $configuration.InstallationStatus == 'on' && $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
                                                                     </tr>
                                                                 {/if}
 
@@ -1125,7 +1119,7 @@
                                     </div>
                                 </div>
                             {/if}
-                            {if ($configuration.Status == 'on' || $configuration.OrderId == 'on' || $configuration.ServiceStatus == 'on' || $configuration.Model == 'on' || $configuration.SerialNumber == 'on' || $configuration.PurchaseDate == 'on' || $configuration.WarrantyMonths == 'on') && $configuration.BlockGeneralInformationTable != 'on'}
+                            {if ($configuration.StatusInformation == 'on' || $configuration.OrderId == 'on' || $configuration.ServiceStatus == 'on' || $configuration.Model == 'on' || $configuration.SerialNumber == 'on' || $configuration.PurchaseDate == 'on' || $configuration.WarrantyMonths == 'on') && $configuration.BlockGeneralInformationTable != 'on'}
                                 <div class="lu-row">
                                     <div  class="lu-col-md-12">
                                         <div class="lu-widget widgetActionComponent vueDatatableTable">
@@ -1141,7 +1135,7 @@
                                                         <div>
                                                             <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
                                                                 <tbody>
-                                                                {if $configuration.Status == 'on'}
+                                                                {if $configuration.StatusInformation == 'on'}
                                                                     <tr role="row">
                                                                         <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>
                                                                         <td>{$rawObject->generalInformation->getStatus()}</td>
@@ -1527,7 +1521,7 @@
                             <script src="{$assetsURL}/js/overview.js"></script>
 
                             <div id="layers">
-                                {if $configuration.BootServer == 'on' || $configuration.ShutdownServer == 'on' || $configuration.RebootServer == 'on' || $configuration.BMCColdReset == 'on' || $configuration.RescueMode == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.noVNCKVMConsole == 'on'}
+                                {if $configuration.BootServer == 'on' || $configuration.ShutdownServer == 'on' || $configuration.RebootServer == 'on' || $configuration.BMCColdReset == 'on' || $configuration.RescueMode == 'on' || $configuration.noVNCKVMConsole == 'on'}
                                     <div class="lu-col-md-12">
                                         <div class="lu-h5 lu-m-b-3x lu-m-t-2x">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.statusWidgetTitle}</div>
                                         <div class="lu-tiles lu-row lu-row--eq-height">
@@ -1581,16 +1575,6 @@
                                                     </a>
                                                 </div>
                                             {/if}
-                                            {if $configuration.KVMJavaConsole == 'on'}
-                                                <div class="lu-col-xs-6 lu-col-md-20p">
-                                                    <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.kVMJavaConsoleForm.confirmKVMJavaConsoleInstance}','kvmConsole')">
-                                                        <div class="lu-i-c-6x">
-                                                            <img class="serviceActionsImages" src="{$assetsURL}/img/vnc.png" alt="">
-                                                        </div>
-                                                        <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.modal.kVMJavaConsoleInstance}</span>
-                                                    </a>
-                                                </div>
-                                            {/if}
                                             {if $configuration.noVNCKVMConsole == 'on'}
                                                 <div class="lu-col-xs-6 lu-col-md-20p">
                                                     <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.noVNCKVMConsoleForm.confirmNoVNCKVMConsoleInstance}','noVNCConsole')">
@@ -1614,7 +1598,7 @@
                                         </div>
                                     </div>
                                 {/if}
-                                {if ($configuration.ServerId == 'on' || $configuration.Label == 'on' || $configuration.ServerStatus == 'on' || $configuration.CurrentOS == 'on' || $configuration.Hostname == 'on' || $configuration.IPAddresses == 'on' || $configuration.MacAddress == 'on' || !empty($metadata)) && $configuration.BlockServerInformationTable != 'on'}
+                                {if ($configuration.ServiceID == 'on' || $configuration.ServerId == 'on' || $configuration.Label == 'on' || $configuration.ServerStatus == 'on' || $configuration.CurrentOS == 'on' || $configuration.Hostname == 'on' || $configuration.IPAddresses == 'on' || $configuration.MacAddress == 'on' || !empty($metadata)) && $configuration.BlockServerInformationTable != 'on'}
                                     <div class="lu-row">
                                         <div class="lu-col-md-12">
                                             <div class="lu-widget widgetActionComponent vueDatatableTable">
@@ -1647,6 +1631,13 @@
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>
+                                                                    {if $configuration.ServiceID == 'on'}
+                                                                        <tr role="row">
+                                                                            <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.serviceID}</td>
+                                                                            <td>{$rawObject->serverInformation->getServiceID()}</td>
+                                                                        </tr>
+                                                                    {/if}
+
                                                                     {if $configuration.ServerId == 'on'}
                                                                         <tr role="row">
                                                                             <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serverID}</td>
@@ -1671,7 +1662,7 @@
                                                                     {if $configuration.CurrentOS == 'on'}
                                                                         <tr role="row">
                                                                             <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.os}</td>
-                                                                            <td>{$rawObject->serverInformation->getCurrentOS()}{if $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
+                                                                            <td>{$rawObject->serverInformation->getCurrentOS()}{if $configuration.InstallationStatus == 'on' && $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
                                                                         </tr>
                                                                     {/if}
 
@@ -1730,7 +1721,7 @@
                                         </div>
                                     </div>
                                 {/if}
-                                {if ($configuration.Status == 'on' || $configuration.OrderId == 'on' || $configuration.ServiceStatus == 'on' || $configuration.Model == 'on' || $configuration.SerialNumber == 'on' || $configuration.PurchaseDate == 'on' || $configuration.WarrantyMonths == 'on') && $configuration.BlockGeneralInformationTable != 'on'}
+                                {if ($configuration.StatusInformation == 'on' || $configuration.OrderId == 'on' || $configuration.ServiceStatus == 'on' || $configuration.Model == 'on' || $configuration.SerialNumber == 'on' || $configuration.PurchaseDate == 'on' || $configuration.WarrantyMonths == 'on') && $configuration.BlockGeneralInformationTable != 'on'}
                                     <div class="lu-row">
                                         <div  class="lu-col-md-12">
                                             <div class="lu-widget widgetActionComponent vueDatatableTable">
@@ -1746,7 +1737,7 @@
                                                             <div>
                                                                 <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
                                                                     <tbody>
-                                                                    {if $configuration.Status == 'on'}
+                                                                    {if $configuration.StatusInformation == 'on'}
                                                                         <tr role="row">
                                                                             <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>
                                                                             <td>{$rawObject->generalInformation->getStatus()}</td>
@@ -2150,7 +2141,7 @@
                     <script src="{$assetsURL}/js/overview.js"></script>
 
                     <div id="layers">
-                        {if $configuration.BootServer == 'on' || $configuration.ShutdownServer == 'on' || $configuration.RebootServer == 'on' || $configuration.BMCColdReset == 'on' || $configuration.RescueMode == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.KVMJavaConsole == 'on' || $configuration.noVNCKVMConsole == 'on'}
+                        {if $configuration.BootServer == 'on' || $configuration.ShutdownServer == 'on' || $configuration.RebootServer == 'on' || $configuration.BMCColdReset == 'on' || $configuration.RescueMode == 'on' || $configuration.noVNCKVMConsole == 'on'}
                             <div class="lu-col-md-12">
                                 <div class="lu-h5 lu-m-b-3x lu-m-t-2x">{$lang.serverAA.servicePageIntegration.mainContainer.statusWidget.statusWidgetTitle}</div>
                                 <div class="lu-tiles lu-row lu-row--eq-height">
@@ -2204,16 +2195,6 @@
                                             </a>
                                         </div>
                                     {/if}
-                                    {if $configuration.KVMJavaConsole == 'on'}
-                                        <div class="lu-col-xs-6 lu-col-md-20p">
-                                            <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.kVMJavaConsoleForm.confirmKVMJavaConsoleInstance}','kvmConsole')">
-                                                <div class="lu-i-c-6x">
-                                                    <img class="serviceActionsImages" src="{$assetsURL}/img/vnc.png" alt="">
-                                                </div>
-                                                <span class="lu-tile__title">{$lang.serverAA.adminServicesTabFields.kVMJavaConsoleInstance.modal.kVMJavaConsoleInstance}</span>
-                                            </a>
-                                        </div>
-                                    {/if}
                                     {if $configuration.noVNCKVMConsole == 'on'}
                                         <div class="lu-col-xs-6 lu-col-md-20p">
                                             <a href="javascript:;" class="lu-tile lu-tile--btn lu-tooltip drop-target drop-abutted drop-abutted-top drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center" onclick="generateServiceActionsModal(this,'{$lang.serverAA.adminServicesTabFields.noVNCKVMConsoleInstance.noVNCKVMConsoleForm.confirmNoVNCKVMConsoleInstance}','noVNCConsole')">
@@ -2237,7 +2218,7 @@
                                 </div>
                             </div>
                         {/if}
-                        {if ($configuration.ServerId == 'on' || $configuration.Label == 'on' || $configuration.ServerStatus == 'on' || $configuration.CurrentOS == 'on' || $configuration.Hostname == 'on' || $configuration.IPAddresses == 'on' || $configuration.MacAddress == 'on' || !empty($metadata)) && $configuration.BlockServerInformationTable != 'on'}
+                        {if ($configuration.ServiceID == 'on' || $configuration.ServerId == 'on' || $configuration.Label == 'on' || $configuration.ServerStatus == 'on' || $configuration.CurrentOS == 'on' || $configuration.Hostname == 'on' || $configuration.IPAddresses == 'on' || $configuration.MacAddress == 'on' || !empty($metadata)) && $configuration.BlockServerInformationTable != 'on'}
                             <div class="lu-row">
                                 <div class="lu-col-md-12">
                                     <div class="lu-widget widgetActionComponent vueDatatableTable">
@@ -2270,6 +2251,13 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
+                                                            {if $configuration.ServiceID == 'on'}
+                                                                <tr role="row">
+                                                                    <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.serviceID}</td>
+                                                                    <td>{$rawObject->serverInformation->getServiceID()}</td>
+                                                                </tr>
+                                                            {/if}
+
                                                             {if $configuration.ServerId == 'on'}
                                                                 <tr role="row">
                                                                     <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.serverID}</td>
@@ -2294,7 +2282,7 @@
                                                             {if $configuration.CurrentOS == 'on'}
                                                                 <tr role="row">
                                                                     <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.serverInformation.tableField.os}</td>
-                                                                    <td>{$rawObject->serverInformation->getCurrentOS()}{if $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
+                                                                    <td>{$rawObject->serverInformation->getCurrentOS()}{if $configuration.InstallationStatus == 'on' && $rawObject->serverInformation->getInstallationStatus() != ''}<b> - {$rawObject->serverInformation->getInstallationStatus()}</b>{/if}</td>
                                                                 </tr>
                                                             {/if}
 
@@ -2353,7 +2341,7 @@
                                 </div>
                             </div>
                         {/if}
-                        {if ($configuration.Status == 'on' || $configuration.OrderId == 'on' || $configuration.ServiceStatus == 'on' || $configuration.Model == 'on' || $configuration.SerialNumber == 'on' || $configuration.PurchaseDate == 'on' || $configuration.WarrantyMonths == 'on') && $configuration.BlockGeneralInformationTable != 'on'}
+                        {if ($configuration.StatusInformation == 'on' || $configuration.OrderId == 'on' || $configuration.ServiceStatus == 'on' || $configuration.Model == 'on' || $configuration.SerialNumber == 'on' || $configuration.PurchaseDate == 'on' || $configuration.WarrantyMonths == 'on') && $configuration.BlockGeneralInformationTable != 'on'}
                             <div class="lu-row">
                                 <div  class="lu-col-md-12">
                                     <div class="lu-widget widgetActionComponent vueDatatableTable">
@@ -2369,7 +2357,7 @@
                                                     <div>
                                                         <table width="100%" role="grid" class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column" style="margin-top:0px!important">
                                                             <tbody>
-                                                            {if $configuration.Status == 'on'}
+                                                            {if $configuration.StatusInformation == 'on'}
                                                                 <tr role="row">
                                                                     <td class="informationTablesWidth">{$lang.serverAA.servicePageIntegration.mainContainer.generalInformation.tableField.status}</td>
                                                                     <td>{$rawObject->generalInformation->getStatus()}</td>

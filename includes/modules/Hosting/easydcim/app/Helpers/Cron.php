@@ -37,6 +37,13 @@ class Cron
 
     protected $mailer;
 
+    /**
+     * Product module options, per product ID, for the current run.
+     *
+     * @var array<int, array>
+     */
+    private $productOptions = [];
+
     public function __construct($servers, $accountsHelper, $mailer, $clientHelper, $serversHelper)
     {
         $this->mailer = $mailer;
@@ -266,10 +273,53 @@ class Cron
 
     private function synchronizeActiveServices($hosting, OrderData $order)
     {
-        if (!empty($order->service === null ? null : $order->service->related_id) && $order->service->status == 'aborted') {
+        $relatedId = $order->service === null ? null : $order->service->related_id;
+
+        if (!empty($relatedId) && $order->service->status == 'aborted') {
             DB::table('hb_accounts')->where('id','=',$hosting->id)->update([
                 'status'=>'Pending'
             ]);
+
+            return;
+        }
+
+        // As the WHMCS cron does: follow the device's IPs and hostname on every
+        // pass, within the product's "Block Automatic Update" / domain switches.
+        $sync = new DeviceDetailsSync($this->getProductOptions($hosting));
+
+        if (empty($relatedId) || !$sync->hasWork()) {
+            return;
+        }
+
+        try {
+            $server = $this->getServer($hosting->server_id);
+        } catch (Exception $ex) {
+            echo $ex->getMessage() . PHP_EOL;
+            return;
+        }
+
+        $orderCfg['config']['extra_details']['option4'] = unserialize($hosting->extra_details)['option4'];
+        $api = ApiClientFactory::fromClient(new ClientAdapter(array_merge($server, $orderCfg)));
+
+        $this->applyDeviceDetails($hosting, $sync->changes($api->admin()->devices()->show($relatedId)->data));
+    }
+
+    /**
+     * Write DeviceDetailsSync's picks straight to the account row: extra details
+     * merged over what is stored, and the domain column when it follows the hostname.
+     */
+    private function applyDeviceDetails($hosting, array $changes, array $update = [])
+    {
+        if (!empty($changes['details'])) {
+            $update['extra_details'] = serialize(array_merge((array) unserialize($hosting->extra_details), $changes['details']));
+        }
+
+        if ($changes['domain'] !== null) {
+            $update['domain'] = $changes['domain'];
+        }
+
+        if (!empty($update)) {
+            DB::table('hb_accounts')->where('id','=',$hosting->id)->update($update);
         }
     }
 
@@ -321,12 +371,19 @@ class Cron
             $extraDetails['option9'] = $service->id;
         }
 
-        $extraDetails['option8'] = ($device === null ? null : $device->metadata)['IP Address'] ?? '';
+        $changes = (new DeviceDetailsSync($this->getProductOptions($hosting)))->changes($device);
+        $extraDetails = array_merge($extraDetails, $changes['details']);
 
-        DB::table('hb_accounts')->where('id','=',$hosting->id)->update([
+        $update = [
             'extra_details'=>serialize($extraDetails),
             'status'=>'Active'
-        ]);
+        ];
+
+        if ($changes['domain'] !== null) {
+            $update['domain'] = $changes['domain'];
+        }
+
+        DB::table('hb_accounts')->where('id','=',$hosting->id)->update($update);
 
         $account = $this->accountsHelper->getAccount($hosting->id);
         $serverDetails = $this->serversHelper->getServerDetails($account["server_id"]);
@@ -348,6 +405,19 @@ class Cron
      */
     private function getActivationCondition($hosting): string
     {
+        return (string) ($this->getProductOptions($hosting)['serviceActivationCondition'] ?? '');
+    }
+
+    /**
+     * The product's module options, flattened: an option stored as
+     * ['value' => ...] comes back as its value, multi-selects stay arrays.
+     */
+    private function getProductOptions($hosting): array
+    {
+        if (array_key_exists($hosting->product_id, $this->productOptions)) {
+            return $this->productOptions[$hosting->product_id];
+        }
+
         $row = DB::table('hb_products_modules')
             ->join('hb_modules_configuration', 'hb_products_modules.module', '=', 'hb_modules_configuration.id')
             ->where('hb_modules_configuration.module', '=', 'easydcim')
@@ -355,19 +425,16 @@ class Cron
             ->select('hb_products_modules.options')
             ->first();
 
-        if (empty($row)) {
-            return '';
+        $options = empty($row) ? false : @unserialize($row->options);
+        $options = is_array($options) ? $options : [];
+
+        foreach ($options as $key => $value) {
+            if (is_array($value) && array_key_exists('value', $value)) {
+                $options[$key] = $value['value'];
+            }
         }
 
-        $options = @unserialize($row->options);
-
-        if (!is_array($options)) {
-            return '';
-        }
-
-        $value = $options['serviceActivationCondition'] ?? '';
-
-        return (string) (is_array($value) ? ($value['value'] ?? '') : $value);
+        return $this->productOptions[$hosting->product_id] = $options;
     }
 
     private function extractOrderIdsByServer(array $hostings): array

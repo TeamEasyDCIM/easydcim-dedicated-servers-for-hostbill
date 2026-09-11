@@ -79,6 +79,10 @@ class widget_edreversedns extends HostingWidget
         {
             $this->reverseDNS->delete($_GET['formdata']);
         }
+        if (isset($_GET['massDeleteDNS']))
+        {
+            $this->reverseDNS->massDelete($_GET['ids'] ?? []);
+        }
         $assetsUrl = './includes/modules/Hosting/easydcim/templates/assets';
         $variables = [
             'assetsURL'=>  $assetsUrl,

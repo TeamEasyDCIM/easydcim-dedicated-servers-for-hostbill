@@ -16,7 +16,10 @@
                         <div class="lu-top__title">
                             {$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.reverseDNSTable}
                         </div>
-                        <div class="lu-top__toolbar"><a onclick='showReverseDNSModal({$jsonIpAddresses})' data-toggle="modal" data-target="#statusModal"
+                        <div class="lu-top__toolbar"><a href="javascript:;" onclick="massDeleteDnsRecords()" class="lu-btn lu-btn--danger lu-btn--outline"><i
+                                        class="lu-btn__icon lu-zmdi lu-zmdi-delete"></i> <span
+                                        class="lu-btn__text">{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.massDeleteButton.button.massDeleteButton}</span></a>
+                            <a onclick='showReverseDNSModal({$jsonIpAddresses})' data-toggle="modal" data-target="#statusModal"
                                                         class="lu-btn lu-btn--primary pmCreateButton"><i
                                         class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i> <span
                                         class="lu-btn__text">{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.createButton.button.createButton}</span></a>
@@ -31,6 +34,7 @@
                                        class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
                                     <thead>
                                     <tr role="row">
+                                        <th name="selectCol" class="mgTableActionsHeader" style="width: 30px;"><input type="checkbox" id="reverseDNSSelectAll" onclick="toggleAllDnsRecords(this)"></th>
                                         <th aria-sort="descending" name="ipAddress" class="sorting "><span
                                                     class="lu-table__text">{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.table.ipAddress}</span></th>
                                         <th aria-sort="descending" name="hostname" class="sorting "><span
@@ -43,6 +47,7 @@
                                     <tbody>
                                     {foreach from=$dnsRecords key=myId item=i}
                                         <tr id="{$i.id}" role="row">
+                                            <td><input type="checkbox" class="dnsRecordSelect" value="{$i.id}"></td>
                                             <td>
                                                 {$i.ipAddress}
                                             </td>

@@ -118,10 +118,13 @@ $(document).ready(function () {
         e.preventDefault();
         hideStatusModal();
         let option = $('#scope option:selected').val();
+        let range = option === 'custom'
+            ? '&start=' + encodeURIComponent($('#scopeStart').val() || '') + '&end=' + encodeURIComponent($('#scopeEnd').val() || '')
+            : '';
         let url = window.location.href;
         $.ajax({
             type: "GET",
-            url: url + '&graphs=Status&interval='+option,
+            url: url + '&graphs=Status&interval='+option+range,
             success: function (data) {
                 let graphData
                 if (data != '')

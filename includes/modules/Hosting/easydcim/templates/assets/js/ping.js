@@ -125,10 +125,13 @@ $(document).ready(function () {
         e.preventDefault();
         hidePingModal();
         let option = $('#scope2 option:selected').val();
+        let range = option === 'custom'
+            ? '&start=' + encodeURIComponent($('#scope2Start').val() || '') + '&end=' + encodeURIComponent($('#scope2End').val() || '')
+            : '';
         let url = window.location.href;
         $.ajax({
             type: "GET",
-            url: url + '&graphs=Ping&interval='+option,
+            url: url + '&graphs=Ping&interval='+option+range,
             success: function (data) {
                 let graphData
                 if (data != '')

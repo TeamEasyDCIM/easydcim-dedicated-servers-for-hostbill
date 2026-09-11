@@ -404,3 +404,60 @@ function deleteDNS()
         }
     });
 }
+
+function toggleAllDnsRecords(checkbox)
+{
+    $('#reverseDNS .dnsRecordSelect').prop('checked', checkbox.checked);
+}
+
+/**
+ * Delete every ticked record. The API has no bulk call, so the server removes
+ * them one by one and reports which went through; those rows leave the table.
+ */
+function massDeleteDnsRecords()
+{
+    let ids = $('#reverseDNS .dnsRecordSelect:checked').map(function () { return this.value; }).get();
+
+    if (ids.length === 0 || !confirm('Delete ' + ids.length + ' selected DNS record(s)?')) {
+        return;
+    }
+
+    $.ajax({
+        type: "GET",
+        url: window.location.href + '&ajax=1&massDeleteDNS=1&' + $.param({ids: ids}),
+        success: function (data) {
+            let response = JSON.parse(data).data;
+            removeDnsRows(response.deleted || []);
+            showDnsMessage(response.message, 'info');
+        },
+        error: function (data) {
+            let response = JSON.parse(data.responseText).data;
+            removeDnsRows(response.deleted || []);
+            showDnsMessage(response.error, 'error');
+        }
+    });
+}
+
+function removeDnsRows(ids)
+{
+    let table = $('#reverseDNS').DataTable();
+
+    $(ids).each(function (index, id) {
+        table.row('#' + id).remove();
+    });
+    table.draw(false);
+    $('#reverseDNSSelectAll').prop('checked', false);
+}
+
+function showDnsMessage(message, type)
+{
+    let div = $(type === 'error' ? '#errors' : '#infos');
+    div.html('');
+    div.css("display", "block");
+    div.append('<div class="alert alert-' + type + '">\n' +
+        '<a class="close">×</a>\n' +
+        '' + message + '<br></div>');
+    if (typeof PNotify !== 'undefined') {
+        new PNotify({text: message, type: type});
+    }
+}

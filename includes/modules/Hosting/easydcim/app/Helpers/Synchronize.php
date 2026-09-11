@@ -40,13 +40,21 @@ class Synchronize
 
         $service = $info->data === null ? null : $info->data->service;
 
-        if (empty($service === null ? null : $service->related_id) || $this->module->getDetail('ServerID') != '')
+        if (empty($service === null ? null : $service->related_id))
         {
             return;
         }
 
+        // Already linked: keep the account's IPs and domain in step with the device.
+        if ($this->module->getDetail('ServerID') != '')
+        {
+            $this->updateDeviceDetails($this->getDeviceInformation($service->related_id));
+
+            return;
+        }
+
         $device = $this->getDeviceInformation($service->related_id);
-        $this->saveDedicatedIP($device);
+        $this->updateDeviceDetails($device);
 
         $this->module->updateDetail('ServerID', $service->related_id);
 
@@ -152,11 +160,23 @@ class Synchronize
     }
 
     /**
-     * Copy the device's primary IP into the account so HostBill can show it
-     * without another API round trip.
+     * Copy the device's IPs and hostname into the account, as far as the
+     * product's "Block Automatic Update" / "Automatic Update of Domain"
+     * switches allow, so HostBill can show them without another API call.
+     */
+    public function updateDeviceDetails($device)
+    {
+        $account = $this->module->getAccount();
+        $sync = new DeviceDetailsSync((array) ($account['options'] ?? []));
+
+        $this->module->applyDeviceDetails($sync->changes($device));
+    }
+
+    /**
+     * @deprecated kept for existing callers; honours the same product switches.
      */
     public function saveDedicatedIP($device)
     {
-        $this->module->updateDetail('DedicatedIP', ($device === null ? null : $device->metadata)['IP Address'] ?? '');
+        $this->updateDeviceDetails($device);
     }
 }

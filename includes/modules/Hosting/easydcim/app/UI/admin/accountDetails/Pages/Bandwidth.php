@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\Device\GetDeviceBandwidthRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\DateRange;
 
 class Bandwidth
 {
@@ -73,6 +74,51 @@ class Bandwidth
         }
 
         return $data;
+    }
+
+    /**
+     * One row for the period picked in the admin area's bandwidth filter - a
+     * preset or a custom date range, as in the WHMCS module. Answers the
+     * bandwidth.js request and ends it.
+     */
+    public function managePeriod(array $getParams)
+    {
+        $rows = [];
+
+        try
+        {
+            $dates = DateRange::resolve((string) ($getParams['interval'] ?? 'td'), $getParams['start'] ?? null, $getParams['end'] ?? null);
+            $bandwidth = $this->fetch(
+                $this->client->getEasyServerID(),
+                Carbon::createFromTimestamp($dates['start']),
+                Carbon::createFromTimestamp($dates['end'])
+            );
+
+            if ($bandwidth !== null)
+            {
+                $rows[] = [
+                    'bandwidthInterval' => date('Y-m-d H:i', $dates['start']) . ' - ' . date('Y-m-d H:i', $dates['end']),
+                    'bandwidthIn'       => $bandwidth->bwIn,
+                    'bandwidthOut'      => $bandwidth->bwOut,
+                    'bandwidthTotal'    => $bandwidth->bwTotal,
+                ];
+            }
+        }
+        catch (\Throwable $e)
+        {
+            // No device yet, or an unparseable date: an empty table says as much.
+        }
+
+        self::jsonEncode(['rows' => $rows]);
+    }
+
+    public static function jsonEncode(array $data)
+    {
+        ob_clean();
+        echo(json_encode([
+            'data'=>$data
+        ]));
+        die;
     }
 
     /**

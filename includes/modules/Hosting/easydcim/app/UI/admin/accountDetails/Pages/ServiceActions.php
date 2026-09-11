@@ -68,11 +68,6 @@ class ServiceActions
                     self::jsonEncode(['success' => 'Enable Rescue Mode Successfull']);
                     break;
 
-                case "kvmConsole":
-                    // API v3 exposes no Java/JNLP console launcher; noVNC replaces it.
-                    $this->fail('The Java KVM console is not available over EasyDCIM API v3. Use the noVNC console instead.');
-                    break;
-
                 case "noVNCConsole":
                     try {
                         if ($this->checkIsIPMIEnable($deviceId) === false) {
