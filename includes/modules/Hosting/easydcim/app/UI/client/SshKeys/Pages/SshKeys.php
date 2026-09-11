@@ -116,7 +116,7 @@ class SshKeys
             }
 
             self::jsonEncode([
-                'message' => 'SSH key added successfully'
+                'message' => 'SSH key has been created successfully'
             ]);
         }
         catch (\Exception $exc)
@@ -162,7 +162,7 @@ class SshKeys
             }
 
             self::jsonEncode([
-                'message' => 'SSH key edited successfully'
+                'message' => 'SSH key has been updated successfully'
             ]);
         }
         catch (\Exception $exc)
@@ -190,7 +190,7 @@ class SshKeys
             }
 
             self::jsonEncode([
-                'message' => 'SSH key set as default'
+                'message' => 'SSH key set as default successfully'
             ]);
         }
         catch (\Exception $exc)
@@ -218,7 +218,7 @@ class SshKeys
             }
 
             self::jsonEncode([
-                'message' => 'SSH key deleted successfully'
+                'message' => 'SSH key has been deleted successfully'
             ]);
         }
         catch (\Exception $exc)

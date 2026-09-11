@@ -162,6 +162,11 @@ class easydcim_controller extends HBController
             {
                 $this->bandwidth->managePeriod($_GET);
             }
+            // "Filter Graph" / "Filter Bandwidth" saved for this service.
+            if (isset($_GET['edcSaveScope']))
+            {
+                \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ScopeSettings::handleSave($params['account']['id'] ?? null, $_GET);
+            }
             if (isset($_GET['deviceButtonsAction']))
             {
                 $this->serviceActions->manageServiceActions($_GET['deviceButtonsAction']);
@@ -178,6 +183,9 @@ class easydcim_controller extends HBController
             $this->template->assign('applyFeatures', ($options['ApplyFeatureSettingsToAdminArea'] ?? '') == 'on');
             $this->template->assign('metadata',$this->serverInformation->getMetadata($params['account'], 'caMetadataAdmin'));
             $this->template->assign('lang',$lang);
+            $this->template->assign('serviceId', $params['account']['id'] ?? '');
+            $this->template->assign('edcLang', \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\UiLang::json());
+            $this->template->assign('edcScopes', \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ScopeSettings::json($params['account']['id'] ?? null));
         }
 
     }

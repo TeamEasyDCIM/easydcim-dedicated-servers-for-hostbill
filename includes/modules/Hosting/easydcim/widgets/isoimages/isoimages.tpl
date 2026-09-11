@@ -1,107 +1,56 @@
 <link href="{$assetsURL}/css/fonts.css" rel="stylesheet">
-<link rel="stylesheet" href="{$assetsURL}/css/datatables.min.css">
 <link rel="stylesheet" href="{$assetsURL}/css/layers-ui.css">
 <link rel="stylesheet" href="{$assetsURL}/css/mg_styles.css">
-<link rel="stylesheet" href="{$assetsURL}/css/select2.css">
-<script src="{$assetsURL}/js/datatables.js"></script>
-<script src="{$assetsURL}/js/select2.js"></script>
-<script src="{$assetsURL}/js/isoimages.js"></script>
 <script src="{$assetsURL}/js/index.js"></script>
-
-<div id="layers">
+<script>window.EdcLang = {$edcLang|default:'null'};</script>
+<script src="{$assetsURL}/js/edcUi.js"></script>
+<script src="{$assetsURL}/js/isoimages.js"></script>
+{* The WHMCS IsoImages DataTable: search on name and URL, Create in the toolbar, Edit / Delete per row. *}
+<div id="layers" data-edc-service="{$serviceId}">
     <div class="lu-row">
         <div class="lu-col-md-12">
-            <div class="lu-widget widgetActionComponent vueDatatableTable">
-                <div class="lu-widget__header">
-                    <div class="lu-widget__top lu-top">
-                        <div class="lu-top__title">
-                            {$lang.serverCA.isoImages.mainContainer.isoImagesTable.isoImagesTable}
-                        </div>
-                        <div class="lu-top__toolbar">
-                            <a onclick='showIsoImagesModal()' class="lu-btn lu-btn--primary pmCreateButton">
-                                <i class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i>
-                                <span class="lu-btn__text">{$lang.serverCA.isoImages.mainContainer.isoImagesTable.createButton.button.createButton}</span>
-                            </a>
+            <div id="isoImagesTable" class="lu-widget">
+                <div class="lu-widget__body">
+                    <div class="lu-widget__header">
+                        <div class="lu-widget__top lu-top">
+                            <div class="lu-top__title">{$lang.edcUi.iso_images}</div>
                         </div>
                     </div>
-                </div>
-                <div class="lu-widget__body">
-                    <div class="lu-t-c">
-                        <div class="dataTables_wrapper no-footer" style="overflow: unset!important;">
-                            <div>
-                                <table id="isoImages" width="100%" role="grid"
-                                       class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
+                    <div class="lu-t-c datatableLoader" data-table-container data-check-container>
+                        <div data-edc-toolbar>
+                            <button type="button" class="lu-btn lu-btn--plain lu-btn--primary" data-edc-action="create">
+                                <i class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i>
+                                <span class="lu-btn__text">{$lang.edcUi.create}</span>
+                            </button>
+                        </div>
+                        <div class="dataTables_wrapper no-footer">
+                            <div class="lu-d-grid">
+                                <table class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
                                     <thead>
                                     <tr role="row">
-                                        <th aria-sort="descending" name="Id" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.isoImages.mainContainer.isoImagesTable.table.Id}</span></th>
-                                        <th aria-sort="descending" name="name" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.isoImages.mainContainer.isoImagesTable.table.name}</span></th>
-                                        <th aria-sort="descending" name="iso_url" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.isoImages.mainContainer.isoImagesTable.table.iso_url}</span></th>
-                                        <th aria-sort="descending" name="status" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.isoImages.mainContainer.isoImagesTable.table.status}</span></th>
-                                        <th name="actionsCol" class="mgTableActionsHeader"></th>
+                                        <th name="name"><span class="lu-table__text">{$lang.edcUi.iso_name}</span></th>
+                                        <th name="iso_url"><span class="lu-table__text">{$lang.edcUi.iso_url}</span></th>
+                                        <th name="status"><span class="lu-table__text">{$lang.edcUi.iso_status}</span></th>
+                                        <th class="mgTableActionsHeader" name="actionsCol"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {foreach from=$isoImages key=myId item=i}
-                                        <tr role="row">
-                                            <td>
-                                                {$i.Id}
-                                            </td>
-                                            <td>
-                                                {$i.name}
-                                            </td>
-                                            <td>
-                                                {$i.iso_url}
-                                            </td>
-                                            <td>
-                                                {if $i.status eq 'Finished'}
-                                                    <span class="lu-label lu-label--status {$i.colorStatus} lu-tooltip drop-target
-                                                drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center"
-                                                          data-toggle="lu-tooltip" data-title="The ISO image has been downloaded"
-                                                          style="margin-left: 0px; margin-right: 10px; margin-bottom: 5px;">{$i.status}
-                                                    <span class="tooltiptext">{$lang.serverCA.isoImages.Downloadingisfinished}</span></span>
-                                                {elseif $i.status eq 'Error'}
-                                                    <span class="lu-label lu-label--status {$i.colorStatus} lu-tooltip drop-target
-                                                drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center"
-                                                          data-toggle="lu-tooltip" data-title="The ISO image has been downloaded"
-                                                          style="margin-left: 0px; margin-right: 10px; margin-bottom: 5px;">{$i.status}
-                                                    <span class="tooltiptext">Error: {$i.data.message}</span></span>
-                                                {elseif $i.status eq 'Started'}
-                                                    <span class="lu-label lu-label--status {$i.colorStatus} lu-tooltip drop-target
-                                                drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center"
-                                                          data-toggle="lu-tooltip" data-title="The ISO image has been downloaded"
-                                                          style="margin-left: 0px; margin-right: 10px; margin-bottom: 5px;">{$i.status}
-                                                    <span class="tooltiptext"><div style="padding:5px ">
-                                                        <div class="progress" style="margin-bottom:0px; width: 100%;">
-                                                            <div class="progress-bar" role="progressbar" aria-valuenow="{$i.progress}" aria-valuemin="1" aria-valuemax="100" style="width:{$i.progress}% ">
-                                                                {$i.progress}%
-                                                            </div>
-                                                        </div>
-                                                    </div></span></span>
-                                                {else}
-                                                    <span class="lu-label lu-label--status {$i.colorStatus} lu-tooltip drop-target
-                                                drop-element-attached-bottom drop-element-attached-center drop-target-attached-top drop-target-attached-center"
-                                                          data-toggle="lu-tooltip" data-title="The ISO image has been downloaded"
-                                                          style="margin-left: 0px; margin-right: 10px; margin-bottom: 5px;">{$i.status}
-                                                    <span class="tooltiptext">{$lang.serverCA.isoImages.Waitingfordownloadingtostart}</span></span>
-                                                {/if}
-                                            </td>
-                                            <td class="lu-cell-actions mgTableActions">
-                                                <a href="javascript:;" onclick="editIsoImageModal('{$i.Id}','{$i.name}','{$i.iso_url}')" data-toggle="lu-tooltip" class="lu-btn lu-btn--sm lu-btn--link lu-btn--icon
-                                                lu-btn--plain lu-btn--default lu-tooltip drop-target drop-element-attached-bottom drop-element-attached-center
-                                                 drop-target-attached-top drop-target-attached-center" data-title="{$lang.serverCA.isoImages.mainContainer.isoImagesTable.updateButton.button.updateButton}">
-                                                    <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i>
-                                                </a>
-                                                <a href="javascript:;" onclick="deleteIsoImageModal('{$i.Id}')" data-toggle="lu-tooltip" class="lu-btn lu-btn--sm lu-btn--danger lu-btn--link
-                                                 lu-btn--icon lu-btn--plain lu-tooltip drop-target drop-element-attached-bottom drop-element-attached-center
-                                                  drop-target-attached-top drop-target-attached-center" data-title="{$lang.serverCA.isoImages.mainContainer.isoImagesTable.deleteButton.button.deleteButton}">
-                                                    <i class="lu-btn__icon lu-zmdi lu-zmdi-delete"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
+                                    {foreach from=$isoImages item=i}
+                                    <tr class="lu-table-row" data-id="{$i.Id}" data-name="{$i.name|escape}" data-iso-url="{$i.iso_url|escape}">
+                                        <td><div>{$i.name|escape}</div></td>
+                                        <td><div>{$i.iso_url|escape}</div></td>
+                                        <td>
+                                            <span class="lu-badge lu-value lu-tooltip {$i.badgeClass}"{if $i.message != ''} data-title="{$i.message|escape}"{/if}>{if $i.statusKey == 'iso_waiting'}{$lang.edcUi.iso_waiting}{elseif $i.statusKey == 'iso_downloading'}{$lang.edcUi.iso_downloading}{elseif $i.statusKey == 'iso_completed'}{$lang.edcUi.iso_completed}{elseif $i.statusKey == 'iso_error'}{$lang.edcUi.iso_error}{else}{$lang.edcUi.iso_unknown}{/if}{if $i.message != ''}<span class="tooltiptext">{$i.message|escape}</span>{/if}</span>
+                                        </td>
+                                        <td class="lu-cell-actions">
+                                            <button type="button" class="lu-btn lu-btn--sm lu-btn--link lu-btn--icon lu-btn--plain lu-btn--default lu-tooltip" data-toggle="lu-tooltip" data-title="{$lang.edcUi.edit}" data-edc-action="update">
+                                                <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i><span class="tooltiptext">{$lang.edcUi.edit}</span>
+                                            </button>
+                                            <button type="button" class="lu-btn lu-btn--sm lu-btn--link lu-btn--icon lu-btn--plain lu-btn--danger lu-tooltip" data-toggle="lu-tooltip" data-title="{$lang.edcUi.delete}" data-edc-action="delete">
+                                                <i class="lu-btn__icon lu-zmdi lu-zmdi-delete"></i><span class="tooltiptext">{$lang.edcUi.delete}</span>
+                                            </button>
+                                        </td>
+                                    </tr>
                                     {/foreach}
                                     </tbody>
                                 </table>

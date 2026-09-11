@@ -32,11 +32,11 @@ class Sensors
      * Sensor type to the badge class the client area styles it with.
      */
     protected static $typeClassMap = [
-        'Power'   => 'lu-label--info',
-        'Thermal' => 'lu-label--danger',
+        'Power'   => 'lu-badge--info',
+        'Thermal' => 'lu-badge--danger',
     ];
 
-    protected const TYPE_CLASS_DEFAULT = 'lu-label--success';
+    protected const TYPE_CLASS_DEFAULT = 'lu-badge--success';
 
     /**
      * A sensor graph is drawn against the sensor itself, not the device.
@@ -129,7 +129,7 @@ class Sensors
             $graphData = $this->api->client()->graphs()->export($sensorId, new ExportGraphRequest(self::GRAPH_TYPE, self::GRAPH_TARGET, (string) $dates['start'], (string) $dates['end'], null, false));
 
             $options = GraphOptions::sensor($graphData->toArray(), $name, $unit);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $options = GraphOptions::sensor([], $name, $unit);
         }
 

@@ -405,7 +405,23 @@ class easydcim extends HostingModule implements Observer
                 <b>EasyDCIM Server ID:</b> {"."$"."details.serverid} <br> <br>
             </p>", "");
 
+        // Period filters of the graphs, the bandwidth and the sensors (ScopeSettings).
+        $this->createSettingsTable();
+
         return true;
+    }
+
+    /**
+     * The table of App\Helpers\ScopeSettings. ScopeSettings also creates it on
+     * its first save, so a failure here only postpones it.
+     */
+    protected function createSettingsTable(): void
+    {
+        try {
+            \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ScopeSettings::createTable();
+        } catch (\Throwable $e) {
+            error_log('[EasyDCIM] Could not create the settings table: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -436,6 +452,8 @@ class easydcim extends HostingModule implements Observer
      *   their current behaviour until an administrator opts in.
      */
     public function upgrade($previous_version) {
+        $this->createSettingsTable();
+
         if (version_compare($previous_version, '2.0.0', '<')) {
             error_log(
                 '[EasyDCIM] Module upgraded from ' . $previous_version . ' to ' . $this->version . '. '

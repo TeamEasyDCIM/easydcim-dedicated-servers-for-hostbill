@@ -1,8 +1,4 @@
-$(document).ready(function (e) {
-    $('#accessListTable').DataTable({
-        lengthChange: false,
-        ordering: false,
-        searching: false,
-        info:false
-    });
+// Access List - the WHMCS AccessListTable: pages, no search.
+$(function () {
+    EdcUi.table('#accessListTable .lu-t-c', {search: false, pagination: true});
 });

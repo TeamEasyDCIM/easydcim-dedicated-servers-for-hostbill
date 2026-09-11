@@ -37,15 +37,15 @@ class ServiceActions
 
             switch ($action) {
                 case "boot":
-                    $this->powerAction($deviceId, 'boot', 'Server Was Boot Successfully');
+                    $this->powerAction($deviceId, 'boot', 'Server boot command has been sent successfully');
                     break;
 
                 case "shutdown":
-                    $this->powerAction($deviceId, 'shutdown', 'Server Was Shutdown Successfully');
+                    $this->powerAction($deviceId, 'shutdown', 'Server shutdown command has been sent successfully');
                     break;
 
                 case "reboot":
-                    $this->powerAction($deviceId, 'reboot', 'Server Was Reboot Successfully');
+                    $this->powerAction($deviceId, 'reboot', 'Server reboot command has been sent successfully');
                     break;
 
                 case "bmcColdReset":
@@ -55,7 +55,7 @@ class ServiceActions
                         $this->fail($result->message);
                     }
 
-                    self::jsonEncode(['success' => 'BMC Cold Reset Successfull']);
+                    self::jsonEncode(['success' => 'BMC cold reset has been initiated successfully']);
                     break;
 
                 case "enableRescueMode":
@@ -65,13 +65,13 @@ class ServiceActions
                         $this->fail($result->message);
                     }
 
-                    self::jsonEncode(['success' => 'Enable Rescue Mode Successfull']);
+                    self::jsonEncode(['success' => 'Rescue mode has been enabled successfully']);
                     break;
 
                 case "noVNCConsole":
                     try {
                         if ($this->checkIsIPMIEnable($deviceId) === false) {
-                            throw new \Exception('IPMI is not enabled');
+                            throw new \Exception('IPMI is not enabled for this service');
                         }
 
                         $result = $this->api->admin()->ipmi()->startNoVncSession($deviceId);
@@ -81,7 +81,7 @@ class ServiceActions
                         }
 
                         self::jsonEncode([
-                            'success' => 'noVNC KVM Console Launched Successfully',
+                            'success' => 'noVNC Console session has been started successfully',
                             'url'     => $result->data === null ? null : $result->data->url,
                         ]);
                     } catch (\Exception $e) {
@@ -96,11 +96,11 @@ class ServiceActions
                         $result = $this->api->client()->users()->getAutoLoginLink();
 
                         if ($result->success === false || empty($result->data === null ? null : $result->data->link)) {
-                            throw new \Exception($result->message ?: 'Account Not Exist');
+                            throw new \Exception($result->message ?: 'Could not generate auto-login link');
                         }
 
                         self::jsonEncode([
-                            'success' => 'You have been redirected correctlly',
+                            'success' => 'Auto-login link has been generated successfully',
                             'url'     => $result->data->link,
                         ]);
                     } catch (\Exception $e) {

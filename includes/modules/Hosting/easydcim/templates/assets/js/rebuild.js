@@ -1,349 +1,179 @@
-let popup = false;
-$(document).ready(function (e) {
-    $('#rebuildTable').DataTable({
-        lengthChange: false,
-        ordering: false,
-        searching: false,
-        info:false
-    });
-    let instalationStatus = $('#instalationStatusForReload').val();
-    let currentInstaltionStatus = instalationStatus;
-    setInterval(function(a){
-        let url = window.location.href;
-        if (popup === false)
-        {
-            $.ajax({
-                type: "GET",
-                url: url + '&ajax=1&reloadRebuild=1',
-                success: function(data){
-                    currentInstaltionStatus = JSON.parse(data).data.installationStatus
-                    if (currentInstaltionStatus != a)
-                    {
-                        location.reload();
-                    }
-                },
-                error: function(data) {
-                }
-            });
-        }
-    }, 15000, instalationStatus);
-});
-function getFormData(form){
-    var o = {};
-    var a = form.serializeArray();
-    $.each(a, function() {
-        if (o[this.name]) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push(this.value || '');
-        } else {
-            o[this.name] = this.value || '';
-        }
-    });
-    return o;
-}
+/**
+ * Rebuild - the WHMCS ReinstallWidget: the server details, the Rebuild Server /
+ * Cancel Installation toolbar button, a status check every 10 seconds, and the
+ * RebuildForm - the template first, then the fields that template needs.
+ */
+var RebuildPage = (function ($) {
+    'use strict';
 
-function rebuild()
-{
-    let form = $('#rebuildForm');
-    let serializeData = getFormData(form);
-    let url = window.location.href;
-    closeModal();
+    var RELOAD_INTERVAL = 10000;
+    var t = EdcUi.t;
 
-    $.ajax({
-        type: "GET",
-        url: url + '&ajax=1&rebuild=1&' + $.param({formdata: serializeData}),
-        success: function(data){
-            let message = JSON.parse(data).data.message;
-            let div = $('#infos');
-            div.html('');
-            div.css("display", "block");
-            div.append('<div class="alert alert-info">\n' +
-                '<a class="close">×</a>\n' +
-                ''+message+'<br></div>')
-            let pntf_opts = {}
-            pntf_opts.text = message;
-            pntf_opts.type = 'info';
-            if (typeof PNotify !== 'undefined') {
-                new PNotify(pntf_opts);
-            }
-        },
-        error: function(data) {
-            let error = JSON.parse(data.responseText).data.error;
-            let div = $('#errors');
-            div.html('');
-            div.css("display", "block");
-            div.append('<div class="alert alert-error">\n' +
-                '<a class="close">×</a>\n' +
-                ''+error+'<br></div>')
-            let pntf_opts = {}
-            pntf_opts.text = error;
-            pntf_opts.type = 'error';
-            if (typeof PNotify !== 'undefined') {
-                new PNotify(pntf_opts);
-            }
-        }
-    });
-}
-
-function generateCIModal(e,installationInformation)
-{
-    popup = true;
-    const layers = $('#layers');
-    layers.append('<div id="confirmationModal" class="lu-modal show lu-modal--info modal--sm modal--zoomIn">\n' +
-        '        <div class="lu-modal__dialog">\n' +
-        '            <div id="mgModalContainer" class="lu-modal__content">\n' +
-        '                <div class="lu-modal__top lu-top">\n' +
-        '                    <div class="lu-top__title lu-type-6 lu-text-faded">\n' +
-        '                        '+installationInformation.hostname+' ('+installationInformation.hostInformation+') - Cancel OS Installation\n' +
-        '                    </div>\n' +
-        '                    <div class="lu-top__toolbar">\n' +
-        '                        <button data-dismiss="lu-modal" onclick="closeModal()" aria-label="Close"\n' +
-        '                                class="lu-btn lu-btn--xs lu-btn--default lu-btn--icon lu-btn--link lu-btn--plain closeModal">\n' +
-        '                            <i class="lu-btn__icon lu-zmdi lu-zmdi-close"></i></button>\n' +
-        '                    </div>\n' +
-        '                </div>\n' +
-        '                <div class="lu-modal__body lu-m-b-0x"><div class="lu-form-group">\n' +
-        '\n' +
-        '                   Are you sure you want to abort the installation process? \n' +
-        '</div>\n' +
-        '\n' +
-        '                <div class="lu-modal__actions">\n' +
-        '                    <button onclick="cancelInstalation()" class="lu-btn lu-btn--primary submitForm mg-submit-form">\n' +
-        '                        Cancel Installation\n' +
-        '                    </button>\n' +
-        '                    <button class="lu-btn lu-btn--danger lu-btn--outline lu-btn--plain closeModal" onclick="closeModal()">\n' +
-        '                        Cancel\n' +
-        '                    </button>\n' +
-        '                </div>\n' +
-        '            </div>\n' +
-        '        </div>\n' +
-        '    </div>');
-}
-
-function cancelInstalation()
-{
-    let url = window.location.href;
-    closeModal();
-    $.ajax({
-        type: "GET",
-        url: url + '&ajax=1&cancelInstallation=1',
-        success: function(data){
-            let message = JSON.parse(data).data.message;
-            let div = $('#infos');
-            div.html('');
-            div.css("display", "block");
-            div.append('<div class="alert alert-info">\n' +
-                '<a class="close">×</a>\n' +
-                ''+message+'<br></div>')
-            let pntf_opts = {}
-            pntf_opts.text = message;
-            pntf_opts.type = 'info';
-            if (typeof PNotify !== 'undefined') {
-                new PNotify(pntf_opts);
-            }
-        },
-        error: function(data) {
-            let error = JSON.parse(data.responseText).data.error;
-            let div = $('#errors');
-            div.html('');
-            div.css("display", "block");
-            div.append('<div class="alert alert-error">\n' +
-                '<a class="close">×</a>\n' +
-                ''+error+'<br></div>')
-            let pntf_opts = {}
-            pntf_opts.text = error;
-            pntf_opts.type = 'error';
-            if (typeof PNotify !== 'undefined') {
-                new PNotify(pntf_opts);
-            }
-        }
-    });
-}
-
-function generatePassword(e)
-{
-    let input = $(e)[0].parentElement.children[0];
-    let length = 8;
-    var randKey = "";
-    var avChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < length; i++) {
-        randKey += avChars.charAt(Math.floor(Math.random() * avChars.length));
+    function widget() {
+        return $('#reinstallWidget');
     }
 
-    $(input).val(randKey);
-}
+    function init() {
+        EdcUi.table('#reinstallTable .lu-t-c', {search: false, pagination: false});
+    }
 
-function closeModal()
-{
-    $('#confirmationModal').remove();
-    popup = false;
-}
+    function reload() {
+        EdcUi.reload('#reinstallWidget', init);
+    }
 
-function generateRBModal(e,instaltionInformation,CaTemplates)
-{
-    popup = true;
-    generateRebuildModal(instaltionInformation,CaTemplates);
-    $('.mgselect2Templates').select2({
-        placeholder: "Select a template",
-    });
-    $('#templateRebuildSelect').on('change',function () {
-        let selectedTemplateId = $('#templateRebuildSelect option:selected').val();
-        let rebuildForm = $('#rebuildForm');
-        let extrasDiv = $('#extrasDiv');
-        let diskLayoutDiv = $('#diskLayoutDiv');
-        let sshKeysDiv = $('#sshKeysDiv');
-        if (extrasDiv.length != 0)
-        {
-            extrasDiv.remove();
-        }
-        if (diskLayoutDiv.length != 0)
-        {
-            diskLayoutDiv.remove();
-        }
-        if (sshKeysDiv.length != 0)
-        {
-            sshKeysDiv.remove();
-        }
-        $( CaTemplates ).each(function( index,value ) {
-            if (value.id == selectedTemplateId)
-            {
+    // What the WHMCS toolbar compares between checks: idle, or the install message.
+    function signature(info) {
+        return info && info.installing ? 'installing:' + (info.installationMessage || '') : 'idle';
+    }
 
-                if (value.diskLayout.length != 0)
-                {
-                    let diskLayout = '<option></option>';
-
-                    $( value.diskLayout ).each(function( index,value ) {
-                        diskLayout += '<option value="'+value.key+'">'+value.value+'</option>';
-                    });
-
-                    let divForDiskLayout = '<div id="diskLayoutDiv" class="lu-form-group"><label class="lu-form-label text-black"> Disk Layout </label> <select id="diskLayoutSelect" name="rebuildDiskLayout"\n' +
-                        '                                                                                      class="lu-form-control"\n' +
-                        '                                                                                                         tabindex="-1">'+diskLayout+'</select>\n' +
-                        '        <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>\n' +
-                        '</div>';
-                    rebuildForm.append(divForDiskLayout);
-                    $('#diskLayoutSelect').select2({
-                        placeholder: "Select Disk Layout addons",
-                        // allowClear: true
-                    });
-                }
-                if (value.extras.length != 0)
-                {
-                    let extras = '';
-
-                    $( value.extras ).each(function( index,value ) {
-                        extras += '<option value="'+value.key+'">'+value.value+'</option>';
-                    });
-                    let divForExtras = '<div id="extrasDiv" class="lu-form-group"><label class="lu-form-label text-black">Extras </label> <select id="extrasSelect" multiple="multiple" name="rebuildExtras" \n' +
-                        '    class="lu-form-control">'+extras+'</select>\n' +
-                        '    <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>\n' +
-                        '</div>';
-                    rebuildForm.append(divForExtras);
-                    // // $('#extrasSelect').select2({
-                    // //     placeholder: "Select Extras Addons",
-                    // //     // allowClear: true
-                    // // });
-                    // $("#extrasSelect").select2({
-                    //     data:[{id:0,text:'enhancement'},{id:1,text:'bug'},{id:2,text:'duplicate'},{id:3,text:'invalid'},{id:4,text:'wontfix'}]
-                    // });
-                }
-                if (typeof value.sshKeys !== 'undefined' && value.sshKeys.length != 0)
-                {
-                    let sshKeys = '';
-
-                    $( value.sshKeys ).each(function( index,value ) {
-                        sshKeys += '<option value="'+value.key+'"'+(value.default ? ' selected' : '')+'>'+value.value+'</option>';
-                    });
-
-                    let divForSshKeys = '<div id="sshKeysDiv" class="lu-form-group"><label class="lu-form-label text-black">SSH Keys </label> <select id="sshKeysSelect" multiple="multiple" name="rebuildSshKeys" \n' +
-                        '    class="lu-form-control">'+sshKeys+'</select>\n' +
-                        '    <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>\n' +
-                        '</div>';
-                    rebuildForm.append(divForSshKeys);
-                }
+    function poll() {
+        $.ajax({type: 'GET', url: window.location.href.split('#')[0] + '&ajax=1&reloadRebuild=1'}).done(function (raw) {
+            var info;
+            try {
+                info = JSON.parse(raw).data;
+            } catch (e) {
+                return;
+            }
+            if (signature(info) !== widget().attr('data-edc-signature')) {
+                reload();
             }
         });
-    })
-}
+    }
 
-function generateRebuildModal(instaltionInformation,CaTemplates) {
-    let caTemplates = '<option></option>';
-    let username = instaltionInformation.username;
-    let hostname = instaltionInformation.hostname;
-    let sshPassword = instaltionInformation.sshPassword;
-    let sshRootPassword = instaltionInformation.sshRootPassword;
-    $( CaTemplates ).each(function( index,value ) {
-        caTemplates += '<option value="'+value.id+'">'+value.Description+'</option>';
+    function templates() {
+        try {
+            return JSON.parse(widget().attr('data-edc-templates') || '[]') || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    // "domain (dedicated IP) - title", as the WHMCS rebuild modals are titled.
+    function title(suffix) {
+        var base = widget().attr('data-edc-title') || '';
+        return (base ? base + ' - ' : '') + suffix;
+    }
+
+    function options(list) {
+        return $.map(list || [], function (item) {
+            return [[item.key, item.value]];
+        });
+    }
+
+    function templateFields(container, data, dropdownParent) {
+        var windows = !!data.isWindows;
+        container.append(
+            EdcUi.field.text({name: 'rebuildUsername', label: t('username'), value: windows ? 'Administrator' : (data.username || ''), readonly: windows}),
+            EdcUi.field.password({name: 'rebuildPassword', label: t('password')})
+        );
+        if (!windows) {
+            container.append(EdcUi.field.password({name: 'rebuildRootSSHPassword', label: t('root_password')}));
+            if (data.sshKeys && data.sshKeys.length) {
+                container.append(EdcUi.field.select({
+                    name: 'rebuildSshKeys',
+                    label: t('ssh_keys_field'),
+                    multiple: true,
+                    options: options(data.sshKeys),
+                    value: $.map(data.sshKeys, function (key) {
+                        return key['default'] ? String(key.key) : null;
+                    })
+                }));
+            }
+        }
+        if (data.diskLayout && data.diskLayout.length) {
+            container.append(EdcUi.field.select({name: 'rebuildDiskLayout', label: t('disk_layout'), placeholder: '', options: options(data.diskLayout)}));
+        }
+        if (data.extras && data.extras.length) {
+            container.append(EdcUi.field.select({name: 'rebuildExtras', label: t('extras'), multiple: true, options: options(data.extras)}));
+        }
+        EdcUi.initFields(container, dropdownParent);
+    }
+
+    function formErrors(values) {
+        var errors = {
+            templateCaId: values.templateCaId ? '' : t('field_required'),
+            rebuildHostname: $.trim(values.rebuildHostname) !== '' ? '' : t('field_required')
+        };
+        if (values.rebuildUsername !== undefined) {
+            errors.rebuildUsername = $.trim(values.rebuildUsername) === '' ? t('field_required')
+                : (values.rebuildUsername === 'root' ? t('invalid_username') : '');
+        }
+        if (values.rebuildPassword !== undefined) {
+            errors.rebuildPassword = values.rebuildPassword ? '' : t('field_required');
+        }
+        if (values.rebuildRootSSHPassword !== undefined) {
+            errors.rebuildRootSSHPassword = values.rebuildRootSSHPassword ? '' : t('field_required');
+        }
+        return errors;
+    }
+
+    function rebuild() {
+        var extra = $('<div></div>');
+        var modal = EdcUi.modal({
+            type: 'edit',
+            title: title(t('rebuild_server')),
+            body: [
+                EdcUi.field.select({
+                    name: 'templateCaId',
+                    label: t('os_template'),
+                    placeholder: '',
+                    options: $.map(templates(), function (template) {
+                        return [[template.id, template.Description]];
+                    })
+                }),
+                EdcUi.field.text({name: 'rebuildHostname', label: t('hostname'), value: widget().attr('data-edc-hostname')}),
+                extra
+            ],
+            onSubmit: function (api) {
+                var values = api.values();
+                if (api.errors(formErrors(values))) {
+                    return;
+                }
+                EdcUi.submitModal(api, '&ajax=1&rebuild=1', values, reload);
+            }
+        });
+        // The WHMCS form reloads when the template changes; here the fields are swapped.
+        modal.form.find('select[name="templateCaId"]').on('change', function () {
+            var id = $(this).val();
+            extra.empty();
+            if (!id) {
+                return;
+            }
+            modal.busy(true);
+            EdcUi.request('&ajax=1&osTemplateID=' + encodeURIComponent(id), function (data) {
+                modal.busy(false);
+                templateFields(extra, data, modal.el);
+            }, function (data) {
+                modal.busy(false);
+                EdcUi.notify('error', data.error || '');
+            });
+        });
+    }
+
+    function cancel() {
+        EdcUi.modal({
+            type: 'edit',
+            title: title(t('cancel_installation')),
+            body: [EdcUi.alert('warning', $('<div></div>').text(t('cancel_confirm')).html())],
+            onSubmit: function (api) {
+                EdcUi.submitModal(api, '&ajax=1&cancelInstallation=1', {}, reload);
+            }
+        });
+    }
+
+    $(document).on('click', '#reinstallWidget [data-edc-action]', function (e) {
+        e.preventDefault();
+        if ($(this).attr('data-edc-action') === 'rebuild') {
+            rebuild();
+        } else {
+            cancel();
+        }
     });
 
-    const layers = $('#layers');
-    layers.append('<div id="confirmationModal" class="lu-modal show lu-modal--info modal--sm modal--zoomIn">\n' +
-        '        <div class="lu-modal__dialog">\n' +
-        '            <div id="mgModalContainer" class="lu-modal__content">\n' +
-        '                <div class="lu-modal__top lu-top">\n' +
-        '                    <div class="lu-top__title lu-type-6 lu-text-faded">\n' +
-        '                        '+hostname+' ('+instaltionInformation.hostInformation+') - Reinstall OS\n' +
-        '                    </div>\n' +
-        '                    <div class="lu-top__toolbar">\n' +
-        '                        <button data-dismiss="lu-modal" onclick="closeModal()" aria-label="Close"\n' +
-        '                                class="lu-btn lu-btn--xs lu-btn--default lu-btn--icon lu-btn--link lu-btn--plain closeModal">\n' +
-        '                            <i class="lu-btn__icon lu-zmdi lu-zmdi-close"></i></button>\n' +
-        '                    </div>\n' +
-        '                </div>\n' +
-        '                <div class="lu-modal__body lu-m-b-0x"><div class="lu-form-group"><div class="lu-alert lu-alert--danger">\n' +
-        '    <div class="lu-alert__body">\n' +
-        '        <b>Warning:</b> Reinstallation of OS will result in all the current data located on the server to be lost.\n' +
-        '    </div>\n' +
-        '</div>\n' +
-        '                    <form id="rebuildForm">\n' +
-        '                        <div class="lu-form-group"><label class="lu-form-label text-black">OS Template</label> ' +
-        '                       <select id="templateRebuildSelect" name="templateCaId"\n' +
-        '                                                                                      class="lu-form-control mgselect2Templates"\n' +
-        '                           >'+caTemplates+'</select>\n' +
-        '                       <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>\n' +
-        '                       </div>' +
-        '                       <div class="lu-form-group"><label class="lu-form-label text-black">\n' +
-        '                                Hostname </label> <input type="text" placeholder="" name="rebuildHostname" value="'+hostname+'"\n' +
-        '                                                         class="lu-form-control">\n' +
-        '                            <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>\n' +
-        '                        </div>\n' +
-        '                        <div class="lu-form-group"><label class="lu-form-label text-black">\n' +
-        '                                Username </label> <input type="text" placeholder="" name="rebuildUsername" value="'+username+'"\n' +
-        '                                                         class="lu-form-control">\n' +
-        '                            <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>\n' +
-        '                        </div>\n' +
-        '                        <div class="lu-form-group"><label class="lu-form-label text-black">\n' +
-        '                                Password </label>\n' +
-        '                            <div class="lu-input-group"><input value="'+sshPassword+'" type="text" placeholder="" name="rebuildPassword"\n' +
-        '                                                               class="lu-form-control">\n' +
-        '                                <button type="button" onclick="generatePassword(this)" class="lu-input-group__btn lu-btn lu-btn--default"><span\n' +
-        '                                            class="lu-btn__text">Generate</span></button>\n' +
-        '                            </div>\n' +
-        '                            <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>\n' +
-        '                        </div>\n' +
-        '                        <div class="lu-form-group"><label class="lu-form-label text-black">\n' +
-        '                                Root SSH Password </label>\n' +
-        '                            <div class="lu-input-group"><input value="'+sshRootPassword+'" type="text" placeholder="" name="rebuildRootSSHPassword"\n' +
-        '                                                               class="lu-form-control">\n' +
-        '                                <button type="button" onclick="generatePassword(this)" class="lu-input-group__btn lu-btn lu-btn--default"><span\n' +
-        '                                            class="lu-btn__text">Generate</span></button>\n' +
-        '                            </div>\n' +
-        '                            <div hidden="hidden" class="lu-form-feedback lu-form-feedback--icon"></div>\n' +
-        '                        </div>\n' +
-        '                   </form>\n' +
-        '                </div>\n' +
-        '                <div class="lu-modal__actions">\n' +
-        '                    <button onclick="rebuild()" class="lu-btn lu-btn--primary submitForm mg-submit-form">\n' +
-        '                        Reinstall OS\n' +
-        '                    </button>\n' +
-        '                    <button class="lu-btn lu-btn--danger lu-btn--outline lu-btn--plain closeModal" onclick="closeModal()">\n' +
-        '                        Cancel\n' +
-        '                    </button>\n' +
-        '                </div>\n' +
-        '            </div>\n' +
-        '        </div>\n' +
-        '    </div>');
-}
+    $(function () {
+        init();
+        setInterval(poll, RELOAD_INTERVAL);
+    });
+
+    return {init: init};
+})(jQuery);

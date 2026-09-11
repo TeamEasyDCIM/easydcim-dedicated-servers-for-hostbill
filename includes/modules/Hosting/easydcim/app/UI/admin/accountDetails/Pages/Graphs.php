@@ -47,7 +47,7 @@ class Graphs
             $graphData = $this->api->admin()->graphs()->export($deviceId, new ExportGraphRequest($graph, self::TARGET_DEVICE, (string) $dates['start'], (string) $dates['end'], null, false));
 
             $options = GraphOptions::forDeviceGraph($graph, $graphData->toArray());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $options = GraphOptions::forDeviceGraph($graph, []);
         }
 

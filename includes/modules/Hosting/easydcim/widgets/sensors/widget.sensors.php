@@ -70,12 +70,20 @@ class widget_sensors extends HostingWidget
         {
             $this->sensors->getJSONSensors();
         }
+        // "Sensors Scope" saved for this service.
+        if (isset($_GET['edcSaveScope']))
+        {
+            \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ScopeSettings::handleSave($this->params['id'] ?? null, $_GET);
+        }
 
         $assetsUrl = './includes/modules/Hosting/easydcim/templates/assets';
 
         return array('sensors.tpl', [
             'assetsURL' => $assetsUrl,
             'sensors'   => $this->sensors->getData(),
+            'serviceId' => $this->params['id'] ?? '',
+            'edcLang'   => \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\UiLang::json(),
+            'edcScopes' => \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ScopeSettings::json($this->params['id'] ?? null),
         ]);
     }
 }

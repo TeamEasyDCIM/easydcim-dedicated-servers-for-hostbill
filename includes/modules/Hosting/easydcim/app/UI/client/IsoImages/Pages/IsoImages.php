@@ -25,11 +25,14 @@ class IsoImages
      */
     protected $client;
 
+    /**
+     * Download states with the WHMCS module's label (lang edcUi) and badge colour.
+     */
     protected static $statusMap = [
-        '1'=>'Waiting',
-        '2'=>'Started',
-        '3'=>'Finished',
-        '4'=>'Error',
+        1 => ['iso_waiting', 'lu-badge--warning'],
+        2 => ['iso_downloading', 'lu-badge--info'],
+        3 => ['iso_completed', 'lu-badge--success'],
+        4 => ['iso_error', 'lu-badge--danger'],
     ];
 
     public function __construct($api, $client)
@@ -56,24 +59,7 @@ class IsoImages
 
         foreach ($isoImages as $isoImage)
         {
-            $status = self::$statusMap[(string) $isoImage->status] ?? 'Waiting';
-
-            switch ($status)
-            {
-                case 'Finished':
-                    $colorStatus = self::STATUS_SUCCESS;
-                    break;
-                case 'Started':
-                    $colorStatus = self::STATUS_WARNING;
-                    break;
-                case 'Error':
-                    $colorStatus = self::STATUS_DANGER;
-                    break;
-                default:
-                    $status = 'Waiting';
-                    $colorStatus = self::STATUS_DEFAULT;
-                    break;
-            }
+            $status = self::$statusMap[(int) $isoImage->status] ?? ['iso_unknown', ''];
 
             $data[] = [
                 'id' => base64_encode(json_encode([
@@ -84,12 +70,10 @@ class IsoImages
                 'Id' => $isoImage->id,
                 'name' => $isoImage->name,
                 'iso_url' => $isoImage->isoUrl,
-                'status' => $status,
-                // v3 reports a download status message, not byte counters, so
-                // there is no percentage to drive a progress bar with.
-                'data' => ['message' => ($isoImage->download === null ? null : $isoImage->download->message) ?? ''],
-                'colorStatus' => $colorStatus,
-                'progress' => 0,
+                'statusKey' => $status[0],
+                'badgeClass' => $status[1],
+                // v3 reports a download status message; WHMCS shows it as the badge's tooltip.
+                'message' => ($isoImage->download === null ? null : $isoImage->download->message) ?? '',
             ];
         }
 
@@ -121,7 +105,7 @@ class IsoImages
             }
 
             self::jsonEncode([
-                'message'=>'Record added successfully'
+                'message'=>'Task has been successfully added to the queue'
             ]);
         }
         catch (\Exception $exc)
@@ -151,7 +135,7 @@ class IsoImages
             }
 
             self::jsonEncode([
-                'message'=>'Record edited successfully'
+                'message'=>'ISO Image has been updated successfully'
             ]);
         }
         catch (\Exception $exc)
@@ -178,7 +162,7 @@ class IsoImages
             }
 
             self::jsonEncode([
-                'message'=>'Record deleted successfully'
+                'message'=>'ISO Image has been deleted successfully'
             ]);
         }
         catch (\Exception $exc)

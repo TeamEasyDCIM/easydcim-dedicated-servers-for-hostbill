@@ -23,8 +23,10 @@ class GraphData
     {
         $this->datasets = $datasets;
         $this->labels = $labels;
-        $this->units = $units;
-        $this->precision = $precision;
+        // The endpoints return a bare `new GraphData()` when EasyDCIM sends no
+        // data; keep units/precision objects either way so toArray() holds.
+        $this->units = $units instanceof GraphDataUnits ? $units : GraphDataUnits::fromArray((array) $units);
+        $this->precision = $precision instanceof GraphDataPrecision ? $precision : GraphDataPrecision::fromArray((array) $precision);
     }
 
     public static function fromArray(array $data): self

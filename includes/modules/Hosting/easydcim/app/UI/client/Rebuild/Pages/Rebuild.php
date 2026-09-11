@@ -78,7 +78,23 @@ class Rebuild
             'diskLayout' => $this->getDiskLayout(),
             'sshKeys'    => $this->getSshKeyOptions(),
             'username'   => $this->params['username'],
+            'isWindows'  => $this->isWindowsTemplate($templateId),
         ]);
+    }
+
+    /**
+     * Windows templates get "Administrator" as a fixed username and neither a
+     * root password nor SSH keys, as in the WHMCS RebuildForm.
+     */
+    protected function isWindowsTemplate($templateId): bool
+    {
+        try {
+            $template = $this->api->admin()->osInstallation()->showOsTemplate($templateId)->data;
+        } catch (\Exception $ex) {
+            return false;
+        }
+
+        return $template !== null && ($template->isWindows || $template->family === 'windows');
     }
 
     /**
@@ -175,7 +191,7 @@ class Rebuild
         }
 
         self::jsonEncode([
-            'message'=>$result->message
+            'message'=>'OS reinstallation has been initiated successfully.'
         ]);
     }
 
@@ -210,7 +226,7 @@ class Rebuild
         }
 
         self::jsonEncode([
-            'message'=>"Installation was canceled correctlly"
+            'message'=>'OS installation has been cancelled successfully.'
         ]);
     }
 
@@ -238,6 +254,9 @@ class Rebuild
             'macAddress'                  => $metadata['MAC Address'] ?? '',
             'path'                        => SystemLogo::getLogo($currentOs),
             'installationStatus'          => $instalationStatus == '' ? 'No Installation' : $instalationStatus,
+            // As the WHMCS Reinstall table: an install runs while the API reports one.
+            'installing'                  => $installation->data !== null,
+            'installationMessage'         => $instalationStatus,
         ];
     }
 }

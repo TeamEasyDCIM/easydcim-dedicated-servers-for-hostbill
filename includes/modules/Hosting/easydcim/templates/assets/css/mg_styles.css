@@ -479,3 +479,167 @@ progress {
 #layers .lu-graph .apexcharts-legend .apexcharts-legend-series {
     margin: 4px 10px !important;
 }
+
+/* WHMCS layers UI pieces the HostBill copy of layers-ui.css lacks (edcUi.js) */
+#layers .lu-t-c .dataTables_wrapper .lu-no-data {
+    padding: 15px;
+    text-align: center;
+    border-top: 1px solid #e9ebf0;
+}
+#layers .lu-t-c .lu-d-grid {
+    position: relative;
+}
+#layers .lu-table-layout-fixed {
+    table-layout: fixed;
+}
+#layers .lu-table-simple tbody tr:first-child > td {
+    border-top: none;
+}
+#layers .lu-image-text {
+    display: flex;
+    align-items: center;
+}
+#layers .lu-image-text img {
+    max-width: 24px !important;
+    max-height: 24px !important;
+}
+#layers .copy-text-inline-component [role="button"] {
+    cursor: pointer;
+}
+
+/* The WHMCS module's own stylesheet (overrides/assets/css/module_styles.css) */
+.lu-ed-overflow {
+    overflow-y: auto !important;
+    max-height: 80px !important;
+}
+.lu-ed-no-padding-widget-content .lu-widget__content {
+    padding: 0 !important;
+}
+.lu-ed-no-border-header .lu-widget__header,
+#ServerInformationTable .lu-widget__header {
+    border-width: 0 !important;
+}
+.lu-ed-status-activated {
+    color: #62c45e !important;
+}
+.lu-ed-status-suspended,
+.lu-ed-status-waiting,
+.lu-ed-status-provisioning {
+    color: #3780e6 !important;
+}
+.lu-ed-status-terminated {
+    color: #f4543c !important;
+}
+#ServerInformationTable thead,
+#caServerInformationTable thead,
+#GeneralInformationTable thead,
+#caGeneralInformationTable thead,
+#LocationInformationTable thead,
+#caLocationInformationTable thead,
+#reinstallTable thead {
+    display: none;
+}
+#ServerInformationTable .dataTables_wrapper table,
+#caServerInformationTable .dataTables_wrapper table,
+#reinstallTable .dataTables_wrapper table {
+    margin-top: 0 !important;
+}
+#ServerInformationTable td:nth-child(1),
+#caServerInformationTable td:nth-child(1),
+#GeneralInformationTable td:nth-child(1),
+#caGeneralInformationTable td:nth-child(1),
+#LocationInformationTable td:nth-child(1),
+#caLocationInformationTable td:nth-child(1) {
+    width: 30% !important;
+}
+#ServerInformationTable td:nth-child(2),
+#caServerInformationTable td:nth-child(2),
+#GeneralInformationTable td:nth-child(2),
+#caGeneralInformationTable td:nth-child(2),
+#LocationInformationTable td:nth-child(2),
+#caLocationInformationTable td:nth-child(2) {
+    width: 70% !important;
+}
+#reinstallTable td:nth-child(1) {
+    width: 40% !important;
+}
+#reinstallTable td:nth-child(2) {
+    width: 60% !important;
+}
+.lu-ed-ip-box {
+    overflow: auto;
+    max-height: 200px;
+}
+.lu-ed-ip-info {
+    color: #111827 !important;
+}
+.lu-ed-ip-header {
+    font-weight: 600 !important;
+    margin-bottom: 6px !important;
+}
+.lu-ed-ip-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+}
+.lu-ed-ip-item {
+    font-size: 13px !important;
+}
+.lu-ed-no-ip {
+    margin: 0 !important;
+}
+
+/* Date-time picker (flatpickr) laid out like the WHMCS vue2-datepicker input */
+#layers .edc-datepicker {
+    position: relative;
+}
+#layers .edc-datepicker .lu-form-control {
+    padding-right: 34px;
+}
+#layers .edc-datepicker__icon,
+#layers .edc-datepicker__clear {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #737880;
+    cursor: pointer;
+}
+#layers .edc-datepicker__clear {
+    display: none;
+}
+#layers .edc-datepicker.has-value:hover .edc-datepicker__icon {
+    display: none;
+}
+#layers .edc-datepicker.has-value:hover .edc-datepicker__clear {
+    display: block;
+}
+.flatpickr-calendar.open {
+    z-index: 100002;
+}
+
+/* select2 dropdowns (WHMCS: selectize) sized like the other form controls */
+#layers .lu-form-group .select2-container--default .select2-selection--single {
+    height: 36px;
+    border: 1px solid #dadde6;
+    border-radius: 3px;
+}
+#layers .lu-form-group .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 34px;
+    padding-left: 15px;
+    font-size: 13px;
+    color: #505459;
+}
+#layers .lu-form-group .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 34px;
+    right: 6px;
+}
+#layers .lu-form-group .select2-container--default .select2-selection--multiple {
+    min-height: 36px;
+    border: 1px solid #dadde6;
+    border-radius: 3px;
+}
+#layers .lu-modal .select2-dropdown {
+    z-index: 100001;
+}

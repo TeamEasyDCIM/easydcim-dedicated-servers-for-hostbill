@@ -97,7 +97,7 @@ class Bandwidth
             if ($bandwidth !== null)
             {
                 $rows[] = [
-                    'bandwidthInterval' => date('Y-m-d H:i', $dates['start']) . ' - ' . date('Y-m-d H:i', $dates['end']),
+                    'bandwidthInterval' => date('Y-m-d H:i:s', $dates['start']) . ' - ' . date('Y-m-d H:i:s', $dates['end']),
                     'bandwidthIn'       => $bandwidth->bwIn,
                     'bandwidthOut'      => $bandwidth->bwOut,
                     'bandwidthTotal'    => $bandwidth->bwTotal,

@@ -83,7 +83,11 @@ class widget_rebuild extends HostingWidget
             'assetsURL'=>  $assetsUrl,
             'caTemplates'=>  json_encode($this->rebuild->prepareData()),
             'installationInformation'=> $this->rebuild->getOsInstallInformation(),
-            'jsonEncodeinstallationInformation'=> json_encode($this->rebuild->getOsInstallInformation()),
+            'serviceId'=> $this->params['id'] ?? '',
+            'edcLang'=> \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\UiLang::json(),
+            // WHMCS titles the rebuild modals "domain (dedicated IP) - ...".
+            'rebuildTitle'=> trim(($this->params['domain'] ?? '') . (!empty($this->params['extra_details']['option8']) ? ' (' . $this->params['extra_details']['option8'] . ')' : '')),
+            'rebuildHostname'=> $this->params['domain'] ?? '',
         ];
         return array('rebuild.tpl', $variables);
     }

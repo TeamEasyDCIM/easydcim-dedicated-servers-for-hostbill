@@ -868,6 +868,191 @@ $lang['serverCA']['rebuild']['mainContainer']['osTemplateTable']['osTemplateTabl
 $lang['serverCA']['rebuild']['mainContainer']['osTemplateTable']['table']['Logo'] = 'Logo';
 $lang['serverCA']['rebuild']['mainContainer']['osTemplateTable']['table']['Description'] = 'Description';
 
+/*
+ * The WHMCS module's UI texts (tables, modals, forms, filters), used by the
+ * templates and by templates/assets/js/edcUi.js (App\Helpers\UiLang).
+ */
+// components/DataTable, Modal, Form
+$lang['edcUi']['search_placeholder'] = 'Search...';
+$lang['edcUi']['nodata'] = 'No records found';
+$lang['edcUi']['items_selected'] = 'Items Selected';
+$lang['edcUi']['confirm'] = 'Confirm';
+$lang['edcUi']['cancel'] = 'Cancel';
+$lang['edcUi']['generate'] = 'Generate';
+$lang['edcUi']['form_validation_error'] = 'Incorrect values have been detected. Please check.';
+$lang['edcUi']['field_required'] = 'This field is required.';
+$lang['edcUi']['property'] = 'Property';
+$lang['edcUi']['value'] = 'Value';
+$lang['edcUi']['click_to_view'] = 'Click to view in EasyDCIM';
+$lang['edcUi']['scope'] = 'Scope';
+$lang['edcUi']['yes'] = 'Yes';
+$lang['edcUi']['no'] = 'No';
+$lang['edcUi']['edit'] = 'Edit';
+$lang['edcUi']['update'] = 'Update';
+$lang['edcUi']['delete'] = 'Delete';
+$lang['edcUi']['create'] = 'Create';
+$lang['edcUi']['unassigned'] = 'Unassigned';
+
+// Period filters (GraphSettingsForm, BandwidthSettingsForm, SensorsScope)
+$lang['edcUi']['filter_mode'] = 'Filter Mode';
+$lang['edcUi']['period'] = 'Period';
+$lang['edcUi']['start_date'] = 'Start Date';
+$lang['edcUi']['end_date'] = 'End Date';
+$lang['edcUi']['predefined_period'] = 'Predefined Period';
+$lang['edcUi']['custom_dates'] = 'Custom Dates';
+$lang['edcUi']['from_to_date'] = 'From-To Date';
+$lang['edcUi']['today'] = 'Today';
+$lang['edcUi']['yesterday'] = 'Yesterday';
+$lang['edcUi']['this_week'] = 'This Week';
+$lang['edcUi']['last_week'] = 'Last Week';
+$lang['edcUi']['this_month'] = 'This Month';
+$lang['edcUi']['last_month'] = 'Last Month';
+$lang['edcUi']['this_year'] = 'This Year';
+$lang['edcUi']['last_year'] = 'Last Year';
+$lang['edcUi']['start_date_description'] = 'Start date of the custom date range';
+$lang['edcUi']['end_date_description'] = 'End date of the custom date range';
+$lang['edcUi']['start_date_before_end_date'] = 'Start date must be before end date';
+$lang['edcUi']['graph_filter_modal'] = 'Filter Graph';
+$lang['edcUi']['graph_scope_description'] = 'Select a predefined time period for the graph';
+$lang['edcUi']['graph_settings_saved'] = 'Graph settings saved successfully';
+$lang['edcUi']['bandwidth_filter_modal'] = 'Filter Bandwidth';
+$lang['edcUi']['bandwidth_scope_description'] = 'Select a predefined time period for the bandwidth chart';
+$lang['edcUi']['bandwidth_settings_saved'] = 'Bandwidth settings saved successfully';
+$lang['edcUi']['sensors_scope_modal'] = 'Sensors Scope';
+$lang['edcUi']['sensors_filters_updated'] = 'Filter settings have been updated successfully.';
+$lang['edcUi']['graph_settings_save_failed'] = 'Failed to save graph settings';
+$lang['edcUi']['bandwidth_settings_save_failed'] = 'Failed to save bandwidth settings';
+$lang['edcUi']['sensors_settings_save_failed'] = 'Failed to save sensor filter settings';
+$lang['edcUi']['service_not_found'] = 'Service not found';
+$lang['edcUi']['settings_unknown'] = 'Undefined Action';
+
+// Service page widgets
+$lang['edcUi']['service_information'] = 'Service Information';
+$lang['edcUi']['general_information'] = 'General Information';
+$lang['edcUi']['location_information'] = 'Location Information';
+$lang['edcUi']['bandwidth'] = 'Bandwidth';
+$lang['edcUi']['bandwidth_interval'] = 'Interval';
+$lang['edcUi']['bandwidth_in'] = 'Bandwidth IN';
+$lang['edcUi']['bandwidth_out'] = 'Bandwidth OUT';
+$lang['edcUi']['bandwidth_total'] = 'Bandwidth Total';
+$lang['edcUi']['aggregate_traffic'] = 'Aggregate Traffic';
+$lang['edcUi']['ping_graph'] = 'Ping Graph';
+$lang['edcUi']['status_graph'] = 'Status Graph';
+$lang['edcUi']['change_hostname'] = 'Change Hostname';
+$lang['edcUi']['hostname'] = 'Hostname';
+
+// StatusWidget tiles and their confirmations
+$lang['edcUi']['server_actions'] = 'Service Actions';
+$lang['edcUi']['boot_server'] = 'Boot Server';
+$lang['edcUi']['shutdown_server'] = 'Shutdown Server';
+$lang['edcUi']['reboot_server'] = 'Reboot Server';
+$lang['edcUi']['bmc_cold_reset'] = 'BMC Cold Reset';
+$lang['edcUi']['rescue_mode'] = 'Enable Rescue Mode';
+$lang['edcUi']['novnc_console'] = 'noVNC KVM Console';
+$lang['edcUi']['auto_login'] = 'Log In To Panel';
+$lang['edcUi']['start_title'] = 'Boot Server';
+$lang['edcUi']['start_alert'] = 'This action will boot the server. The server will start and become available shortly.';
+$lang['edcUi']['start_submit'] = 'Boot Server';
+$lang['edcUi']['stop_title'] = 'Shutdown Server';
+$lang['edcUi']['stop_alert'] = 'Warning: This action will immediately shut down the server. All unsaved data may be lost. Are you sure you want to proceed?';
+$lang['edcUi']['stop_submit'] = 'Shutdown Server';
+$lang['edcUi']['reset_title'] = 'Reboot Server';
+$lang['edcUi']['reset_alert'] = 'Warning: This action will reboot the server. All unsaved data may be lost and active connections will be terminated.';
+$lang['edcUi']['reset_submit'] = 'Reboot Server';
+$lang['edcUi']['bmc_title'] = 'BMC Cold Reset';
+$lang['edcUi']['bmc_alert'] = 'Warning: This action will perform a BMC cold reset. This may temporarily disrupt server management capabilities.';
+$lang['edcUi']['bmc_submit'] = 'Reset BMC';
+$lang['edcUi']['rescue_title'] = 'Enable Rescue Mode';
+$lang['edcUi']['rescue_alert'] = 'Warning: Enabling rescue mode will reboot the server into a recovery environment. Your normal operating system will not be accessible until rescue mode is disabled.';
+$lang['edcUi']['rescue_submit'] = 'Enable Rescue Mode';
+$lang['edcUi']['novnc_title'] = 'noVNC KVM Console';
+$lang['edcUi']['novnc_alert'] = 'The noVNC Console provides browser-based access to the server\'s display and input. No additional software is required.';
+$lang['edcUi']['novnc_submit'] = 'Open Console';
+$lang['edcUi']['login_title'] = 'Log In To Panel';
+$lang['edcUi']['login_alert'] = 'You will be automatically logged into the EasyDCIM panel in a new window.';
+$lang['edcUi']['login_submit'] = 'Log In';
+
+// ISO Images
+$lang['edcUi']['iso_images'] = 'ISO Images';
+$lang['edcUi']['iso_name'] = 'Name';
+$lang['edcUi']['iso_url'] = 'ISO URL';
+$lang['edcUi']['iso_status'] = 'Status';
+$lang['edcUi']['iso_waiting'] = 'Waiting';
+$lang['edcUi']['iso_downloading'] = 'Downloading';
+$lang['edcUi']['iso_completed'] = 'Completed';
+$lang['edcUi']['iso_error'] = 'Error';
+$lang['edcUi']['iso_unknown'] = 'Unknown';
+$lang['edcUi']['iso_create_modal'] = 'Create ISO Image';
+$lang['edcUi']['iso_update_modal'] = 'Update ISO Image';
+$lang['edcUi']['iso_delete_modal'] = 'Delete ISO Image';
+$lang['edcUi']['iso_confirm_delete'] = 'Are you sure you want to delete this ISO image? This action cannot be undone.';
+$lang['edcUi']['iso_invalid_url'] = 'Please provide a valid ISO URL';
+
+// SSH Keys
+$lang['edcUi']['ssh_keys'] = 'SSH Keys';
+$lang['edcUi']['ssh_id'] = 'ID';
+$lang['edcUi']['ssh_name'] = 'Name';
+$lang['edcUi']['ssh_fingerprint'] = 'Fingerprint';
+$lang['edcUi']['ssh_default'] = 'Default';
+$lang['edcUi']['ssh_key'] = 'SSH Key';
+$lang['edcUi']['ssh_is_default'] = 'Is Default';
+$lang['edcUi']['ssh_message'] = 'SSH keys are used to securely connect to your servers without passwords.';
+$lang['edcUi']['ssh_create'] = 'Create SSH Key';
+$lang['edcUi']['ssh_set_default'] = 'Set as Default';
+$lang['edcUi']['ssh_create_modal'] = 'Create SSH Key';
+$lang['edcUi']['ssh_update_modal'] = 'Update SSH Key';
+$lang['edcUi']['ssh_delete_modal'] = 'Delete SSH Key';
+$lang['edcUi']['ssh_default_modal'] = 'Set SSH Key as Default';
+$lang['edcUi']['ssh_confirm_delete'] = 'Are you sure you want to delete this SSH key? This action cannot be undone.';
+$lang['edcUi']['ssh_confirm_default'] = 'Are you sure you want to set this SSH key as default?';
+$lang['edcUi']['ssh_invalid_key'] = 'This value must be a valid SSH public key in OpenSSH format';
+
+// Reverse DNS
+$lang['edcUi']['reverse_dns'] = 'Reverse DNS';
+$lang['edcUi']['rdns_ip'] = 'IP Address';
+$lang['edcUi']['rdns_hostname'] = 'Hostname';
+$lang['edcUi']['rdns_created'] = 'Created';
+$lang['edcUi']['rdns_cidr'] = 'CIDR';
+$lang['edcUi']['rdns_create'] = 'Create Record';
+$lang['edcUi']['rdns_create_modal'] = 'Create Reverse DNS Record';
+$lang['edcUi']['rdns_update_modal'] = 'Update Reverse DNS Record';
+$lang['edcUi']['rdns_delete_modal'] = 'Delete Reverse DNS Record';
+$lang['edcUi']['rdns_mass_delete_modal'] = 'Delete Multiple Reverse DNS Records';
+$lang['edcUi']['rdns_confirm_delete'] = 'Are you sure that you want to delete this record? This process cannot be undone.';
+$lang['edcUi']['rdns_confirm_mass_delete'] = 'Are you sure that you want to delete the selected records? This process cannot be undone.';
+$lang['edcUi']['rdns_available_ips'] = 'Available IP Addresses';
+$lang['edcUi']['rdns_no_ips'] = 'No available IP addresses';
+$lang['edcUi']['rdns_invalid_ip'] = 'Please provide a valid IP address';
+$lang['edcUi']['rdns_ip_not_in_pool'] = 'The IP address is not in the available IP pool for this service';
+$lang['edcUi']['rdns_invalid_hostname'] = 'Please provide a valid hostname';
+$lang['edcUi']['rdns_ipv6_mask'] = 'You cannot provide mask for IPv6';
+$lang['edcUi']['rdns_invalid_mask'] = 'Please provide a valid mask in the form of a shortened CIDR mask notation (0-32)';
+
+// Rebuild
+$lang['edcUi']['rebuild_server'] = 'Rebuild Server';
+$lang['edcUi']['cancel_installation'] = 'Cancel Installation';
+$lang['edcUi']['current_os'] = 'Current Operating System Template';
+$lang['edcUi']['host_information'] = 'Host Information';
+$lang['edcUi']['mac_address'] = 'MAC Address';
+$lang['edcUi']['installation_in_progress'] = 'Installation In Progress';
+$lang['edcUi']['installation_status'] = 'Installation Status';
+$lang['edcUi']['os_template'] = 'Operating System Template';
+$lang['edcUi']['username'] = 'Username';
+$lang['edcUi']['password'] = 'Password';
+$lang['edcUi']['root_password'] = 'Root Password';
+$lang['edcUi']['ssh_keys_field'] = 'SSH Keys';
+$lang['edcUi']['disk_layout'] = 'Disk Layout';
+$lang['edcUi']['extras'] = 'Extras';
+$lang['edcUi']['cancel_confirm'] = 'Are you sure you want to cancel the ongoing OS installation? This action cannot be undone.';
+$lang['edcUi']['os_template_required'] = 'You must select an OS template before reinstalling.';
+$lang['edcUi']['invalid_username'] = 'Please provide a valid username. Username cannot be set as root';
+
+// Access List
+$lang['edcUi']['access_list'] = 'Access List';
+$lang['edcUi']['al_name'] = 'Name';
+$lang['edcUi']['al_username'] = 'Username';
+$lang['edcUi']['al_password'] = 'Password';
+
 $lang['ajaxResponses']['ServiceStopped'] = 'Stopping the service. It may take a while to complete this process.';
 $lang['ajaxResponses']['ServiceStarted'] = 'Starting the service. It may take a while to complete this process.';
 $lang['ajaxResponses']['logInToPanel']= 'Logging to panel. It may take a while to complete this process.';

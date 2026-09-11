@@ -78,6 +78,8 @@ class widget_isoimages extends HostingWidget
         $variables = [
             'assetsURL'=>  $assetsUrl,
             'isoImages'=>  $this->isoImages->getIsoImages(),
+            'serviceId'=>  $this->params['id'] ?? '',
+            'edcLang'=>  \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\UiLang::json(),
         ];
         return array('isoimages.tpl', $variables);
     }

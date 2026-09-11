@@ -69,10 +69,18 @@ class widget_devicestraffic extends HostingWidget
         {
             $this->graphs->manageEasyDCIMGraphs($_GET);
         }
+        // "Filter Graph" saved for this service.
+        if (isset($_GET['edcSaveScope']))
+        {
+            \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ScopeSettings::handleSave($this->params['id'] ?? null, $_GET);
+        }
         $assetsUrl = './includes/modules/Hosting/easydcim/templates/assets';
         $variables = [
             'assetsURL'=>  $assetsUrl,
             'configuration'=>  $this->params['options'],
+            'serviceId'=>  $this->params['id'] ?? '',
+            'edcLang'=>  \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\UiLang::json(),
+            'edcScopes'=>  \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ScopeSettings::json($this->params['id'] ?? null),
         ];
         return array('graph.tpl', $variables);
     }

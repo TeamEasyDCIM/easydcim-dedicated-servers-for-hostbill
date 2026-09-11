@@ -89,6 +89,8 @@ class widget_sshkeys extends HostingWidget
         $variables = [
             'assetsURL' => $assetsUrl,
             'sshKeys'   => $this->sshKeys->getData(),
+            'serviceId' => $this->params['id'] ?? '',
+            'edcLang'   => \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\UiLang::json(),
         ];
 
         return array('sshkeys.tpl', $variables);

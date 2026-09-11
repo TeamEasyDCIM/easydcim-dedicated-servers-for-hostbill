@@ -1,75 +1,54 @@
 <link href="{$assetsURL}/css/fonts.css" rel="stylesheet">
-<link rel="stylesheet" href="{$assetsURL}/css/datatables.min.css">
 <link rel="stylesheet" href="{$assetsURL}/css/layers-ui.css">
 <link rel="stylesheet" href="{$assetsURL}/css/mg_styles.css">
-<link rel="stylesheet" href="{$assetsURL}/css/select2.css">
-<script src="{$assetsURL}/js/datatables.js"></script>
-<script src="{$assetsURL}/js/select2.js"></script>
 <script src="{$assetsURL}/js/index.js"></script>
+<script>window.EdcLang = {$edcLang|default:'null'};</script>
+<script src="{$assetsURL}/js/edcUi.js"></script>
 <script src="{$assetsURL}/js/reverseDNS.js"></script>
-<div id="layers">
+{* The WHMCS ReverseDNS DataTable: search on IP and hostname, Create in the toolbar, Update / Delete per row, mass Delete. *}
+<div id="layers" data-edc-service="{$serviceId}">
     <div class="lu-row">
         <div class="lu-col-md-12">
-            <div class="lu-widget widgetActionComponent vueDatatableTable">
-                <div class="lu-widget__header">
-                    <div class="lu-widget__top lu-top">
-                        <div class="lu-top__title">
-                            {$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.reverseDNSTable}
-                        </div>
-                        <div class="lu-top__toolbar"><a href="javascript:;" onclick="massDeleteDnsRecords()" class="lu-btn lu-btn--danger lu-btn--outline"><i
-                                        class="lu-btn__icon lu-zmdi lu-zmdi-delete"></i> <span
-                                        class="lu-btn__text">{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.massDeleteButton.button.massDeleteButton}</span></a>
-                            <a onclick='showReverseDNSModal({$jsonIpAddresses})' data-toggle="modal" data-target="#statusModal"
-                                                        class="lu-btn lu-btn--primary pmCreateButton"><i
-                                        class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i> <span
-                                        class="lu-btn__text">{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.createButton.button.createButton}</span></a>
+            <div id="reverseDNSTable" class="lu-widget" data-edc-ips="{$ipList|escape}">
+                <div class="lu-widget__body">
+                    <div class="lu-widget__header">
+                        <div class="lu-widget__top lu-top">
+                            <div class="lu-top__title">{$lang.edcUi.reverse_dns}</div>
                         </div>
                     </div>
-                </div>
-                <div class="lu-widget__body">
-                    <div class="lu-t-c">
+                    <div class="lu-t-c datatableLoader" data-table-container data-check-container>
+                        <div data-edc-toolbar>
+                            <button type="button" class="lu-btn lu-btn--plain lu-btn--primary" data-edc-action="create">
+                                <i class="lu-btn__icon lu-zmdi lu-zmdi-plus"></i>
+                                <span class="lu-btn__text">{$lang.edcUi.rdns_create}</span>
+                            </button>
+                        </div>
                         <div class="dataTables_wrapper no-footer">
-                            <div>
-                                <table id="reverseDNS" width="100%" role="grid"
-                                       class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
+                            <div class="lu-d-grid">
+                                <table class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
                                     <thead>
                                     <tr role="row">
-                                        <th name="selectCol" class="mgTableActionsHeader" style="width: 30px;"><input type="checkbox" id="reverseDNSSelectAll" onclick="toggleAllDnsRecords(this)"></th>
-                                        <th aria-sort="descending" name="ipAddress" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.table.ipAddress}</span></th>
-                                        <th aria-sort="descending" name="hostname" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.table.hostname}</span></th>
-                                        <th aria-sort="descending" name="created" class="sorting "><span
-                                                    class="lu-table__text">{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.table.created}</span></th>
-                                        <th name="actionsCol" class="mgTableActionsHeader"></th>
+                                        <th name="ipAddress"><span class="lu-table__text">{$lang.edcUi.rdns_ip}</span></th>
+                                        <th name="hostname"><span class="lu-table__text">{$lang.edcUi.rdns_hostname}</span></th>
+                                        <th name="created"><span class="lu-table__text">{$lang.edcUi.rdns_created}</span></th>
+                                        <th class="mgTableActionsHeader" name="actionsCol"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {foreach from=$dnsRecords key=myId item=i}
-                                        <tr id="{$i.id}" role="row">
-                                            <td><input type="checkbox" class="dnsRecordSelect" value="{$i.id}"></td>
-                                            <td>
-                                                {$i.ipAddress}
-                                            </td>
-                                            <td>
-                                                {$i.hostname}
-                                            </td>
-                                            <td>
-                                                {$i.created}
-                                            </td>
-                                            <td class="lu-cell-actions mgTableActions">
-                                                <a href="javascript:;" onclick="editDnsRecord('{$i.id}','{$i.hostname}','{$i.ipAddress}')" data-toggle="lu-tooltip" class="lu-btn lu-btn--sm lu-btn--link lu-btn--icon
-                                                lu-btn--plain lu-btn--default lu-tooltip drop-target drop-element-attached-bottom drop-element-attached-center
-                                                 drop-target-attached-top drop-target-attached-center" data-title="{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.updateButton.button.updateButton}">
-                                                    <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i>
-                                                </a>
-                                                <a href="javascript:;" onclick="deleteDnsRecord('{$i.id}','{$i.hostname}','{$i.ipAddress}')" data-toggle="lu-tooltip" class="lu-btn lu-btn--sm lu-btn--danger lu-btn--link
-                                                 lu-btn--icon lu-btn--plain lu-tooltip drop-target drop-element-attached-bottom drop-element-attached-center
-                                                  drop-target-attached-top drop-target-attached-center" data-title="{$lang.serverCA.reverseDNS.mainContainer.reverseDNSTable.deleteButton.button.deleteButton}">
-                                                    <i class="lu-btn__icon lu-zmdi lu-zmdi-delete"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
+                                    {foreach from=$dnsRecords item=i}
+                                    <tr class="lu-table-row" data-id="{$i.id}" data-hostname="{$i.hostname|escape}">
+                                        <td><div>{$i.ipAddress|escape}</div></td>
+                                        <td><div>{$i.hostname|escape}</div></td>
+                                        <td><div>{$i.created|escape}</div></td>
+                                        <td class="lu-cell-actions">
+                                            <button type="button" class="lu-btn lu-btn--sm lu-btn--link lu-btn--icon lu-btn--plain lu-btn--default lu-tooltip" data-toggle="lu-tooltip" data-title="{$lang.edcUi.update}" data-edc-action="update">
+                                                <i class="lu-btn__icon lu-zmdi lu-zmdi-edit"></i><span class="tooltiptext">{$lang.edcUi.update}</span>
+                                            </button>
+                                            <button type="button" class="lu-btn lu-btn--sm lu-btn--link lu-btn--icon lu-btn--plain lu-btn--danger lu-tooltip" data-toggle="lu-tooltip" data-title="{$lang.edcUi.delete}" data-edc-action="delete">
+                                                <i class="lu-btn__icon lu-zmdi lu-zmdi-delete"></i><span class="tooltiptext">{$lang.edcUi.delete}</span>
+                                            </button>
+                                        </td>
+                                    </tr>
                                     {/foreach}
                                     </tbody>
                                 </table>
@@ -81,5 +60,3 @@
         </div>
     </div>
 </div>
-
-

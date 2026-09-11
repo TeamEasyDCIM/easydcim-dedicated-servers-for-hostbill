@@ -66,7 +66,9 @@ class widget_accesslist extends HostingWidget {
         $assetsUrl = './includes/modules/Hosting/easydcim/templates/assets';
         $variables = [
           'assetsURL'=>  $assetsUrl,
-          'accessList'=> $this->accessList->getData()
+          'accessList'=> $this->accessList->getData(),
+          'serviceId'=> $this->params['id'] ?? '',
+          'edcLang'=> \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\UiLang::json(),
         ];
         return array('accessList.tpl', $variables);
     }

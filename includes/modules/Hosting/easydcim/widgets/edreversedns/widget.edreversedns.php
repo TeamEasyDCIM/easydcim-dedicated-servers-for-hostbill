@@ -86,9 +86,11 @@ class widget_edreversedns extends HostingWidget
         $assetsUrl = './includes/modules/Hosting/easydcim/templates/assets';
         $variables = [
             'assetsURL'=>  $assetsUrl,
-            'ipAddresses'=> $this->reverseDNS->getIPAddresses(),
-            'jsonIpAddresses'=> json_encode($this->reverseDNS->getIPAddresses()),
             'dnsRecords'=> $this->reverseDNS->getDNS(),
+            // The usable addresses the create form lists (WHMCS IpsHelper).
+            'ipList'=> json_encode($this->reverseDNS->getIPAddresses()),
+            'serviceId'=> $this->params['id'] ?? '',
+            'edcLang'=> \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\UiLang::json(),
         ];
         return array('reverseDNS.tpl', $variables);
 

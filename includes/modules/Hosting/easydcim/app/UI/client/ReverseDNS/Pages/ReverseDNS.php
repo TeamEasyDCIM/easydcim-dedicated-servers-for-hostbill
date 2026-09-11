@@ -3,11 +3,19 @@
 namespace ModulesGarden\Servers\EasyDCIMv2\App\UI\client\ReverseDNS\Pages;
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\ServiceContext;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\IpsHelper;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Dns\CreateRdnsRecordRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Dns\ListRdnsRecordsRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Client\Dns\UpdateRdnsRecordRequest;
 
+/**
+ * Reverse DNS of one service, as the WHMCS module's ReverseDNS page, its forms
+ * and ReverseDNSProvider do it: the records of the EasyDCIM service, the usable
+ * addresses the create form lists, the same validators and the same messages.
+ * As in WHMCS a CIDR mask is validated, but one record is created - for the
+ * address given.
+ */
 class ReverseDNS
 {
     /**
@@ -16,12 +24,16 @@ class ReverseDNS
     protected $api;
 
     /**
-     * Reverse DNS has no admin endpoint in API v3 - every call is
-     * service-scoped and made on behalf of the account's owner.
-     *
      * @var ServiceContext
      */
     protected $context;
+
+    /**
+     * The service's addresses as EasyDCIM lists them (addresses and subnets).
+     *
+     * @var string[]|null
+     */
+    protected $rawIpAddresses = null;
 
     public function __construct($api, ServiceContext $context)
     {
@@ -29,39 +41,47 @@ class ReverseDNS
         $this->context = $context;
     }
 
+    /**
+     * The "Available IP Addresses" of the create form (CreateForm::getIPAddresses).
+     *
+     * @return string[]
+     */
     public function getIPAddresses(): array
     {
-        $data = [];
+        return IpsHelper::listUsableIPsFromArray($this->getRawIpAddresses());
+    }
 
-        $deviceId = $this->context->deviceId();
-
-        if ($deviceId === null)
-        {
-            return $data;
+    /**
+     * The client API's view of the service, as WHMCS reads it; any failure
+     * leaves the list empty, which also switches the pool check off.
+     */
+    protected function getRawIpAddresses(): array
+    {
+        if ($this->rawIpAddresses !== null) {
+            return $this->rawIpAddresses;
         }
 
-        $device = $this->api->admin()->devices()->show($deviceId)->data;
+        $this->rawIpAddresses = [];
 
-        if (!empty($device === null ? null : $device->ipList))
-        {
-            $ipAddresses = $device->ipList;
-        }
-        else
-        {
-            $metadata = (array) (($device === null ? null : $device->metadata) ?? []);
-            $additional = explode(',', (string) ($metadata['Additional IP Addresses'] ?? ''));
-            $primary = [$metadata['IP Address'] ?? ''];
-            $ipAddresses = array_filter(array_merge($primary, $additional));
+        try {
+            $serviceId = $this->context->serviceId();
+            if ($serviceId === null) {
+                return $this->rawIpAddresses;
+            }
+
+            $response = $this->api->client()->services()->show($serviceId);
+            if (!$response->success || $response->data === null || $response->data->related === null) {
+                return $this->rawIpAddresses;
+            }
+
+            $ipAddresses = array_map('trim', (array) $response->data->related->ipAddresses);
+            $this->rawIpAddresses = array_values(array_filter($ipAddresses, function ($ip) {
+                return !empty($ip);
+            }));
+        } catch (\Exception $e) {
         }
 
-        foreach ($ipAddresses as $value)
-        {
-            $data[] = [
-                'ipAddresses'=>$value
-            ];
-        }
-
-        return $data;
+        return $this->rawIpAddresses;
     }
 
     public function getDNS()
@@ -81,9 +101,6 @@ class ReverseDNS
         return $data;
     }
 
-    /**
-     * @return array<\ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Client\Dns\RdnsRecordData>
-     */
     protected function getAllrDNSRecords(): array
     {
         try {
@@ -98,285 +115,163 @@ class ReverseDNS
 
     public function create($data)
     {
-        try
-        {
-            $serviceId = $this->context->requireServiceId();
-            $hostname = $data['reverseDNSHostname'];
-            $ttl = (int) ($data['reverseDNSTTL'] ?: 3600);
+        $data = (array) $data;
 
-            if (empty($data['reverseDNSMask']))
-            {
-                $result = $this->api->client()->dnsManagement()->createRdnsRecord(
-                    $serviceId,
-                    new CreateRdnsRecordRequest($data['reverseDNSIpAddress'], $hostname, $ttl)
-                );
-
-                if ($result->success === false)
-                {
-                    header('HTTP/1.1 400 Bad Request');
-                    self::jsonEncode([
-                        'error'=>$result->message != '' ? $result->message : "Record cannot be added"
-                    ]);
-                }
-
-                self::jsonEncode([
-                    'message'=>'Record added successfully'
-                ]);
-            }
-
-            $mask = filter_var($data['reverseDNSMask'], FILTER_SANITIZE_NUMBER_INT);
-            $pool = $this->createIpv4Pool($data['reverseDNSIpAddress'], $mask);
-            $createdRecords = [];
-
-            foreach ($pool as $value)
-            {
-                $result = $this->api->client()->dnsManagement()->createRdnsRecord(
-                    $serviceId,
-                    new CreateRdnsRecordRequest($value, $hostname, $ttl)
-                );
-
-                if ($result->success === false)
-                {
-                    // Roll the partial pool back so a failed batch leaves nothing behind.
-                    foreach ($createdRecords as $recordId)
-                    {
-                        $this->api->client()->dnsManagement()->deleteRdnsRecord($serviceId, $recordId);
-                    }
-
-                    $errors = $result->getErrors();
-
-                    header('HTTP/1.1 400 Bad Request');
-                    self::jsonEncode([
-                        'error'=> $errors['rdata'][0] ?? ($result->message ?: "Record cannot be added")
-                    ]);
-                }
-
-                $createdRecords[] = $this->findRecordIdByIp($serviceId, $value);
-            }
-
-            self::jsonEncode([
-                'message'=>'Records added successfully'
-            ]);
+        $errors = $this->validateCreate($data);
+        if (!empty($errors)) {
+            $this->fail(['fields' => $errors]);
         }
-        catch (\Exception $exc)
-        {
-            header('HTTP/1.1 400 Bad Request');
-            self::jsonEncode([
-                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be added"
-            ]);
+
+        try {
+            $result = $this->api->client()->dnsManagement()->createRdnsRecord(
+                $this->context->requireServiceId(),
+                new CreateRdnsRecordRequest(
+                    (string) $data['reverseDNSIpAddress'],
+                    (string) $data['reverseDNSHostname'],
+                    (int) ($data['reverseDNSTTL'] ?? 3600)
+                )
+            );
+
+            if ($result->success === false) {
+                throw new \Exception($result->message ?? 'Record cannot be added');
+            }
+        } catch (\Exception $exc) {
+            $this->fail(['error' => 'Failed to create DNS record: ' . $exc->getMessage()]);
         }
+
+        self::jsonEncode(['message' => 'DNS record created successfully']);
     }
 
     public function update($data)
     {
-        try
-        {
-            $result = $this->api->client()->dnsManagement()->updateRdnsRecord(
-                $this->context->requireServiceId(),
-                $data['editId'],
-                new UpdateRdnsRecordRequest($data['hostname'])
-            );
+        $data = (array) $data;
+        $hostname = $data['hostname'] ?? '';
 
-            if ($result->success === false)
-            {
-                header('HTTP/1.1 400 Bad Request');
-                self::jsonEncode([
-                    'error'=>$result->message != '' ? $result->message : "Record cannot be edited"
-                ]);
+        $error = $this->hostnameError($hostname);
+        if ($error !== '') {
+            $this->fail(['fields' => ['hostname' => $error]]);
+        }
+
+        try {
+            $recordId = $data['recordId'] ?? '';
+            if (empty($recordId) || empty($hostname)) {
+                throw new \Exception('Record ID and hostname are required');
             }
 
-            self::jsonEncode([
-                'message'=>'Record edited successfully'
-            ]);
+            $result = $this->api->client()->dnsManagement()->updateRdnsRecord(
+                $this->context->requireServiceId(),
+                (int) $recordId,
+                new UpdateRdnsRecordRequest((string) $hostname)
+            );
+
+            if ($result->success === false) {
+                throw new \Exception($result->message ?? 'Record cannot be updated');
+            }
+        } catch (\Exception $exc) {
+            $this->fail(['error' => 'Failed to update DNS record: ' . $exc->getMessage()]);
         }
-        catch (\Exception $exc)
-        {
-            header('HTTP/1.1 400 Bad Request');
-            self::jsonEncode([
-                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be edited"
-            ]);
-        }
+
+        self::jsonEncode(['message' => 'DNS record updated successfully']);
     }
 
     public function delete($data)
     {
-        try
-        {
+        $data = (array) $data;
+
+        try {
             $result = $this->api->client()->dnsManagement()->deleteRdnsRecord(
                 $this->context->requireServiceId(),
-                $data['deleteId']
+                (int) ($data['recordId'] ?? 0)
             );
 
-            if ($result->success === false)
-            {
-                header('HTTP/1.1 400 Bad Request');
-                self::jsonEncode([
-                    'error'=>$result->message != '' ? $result->message : "Record cannot be deleted"
-                ]);
+            if ($result->success === false) {
+                throw new \Exception($result->message ?? 'Record cannot be deleted');
             }
+        } catch (\Exception $exc) {
+            $this->fail(['error' => 'Failed to delete DNS record: ' . $exc->getMessage()]);
+        }
 
-            self::jsonEncode([
-                'message'=>'Record deleted successfully'
-            ]);
-        }
-        catch (\Exception $exc)
-        {
-            header('HTTP/1.1 400 Bad Request');
-            self::jsonEncode([
-                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be deleted"
-            ]);
-        }
+        self::jsonEncode(['message' => 'DNS record deleted successfully']);
     }
 
     /**
-     * Delete several records in one go. The API has no bulk call, so each is
-     * removed on its own and the failures are reported together.
+     * The selected records one by one; like WHMCS it stops at the first failure.
      */
     public function massDelete($ids)
     {
-        $deleted = [];
-        $failed  = [];
-
-        try
-        {
+        try {
             $serviceId = $this->context->requireServiceId();
-        }
-        catch (\Exception $exc)
-        {
-            header('HTTP/1.1 400 Bad Request');
-            self::jsonEncode([
-                'error'=>$exc->getMessage() != '' ? $exc->getMessage() : "Records cannot be deleted"
-            ]);
-        }
+            $ids = array_filter((array) $ids, function ($id) {
+                return $id !== '' && $id !== null;
+            });
 
-        foreach (array_unique(array_filter(array_map('intval', (array) $ids))) as $recordId)
-        {
-            try
-            {
-                $result = $this->api->client()->dnsManagement()->deleteRdnsRecord($serviceId, $recordId);
+            if (empty($ids)) {
+                throw new \Exception('No records specified for deletion');
+            }
 
-                if ($result->success === false)
-                {
-                    $failed[] = $result->message != '' ? $result->message : "Record cannot be deleted";
-                    continue;
+            foreach ($ids as $id) {
+                $result = $this->api->client()->dnsManagement()->deleteRdnsRecord($serviceId, (int) $id);
+
+                if ($result->success === false) {
+                    throw new \Exception($result->message ?? 'Record cannot be deleted');
                 }
-
-                $deleted[] = $recordId;
             }
-            catch (\Exception $exc)
-            {
-                $failed[] = $exc->getMessage() != '' ? $exc->getMessage() : "Record cannot be deleted";
-            }
+        } catch (\Exception $exc) {
+            $this->fail(['error' => 'Failed to delete DNS record: ' . $exc->getMessage()]);
         }
 
-        if (!empty($failed))
-        {
-            header('HTTP/1.1 400 Bad Request');
-            self::jsonEncode([
-                'error'   => sprintf('%d of %d records could not be deleted: %s', count($failed), count($failed) + count($deleted), implode('; ', array_unique($failed))),
-                'deleted' => $deleted,
-            ]);
-        }
-
-        self::jsonEncode([
-            'message' => sprintf('%d records deleted successfully', count($deleted)),
-            'deleted' => $deleted,
-        ]);
+        self::jsonEncode(['message' => 'DNS record has been deleted successfully']);
     }
 
     /**
-     * v3 create returns no record body, so the new record is located by its IP
-     * in order to be able to roll a partial pool back.
+     * The WHMCS CreateForm validators, first failing message per field:
+     * IpAddressValidator and IpInPoolValidator, MaskValidator, HostnameValidator.
      */
-    private function findRecordIdByIp(int $serviceId, string $ip)
+    protected function validateCreate(array $data): array
     {
-        foreach ($this->getAllrDNSRecords() as $record)
-        {
-            if ($record->ip === $ip)
-            {
-                return $record->id;
+        $errors = [];
+        $ipAddress = $data['reverseDNSIpAddress'] ?? '';
+        $mask = $data['reverseDNSMask'] ?? '';
+
+        if (empty($ipAddress) || filter_var($ipAddress, FILTER_VALIDATE_IP) === false) {
+            $errors['reverseDNSIpAddress'] = 'Please provide a valid IP address';
+        } elseif (empty($mask) && !empty($this->getRawIpAddresses()) && !IpsHelper::isIpInPool((string) $ipAddress, $this->getRawIpAddresses())) {
+            $errors['reverseDNSIpAddress'] = 'The IP address is not in the available IP pool for this service';
+        }
+
+        if ($mask !== '' && $mask !== null) {
+            if (!empty($ipAddress) && filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                $errors['reverseDNSMask'] = 'You cannot provide mask for IPv6';
+            } else {
+                $integerPart = filter_var($mask, FILTER_SANITIZE_NUMBER_INT);
+                if (filter_var($integerPart, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 32]]) === false) {
+                    $errors['reverseDNSMask'] = 'Please provide a valid mask in the form of a shortened CIDR mask notation (0-32)';
+                }
             }
         }
 
-        return null;
-    }
-
-    private function createIpv4Pool($ipPool, $mask)
-    {
-        $pool   = [];
-        $ip_enc = ip2long($ipPool);
-
-        //convert last (32-$mask) bits to zeroes
-        $curr_ip         = $ip_enc | pow(2, (32 - $mask)) - pow(2, (32 - $mask));
-        $ip_nmask        = self::translateBitmaskToNetmask((int)$mask);
-        $ip_address_long = $ip_enc;
-        $ip_nmask_long   = ip2long($ip_nmask);
-
-        //caculate last usable address
-        $ip_broadcast_invert = ~$ip_nmask_long;
-        $ip_last             = ($ip_address_long | $ip_broadcast_invert) - 1;
-        $ip_last_short       = long2ip($ip_last);
-
-        $totalHost = (float)pow(2, (32 - $mask));
-
-        if ($totalHost > 10000)
-        {
-            throw new \Exception(sprintf("Subnet %s/%s is too large. You are tring to add %s addresses.", $ipPool, $mask, $totalHost));
+        $error = $this->hostnameError($data['reverseDNSHostname'] ?? '');
+        if ($error !== '') {
+            $errors['reverseDNSHostname'] = $error;
         }
 
-        for ($pos = 0; $pos < pow(2, (32 - $mask)); ++$pos)
-        {
-            $ip     = long2ip((float)$curr_ip + $pos);
-            $pool[] = $ip;
-
-            if ($ip == $ip_last_short)
-            {
-                break;
-            }
-        }
-
-        return $pool;
+        return $errors;
     }
 
-    public static function translateBitmaskToNetmask($bitmask)
+    // Forms/Validators/HostnameValidator
+    protected function hostnameError($value): string
     {
-        $maskMap = [
-            0  => "0.0.0.0",
-            1  => "128.0.0.0",
-            2  => "192.0.0.0",
-            3  => "224.0.0.0",
-            4  => "240.0.0.0",
-            5  => "248.0.0.0",
-            6  => "252.0.0.0",
-            7  => "254.0.0.0",
-            8  => "255.0.0.0",
-            9  => "255.128.0.0",
-            10 => "255.192.0.0",
-            11 => "255.224.0.0",
-            12 => "255.240.0.0",
-            13 => "255.248.0.0",
-            14 => "255.252.0.0",
-            15 => "255.254.0.0",
-            16 => "255.255.0.0",
-            17 => "255.255.128.0",
-            18 => "255.255.192.0",
-            19 => "255.255.224.0",
-            20 => "255.255.240.0",
-            21 => "255.255.248.0",
-            22 => "255.255.252.0",
-            23 => "255.255.254.0",
-            24 => "255.255.255.0",
-            25 => "255.255.255.128",
-            26 => "255.255.255.192",
-            27 => "255.255.255.224",
-            28 => "255.255.255.240",
-            29 => "255.255.255.248",
-            30 => "255.255.255.252",
-            31 => "255.255.255.254",
-            32 => "255.255.255.255"
-        ];
+        if (empty($value) || !preg_match('/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i', (string) $value)) {
+            return 'Please provide a valid hostname';
+        }
 
-        return isset($maskMap[$bitmask]) ? $maskMap[$bitmask] : $bitmask;
+        return '';
+    }
+
+    protected function fail(array $data): void
+    {
+        header('HTTP/1.1 400 Bad Request');
+        self::jsonEncode($data);
     }
 
     public static function jsonEncode(array $data)

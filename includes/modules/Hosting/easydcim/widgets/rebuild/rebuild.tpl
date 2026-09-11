@@ -1,90 +1,82 @@
 <link href="{$assetsURL}/css/fonts.css" rel="stylesheet">
-<link rel="stylesheet" href="{$assetsURL}/css/datatables.min.css">
 <link rel="stylesheet" href="{$assetsURL}/css/layers-ui.css">
-<link rel="stylesheet" href="{$assetsURL}/css/layout.css">
-<link rel="stylesheet" href="{$assetsURL}/css/font-awesome.css">
-<link rel="stylesheet" href="{$assetsURL}/css/helpers.css">
-<link rel="stylesheet" href="{$assetsURL}/css/loader.css">
 <link rel="stylesheet" href="{$assetsURL}/css/mg_styles.css">
 <link rel="stylesheet" href="{$assetsURL}/css/select2.css">
-<script src="{$assetsURL}/js/datatables.js"></script>
 <script src="{$assetsURL}/js/select2.js"></script>
 <script src="{$assetsURL}/js/index.js"></script>
+<script>window.EdcLang = {$edcLang|default:'null'};</script>
+<script src="{$assetsURL}/js/edcUi.js"></script>
 <script src="{$assetsURL}/js/rebuild.js"></script>
-<div id="layers">
+{* The WHMCS ReinstallWidget: Rebuild Server / Cancel Installation in the toolbar, the server details below. *}
+<div id="layers" data-edc-service="{$serviceId}">
     <div class="lu-row">
-        <div id="reinstallTable" class="lu-col-md-12">
-            <div id="reinstallTable" class="lu-widget widgetActionComponent vueDatatableTable">
+        <div class="lu-col-md-12">
+            <div id="reinstallWidget" class="lu-widget lu-ed-no-padding-widget-content"
+                 data-edc-templates="{$caTemplates|escape}" data-edc-title="{$rebuildTitle|escape}" data-edc-hostname="{$rebuildHostname|escape}"
+                 data-edc-signature="{if $installationInformation.installing}installing:{$installationInformation.installationMessage|escape}{else}idle{/if}">
                 <div class="lu-widget__header">
                     <div class="lu-widget__top lu-top">
-                        <div class="lu-top__title">
-                            {$lang.serverCA.rebuild.mainContainer.osInstalationTable.table.reinstall}
+                        <div class="lu-top__title">{$lang.edcUi.rebuild_server}</div>
+                        <div class="lu-top__toolbar">
+                            {if $installationInformation.installing}
+                            <button type="button" class="lu-btn lu-btn--plain lu-btn--danger" data-edc-action="cancel">
+                                <i class="lu-btn__icon lu-zmdi lu-zmdi-close-circle-o"></i>
+                                <span class="lu-btn__text">{$lang.edcUi.cancel_installation}</span>
+                            </button>
+                            {else}
+                            <button type="button" class="lu-btn lu-btn--plain lu-btn--primary" data-edc-action="rebuild">
+                                <i class="lu-btn__icon lu-zmdi lu-zmdi-refresh"></i>
+                                <span class="lu-btn__text">{$lang.edcUi.rebuild_server}</span>
+                            </button>
+                            {/if}
                         </div>
                     </div>
                 </div>
                 <div class="lu-widget__body">
-                    <div id="reinstallTable" data-table-container="" data-check-container=""
-                         class="lu-t-c  datatableLoader">
-                        <div class="lu-t-c__mass-actions lu-top">
-                            <div class="lu-top__title"><span class="lu-badge lu-badge--primary lu-value">0</span> Items
-                                Selected
-                            </div>
-                            <div class="lu-top__toolbar"></div>
-                            <div class="drop-arrow"></div>
-                        </div>
-                        <div class="dataTables_wrapper no-footer">
-                            <div>
-                                <input id="instalationStatusForReload" type="hidden" value="{$installationInformation.installationStatus}">
-                                <table width="100%" role="grid"
-                                       class="lu-table lu-table--mob-collapsible dataTable dtr-column">
-                                    <thead>
-                                    </thead>
-                                    <tbody>
-                                    <tr role="row">
-                                        <td>{$lang.serverCA.rebuild.mainContainer.osInstalationTable.table.currentOS}</td>
-                                        {if $installationInformation.osIsCurrentlyBeingInstalled eq 'NO'}
-                                            {if $installationInformation.currentOS eq ''}
-                                                <td>{$lang.serverCA.rebuild.mainContainer.osInstalationTable.table.currentOS}</td>
-                                            {else}
-                                                <td><img width="32" height="32" src="{$installationInformation.path}"> {$installationInformation.currentOS}</td>
+                    <div class="lu-widget__content">
+                        <div id="reinstallTable">
+                            <div class="lu-t-c datatableLoader" data-table-container data-check-container>
+                                <div class="dataTables_wrapper no-footer">
+                                    <div class="lu-d-grid">
+                                        <table class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
+                                            <thead>
+                                            <tr role="row">
+                                                <th name="label"><span class="lu-table__text"></span></th>
+                                                <th name="value"><span class="lu-table__text"></span></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr class="lu-table-row">
+                                                <td><div><span class="lu-font-weight-bold">{$lang.edcUi.current_os}</span></div></td>
+                                                <td>
+                                                    <div class="lu-image-text">
+                                                        <div class="lu-m-r-1x"><img src="{$installationInformation.path}" alt=""></div>
+                                                        <span class="lu-text">{$installationInformation.currentOS|escape}</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="lu-table-row">
+                                                <td><div><span class="lu-font-weight-bold">{$lang.edcUi.host_information}</span></div></td>
+                                                <td><div>{if $installationInformation.hostname != ''}{$installationInformation.hostname|escape}{else}-{/if}</div></td>
+                                            </tr>
+                                            <tr class="lu-table-row">
+                                                <td><div><span class="lu-font-weight-bold">{$lang.edcUi.mac_address}</span></div></td>
+                                                <td><div>{if $installationInformation.macAddress != ''}{$installationInformation.macAddress|escape}{else}-{/if}</div></td>
+                                            </tr>
+                                            <tr class="lu-table-row">
+                                                <td><div><span class="lu-font-weight-bold">{$lang.edcUi.installation_in_progress}</span></div></td>
+                                                <td>{if $installationInformation.installing}<span class="lu-text-success">{$lang.edcUi.yes}</span>{else}<span class="lu-text-danger">{$lang.edcUi.no}</span>{/if}</td>
+                                            </tr>
+                                            {if $installationInformation.installing && $installationInformation.installationMessage != ''}
+                                            <tr class="lu-table-row">
+                                                <td><div><span class="lu-font-weight-bold">{$lang.edcUi.installation_status}</span></div></td>
+                                                <td><div>{$installationInformation.installationMessage|escape}</div></td>
+                                            </tr>
                                             {/if}
-                                        {else}
-                                            <td><img width="32" height="32" src="{$installationInformation.path}"> {$installationInformation.currentOS} - <b>{$installationInformation.installationStatus}</b> <div class="icon-container">
-                                                    <i class="loader"></i>
-                                                </div></td>
-                                        {/if}
-                                    </tr>
-                                    <tr role="row">
-                                        <td>{$lang.serverCA.rebuild.mainContainer.osInstalationTable.table.hostInformation}</td>
-                                        <td>{$installationInformation.hostInformation}</td>
-                                    </tr>
-                                    <tr role="row">
-                                        <td>{$lang.serverCA.rebuild.mainContainer.osInstalationTable.table.macAddress}</td>
-                                        <td>{$installationInformation.macAddress}</td>
-                                    </tr>
-                                    <tr role="row">
-                                        <td>{$lang.serverCA.rebuild.mainContainer.osInstalationTable.table.osIsCurrentlyBeingInstalled}</td>
-                                        {if $installationInformation.osIsCurrentlyBeingInstalled eq 'YES'}
-                                            <td><span class="lu-text-success">{$lang.Yes}</span></td>
-                                        {else}
-                                            <td><span class="lu-text-danger">{$lang.No}</span></td>
-                                        {/if}
-                                    </tr>
-                                    <tr role="row">
-                                        <td>{$lang.serverCA.rebuild.mainContainer.osInstalationTable.table.actions}</td>
-                                        <td>
-                                            {if $installationInformation.osIsCurrentlyBeingInstalled eq 'NO'}
-                                                <a onclick='generateRBModal(this,{$jsonEncodeinstallationInformation},{$caTemplates})' class="lu-btn lu-btn--primary" style="cursor: pointer;">
-                                                    <i class="lu-btn__icon lu-zmdi lu-zmdi-refresh-alt" aria-hidden="true"></i> <span
-                                                            class="lu-btn__text">{$lang.serverCA.rebuild.mainContainer.osInstalationTable.table.reinstall}<span></span></a>
-                                            {else}
-                                                <a onclick='generateCIModal(this,{$jsonEncodeinstallationInformation})' data-edc-modal="1" class="lu-btn lu-btn--danger" data-edc-modal-init="true" style="cursor: pointer;">
-                                                    <i class="lu-btn__icon lu-zmdi lu-zmdi-block-alt" aria-hidden="true"></i> <span
-                                                            class="lu-btn__text">{$lang.serverCA.rebuild.mainContainer.osInstalationTable.table.cancelInstallation}</span></a>
-                                            {/if}
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -93,5 +85,3 @@
         </div>
     </div>
 </div>
-
-

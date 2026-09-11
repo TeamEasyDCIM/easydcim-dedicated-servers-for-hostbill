@@ -33,6 +33,16 @@ class easydcim_controller extends HBController
         {
             $this->serviceActions->manageServiceActions($_GET['deviceButtonsAction']);
         }
+        // The Bandwidth widget's "Filter Bandwidth" period, as on the admin page.
+        if (isset($_GET['bandwidthPeriod']) && ($params['account']['options']['BlockBandwidthTable'] ?? '') != 'on')
+        {
+            $this->bandwidth->managePeriod($_GET);
+        }
+        // "Filter Bandwidth" saved for this service.
+        if (isset($_GET['edcSaveScope']))
+        {
+            \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ScopeSettings::handleSave($params['account']['id'] ?? null, $_GET);
+        }
         $assetsUrl = './includes/modules/Hosting/easydcim/templates/assets';
 
         $this->template->render(APPDIR_MODULES.'Hosting/easydcim/templates/service_details.tpl');
@@ -41,6 +51,11 @@ class easydcim_controller extends HBController
         $this->template->assign('metadata',$this->serverInformation->getMetadata($params['account']));
         $this->template->assign('configuration',$params['account']['options']);
         $this->template->assign('currentTemplate',$_SESSION['AppSettings']['UserTemplate']);
+        // One copy of the module's markup for every theme branch of service_details.tpl.
+        $this->template->assign('edcClientBlock', APPDIR_MODULES.'Hosting/easydcim/templates/clientarea_module.tpl');
+        $this->template->assign('serviceId', $params['account']['id'] ?? '');
+        $this->template->assign('edcLang', \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\UiLang::json());
+        $this->template->assign('edcScopes', \ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ScopeSettings::json($params['account']['id'] ?? null));
 
     }
 }
