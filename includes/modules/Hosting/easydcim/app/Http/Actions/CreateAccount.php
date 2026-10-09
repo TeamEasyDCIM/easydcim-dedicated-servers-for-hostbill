@@ -149,9 +149,10 @@ class CreateAccount
 
 
 
-        if(!empty($client->getAdditionalIPAddress()) || $client->getAdditionalIPAddress() != 0){
+        $additionalIPNumber = (int) $client->getAdditionalIPAddress();
+        if($additionalIPNumber > 0){
             $serviceModel->setAdditionalIps($this->getAdditionalIP($client))
-                ->setAdditionalIpsNumber($client->getAdditionalIPAddress());
+                ->setAdditionalIpsNumber($additionalIPNumber);
         }
 
 
@@ -211,7 +212,7 @@ class CreateAccount
      */
     private function getAdditionalIP(IClient $client)
     {
-        $additionalIP = $client->getAdditionalIPAddress();
+        $additionalIP = (int) $client->getAdditionalIPAddress();
         if ($additionalIP == 1)
         {
             return '/30';
