@@ -30,7 +30,7 @@ class Graphs
             $graphModel->setStart($dates['start']);
             $graphModel->setEnd($dates['end']);
             $graphData = $this->api->device->renderSpecifiedGraphs($graphModel);
-            $unit = $this->getDateUnitForLabels($graphData->labels);
+            $unit = $this->getDateUnitForLabels((array)($graphData->labels ?? []));
             $graphData->unit = $unit;
             self::jsonEncode((array)$graphData);
         } catch (\RuntimeException $e) {
@@ -58,6 +58,10 @@ class Graphs
     protected function getDateUnitForLabels(array $labels): string
     {
         $unit = 'day';
+
+        if (empty($labels)) {
+            return $unit;
+        }
 
         $startDate = new Carbon(reset($labels));
         $endDate = new Carbon(end($labels));
