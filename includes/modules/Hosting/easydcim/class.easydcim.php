@@ -6,7 +6,6 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\CreateAccount;
 use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\SuspendAccount;
 use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\UnsuspendAccount;
 use ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions\TerminateAccount;
-use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\ClientSync;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Synchronize;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
 use Illuminate\Database\Capsule\Manager as DB;
@@ -80,6 +79,12 @@ class easydcim extends HostingModule implements Observer
         ),
         'option10' =>array (
             'name'=> 'Additional IP Addresses',
+            'value' => '',
+            'type'=> 'input',
+            'default'=>false
+        ),
+        'option11' =>array (
+            'name'=> 'EasyDCIM Client ID',
             'value' => '',
             'type'=> 'input',
             'default'=>false
@@ -189,6 +194,9 @@ class easydcim extends HostingModule implements Observer
             case 'AdditionalIPs':
                 $this->details['option10']['value'] = $value;
                 break;
+            case 'EasyDCIMClientID':
+                $this->details['option11']['value'] = $value;
+                break;
         }
         $acc = HBLoader::LoadModel("Accounts");
         $acc->updateExtraDetails($this->account_details['id'], $this->getDetails());
@@ -238,6 +246,8 @@ class easydcim extends HostingModule implements Observer
                 return $this->details['option9']['value'];
             case 'AdditionalIPs':
                 return $this->details['option10']['value'];
+            case 'EasyDCIMClientID':
+                return $this->details['option11']['value'];
         }
     }
 
@@ -311,23 +321,6 @@ class easydcim extends HostingModule implements Observer
     }
 
     function after_cronrun($details) {
-    }
-
-    /**
-     * Mirror a HostBill client detail change onto their EasyDCIM user.
-     *
-     * HostBill hands over both versions of the record; the previous email is
-     * what finds the user, since the edit may be the email change itself.
-     */
-    function after_clientedit($details) {
-        try {
-            $serverModel = HBLoader::LoadModel("Servers");
-            $servers = $serverModel->findServersBy('module', 'easydcim');
-
-            (new ClientSync($servers))->handle((array) $details);
-        } catch (Exception $e) {
-            // Never let a sync failure block the client edit itself.
-        }
     }
 
     function before_displayadminheader($details) {
@@ -445,6 +438,10 @@ class easydcim extends HostingModule implements Observer
      *   stored order the first time a service-scoped call needs it and saves it
      *   through HostBill's own updateExtraDetails(). Rewriting the serialised
      *   blob here would risk every existing service for no gain.
+     *   `option11` (EasyDCIM Client ID, the impersonated EasyDCIM user) is
+     *   filled the same lazy way from the owner of the account's order - by
+     *   the cron, "Update Order Information" or the first client-area call
+     *   (EasyDCIMUserBinding).
      * - `billing/metered.yml` needs no registration; HostBill re-reads the file
      *   on demand (BillingModel_Metered::getAvailableVariables), so the new
      *   `powerUsage` variable appears as soon as the files are in place.
@@ -460,6 +457,8 @@ class easydcim extends HostingModule implements Observer
                 . 'This release talks to EasyDCIM API v3, which uses bearer tokens instead of the v2 API key. '
                 . 'Update the password field of every EasyDCIM server in HostBill with an API v3 token, '
                 . 'then use "Test Connection" to confirm it. '
+                . 'Accounts are now linked to their EasyDCIM user by ID (account detail "EasyDCIM Client ID") instead of by e-mail; '
+                . 'existing accounts are linked automatically from the owner of their EasyDCIM order. '
                 . 'New opt-in options: SSH Keys, Sensors, Meter Power Usage and Enable Stock Control.'
             );
         }

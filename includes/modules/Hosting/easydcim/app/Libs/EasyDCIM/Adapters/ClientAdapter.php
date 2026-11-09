@@ -46,6 +46,14 @@ class ClientAdapter implements IClient
      * @var integer|null
      */
     private $easyServiceID;
+
+    /**
+     * EasyDCIM user the account is linked to (account detail option11), see
+     * EasyDCIMUserBinding.
+     *
+     * @var string|null
+     */
+    private $easyClientID;
     /*
      * @var integer $serviceID
      */
@@ -348,6 +356,7 @@ class ClientAdapter implements IClient
         $this->easyOrderID  = $params['config']['extra_details']['option4'];
         $this->easyServerID = $params['config']['extra_details']['option5'];
         $this->easyServiceID = $params['config']['extra_details']['option9'] ?? null;
+        $this->easyClientID = $params['config']['extra_details']['option11'] ?? null;
     }
 
     /**
@@ -797,6 +806,16 @@ class ClientAdapter implements IClient
     public function getEasyServiceID()
     {
         return empty($this->easyServiceID) ? null : $this->easyServiceID;
+    }
+
+    /**
+     * EasyDCIM user ID the account is linked to, as stored (not validated).
+     *
+     * @return string|null
+     */
+    public function getEasyClientID()
+    {
+        return $this->easyClientID;
     }
 
     /**

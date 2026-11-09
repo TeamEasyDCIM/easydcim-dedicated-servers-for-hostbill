@@ -60,7 +60,7 @@ class widget_edsshkeys extends HostingWidget
 
         $this->params['clientsdetails'] = $module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($module->connection,$this->params);
-        $this->api = ApiClientFactory::fromClient($this->client);
+        $this->api = ApiClientFactory::fromClient($this->client, $module);
         $this->sshKeys = new SshKeys($this->api);
 
         if (isset($_GET['createSshKey']))

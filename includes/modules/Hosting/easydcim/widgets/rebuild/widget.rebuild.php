@@ -56,7 +56,7 @@ class widget_rebuild extends HostingWidget
         }
         $this->params['clientsdetails'] = $module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($module->connection,$this->params);
-        $this->api = ApiClientFactory::fromClient($this->client);
+        $this->api = ApiClientFactory::fromClient($this->client, $module);
         $this->rebuild = new Rebuild($this->api,$this->client,$this->params);
         if (isset($_GET['reloadRebuild']))
         {

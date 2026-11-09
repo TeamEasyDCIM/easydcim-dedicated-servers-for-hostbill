@@ -57,7 +57,7 @@ class widget_edreversedns extends HostingWidget
         }
         $this->params['clientsdetails'] = $module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($module->connection,$this->params);
-        $this->api = ApiClientFactory::fromClient($this->client);
+        $this->api = ApiClientFactory::fromClient($this->client, $module);
 
         // Reverse DNS is served by the DNS Manager addon; hide it when absent.
         if (!ExtensionChecker::isDnsManagerActive($this->api))

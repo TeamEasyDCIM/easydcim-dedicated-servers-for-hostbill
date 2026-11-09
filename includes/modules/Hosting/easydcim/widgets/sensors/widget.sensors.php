@@ -57,7 +57,7 @@ class widget_sensors extends HostingWidget
 
         $this->params['clientsdetails'] = $module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($module->connection,$this->params);
-        $this->api = ApiClientFactory::fromClient($this->client);
+        $this->api = ApiClientFactory::fromClient($this->client, $module);
         // Sensors are service-scoped in API v3; the context resolves that ID.
         $this->sensors = new Sensors($this->api, new ServiceContext($this->api, $this->client, $module));
 

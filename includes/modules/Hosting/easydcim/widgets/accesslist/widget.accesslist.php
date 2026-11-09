@@ -54,7 +54,7 @@ class widget_accesslist extends HostingWidget {
         }
         $this->params['clientsdetails'] = $module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($module->connection,$this->params);
-        $this->api = ApiClientFactory::fromClient($this->client);
+        $this->api = ApiClientFactory::fromClient($this->client, $module);
 
         // Without the Password Manager addon the section can only ever be empty.
         if (!ExtensionChecker::isPasswordManagerActive($this->api))

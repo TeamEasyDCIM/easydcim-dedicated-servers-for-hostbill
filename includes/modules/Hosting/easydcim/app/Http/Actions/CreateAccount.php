@@ -4,6 +4,7 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Http\Actions;
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\EasyDCIMConfigFactory;
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\EasyDCIMUserBinding;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\Emails;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\OrderActions;
 use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\SshPublicKey;
@@ -139,9 +140,14 @@ class CreateAccount
      */
     private function addOrder(IClient $client)
     {
-        $api = ApiClientFactory::fromClient($client);
+        $api = ApiClientFactory::fromClient($client, $this->module);
 
         $clientID = $this->getClientID($api, $client);
+        $this->bindEasyDCIMUser($client, (int) $clientID);
+
+        // Client API calls (the order's SSH key) run as the EasyDCIM user bound
+        // to this account; admin calls never carry the impersonation header.
+        $api->setImpersonateUser((int) $clientID);
 
         $request = new CreateOrderRequest('Server', (int) $clientID, (bool) $client->getBaseFeatures()['autoAccept'], $this->buildCriteria($client), $this->buildService($api, $client), null, (new OrderActions($this->params['options'] ?? []))->build());
 
@@ -258,7 +264,9 @@ class CreateAccount
      *
      * A `sshPublicKey` configurable option lets the client hand over a key at
      * order time. An ID is used as-is; a key body is registered against the
-     * EasyDCIM user first, since the order only accepts IDs.
+     * EasyDCIM user first, since the order only accepts IDs. An ID must belong
+     * to the EasyDCIM user of this account - the option is filled in by the
+     * client at order time.
      *
      * @return array<int>
      */
@@ -284,7 +292,7 @@ class CreateAccount
 
         if (is_numeric($value))
         {
-            return [(int) $value];
+            return $this->ownSshKeyIds($api, [(int) $value]);
         }
 
         if (!SshPublicKey::isValid($value))
@@ -311,6 +319,35 @@ class CreateAccount
         }
 
         return [];
+    }
+
+    /**
+     * Keep only SSH key IDs that belong to the impersonated EasyDCIM user.
+     *
+     * @param int[] $keyIds
+     * @return int[]
+     */
+    private function ownSshKeyIds(EasyDCIMClient $api, array $keyIds): array
+    {
+        try
+        {
+            $ownIds = array_map(static function ($key) {
+                return (int) $key->id;
+            }, $api->client()->sshKeys()->listAll());
+        }
+        catch (\Exception $e)
+        {
+            $ownIds = [];
+        }
+
+        $allowed = array_values(array_intersect($keyIds, $ownIds));
+
+        if (count($allowed) !== count($keyIds))
+        {
+            error_log('[EasyDCIM] SSH key ID from the order of account #' . $this->client->getAccountID() . ' does not belong to its EasyDCIM user; ignored.');
+        }
+
+        return $allowed;
     }
 
     /**
@@ -564,22 +601,73 @@ class CreateAccount
     }
 
     /**
-     * Get the EasyDCIM user ID to place the order for, creating the user first
-     * if EasyDCIM does not know this email address yet.
+     * Get the EasyDCIM user bound to this HostBill client, or create a new one.
+     *
+     * An existing EasyDCIM user is never linked only because its e-mail matches
+     * the (client-editable) HostBill e-mail: that requires an administrator to
+     * set the "EasyDCIM Client ID" detail of the account.
      *
      * $param $client insteandof ClientAdapter
      * $return integer
+     * @throws \Exception when an unlinked EasyDCIM user with this e-mail exists
      */
     private function getClientID(EasyDCIMClient $api, IClient $client)
     {
-        $existing = $api->admin()->users()->fetchByEmail($client->getEmail());
+        $accountId = (int) $client->getAccountID();
+        $hostbillClientId = (int) $client->getUserID();
+        $serverId = (int) ($this->params['server_id'] ?? 0);
 
-        if (!empty($existing->data === null ? null : $existing->data->id))
+        // Binding already present on this account (e.g. entered by an administrator)
+        $boundUserId = EasyDCIMUserBinding::getForAccount($accountId, $this->module);
+
+        if ($boundUserId !== null)
         {
-            return $existing->data->id;
+            return $boundUserId;
+        }
+
+        // EasyDCIM user already bound to this HostBill client on the same EasyDCIM
+        // instance, or derived from the orders of the client's existing accounts
+        $boundUserId = EasyDCIMUserBinding::forHostBillClient($hostbillClientId, $serverId);
+
+        if ($boundUserId === null)
+        {
+            $boundUserId = EasyDCIMUserBinding::bindClientAccountsFromOrders($hostbillClientId, $serverId, $api, $accountId);
+        }
+
+        if ($boundUserId !== null)
+        {
+            return $boundUserId;
+        }
+
+        $existing = $api->admin()->users()->fetchByEmail($client->getEmail());
+        $existingId = $existing->data === null ? null : $existing->data->id;
+
+        if (!empty($existingId))
+        {
+            if (EasyDCIMUserBinding::isBoundToOtherClient((int) $existingId, $hostbillClientId, $serverId))
+            {
+                throw new \Exception('An EasyDCIM user with this e-mail address is already linked to another HostBill client. It was not linked to this account.');
+            }
+
+            throw new \Exception('An EasyDCIM user with this e-mail address already exists but is not linked to this HostBill client. '
+                . 'Verify that it belongs to this client, enter its ID in the "EasyDCIM Client ID" field of this account and run Create again.');
         }
 
         return $this->createClient($api, $client);
+    }
+
+    /**
+     * Persist the EasyDCIM user that owns this account (account detail
+     * "EasyDCIM Client ID").
+     *
+     * @throws \Exception If the account cannot be linked to this EasyDCIM user
+     */
+    private function bindEasyDCIMUser(IClient $client, int $easydcimUserId): void
+    {
+        if (EasyDCIMUserBinding::bindIfUnbound((int) $client->getAccountID(), $easydcimUserId, $this->module) !== $easydcimUserId)
+        {
+            throw new \Exception('Could not link this account to EasyDCIM user #' . $easydcimUserId . '. Check the "EasyDCIM Client ID" field of the account.');
+        }
     }
 
     /**

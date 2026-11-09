@@ -260,6 +260,8 @@ class Cron
             throw new Exception('Order ID is empty!');
         }
 
+        $this->synchronizeOrderOwner($hosting, $order);
+
         if (in_array($lastModuleAction, ['CreateAccount', 'SuspendAccount', 'UnsuspendAccount', 'TerminateAccount'])
             && !empty($serverID)) {
             $this->synchronizeActiveServices($hosting, $order);
@@ -268,6 +270,28 @@ class Cron
         if (empty($serverID))
         {
             $this->synchronizeServices($hosting, $order);
+        }
+    }
+
+    /**
+     * Link the account to the owner of its EasyDCIM order: accounts provisioned
+     * before bindings existed get linked, and a change of the order owner made by
+     * an EasyDCIM administrator is followed (EasyDCIMUserBinding).
+     *
+     * The binding is written to hb_accounts directly, so the row this run works
+     * on is refreshed - the later steps re-serialise its extra details.
+     */
+    private function synchronizeOrderOwner($hosting, OrderData $order)
+    {
+        if ((int) $order->user_id <= 0) {
+            return;
+        }
+
+        $before = EasyDCIMUserBinding::getForAccount((int) $hosting->id);
+        $after  = EasyDCIMUserBinding::syncWithOrderOwner((int) $hosting->id, (int) $order->user_id);
+
+        if ($after !== $before) {
+            $hosting->extra_details = DB::table('hb_accounts')->where('id', '=', $hosting->id)->value('extra_details');
         }
     }
 

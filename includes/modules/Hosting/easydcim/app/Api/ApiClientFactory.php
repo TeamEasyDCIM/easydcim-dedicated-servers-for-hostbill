@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\Servers\EasyDCIMv2\App\Api;
 
+use ModulesGarden\Servers\EasyDCIMv2\App\Helpers\EasyDCIMUserBinding;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Client\Configuration;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Support\Logger;
@@ -15,13 +16,21 @@ use ModulesGarden\Servers\EasyDCIMv2\App\Libs\EasyDCIM\Interfaces\IClient;
  * the pair to Configuration.
  *
  * Client-scoped v3 endpoints (`api/v3/client/...`) act on behalf of a user and
- * require an X-Impersonate-User header. The impersonation target is set here
- * from the HostBill client's email, so callers can use $api->client()->... with
- * no further setup.
+ * require an X-Impersonate-User header. The impersonation target is the
+ * EasyDCIM user ID linked to the account (account detail "EasyDCIM Client ID",
+ * see EasyDCIMUserBinding), so callers can use $api->client()->... with no
+ * further setup. It is never derived from the HostBill client e-mail, which
+ * clients can change themselves. With no linked user nothing is set and client
+ * calls fail closed (RequestBuilder refuses them).
  */
 class ApiClientFactory
 {
-    public static function fromClient(IClient $client): EasyDCIMClient
+    /**
+     * @param object|null $module the module instance loaded for the account, when
+     *                            one is in scope. Only then may an account that is
+     *                            not linked yet be linked from its order owner.
+     */
+    public static function fromClient(IClient $client, $module = null): EasyDCIMClient
     {
         if (!$client->getServerHostname()) {
             throw new \Exception('API: Server IP and hostname is empty.');
@@ -40,13 +49,46 @@ class ApiClientFactory
             'verify_ssl' => false,
         ]));
 
-        $email = $client->getEmail();
+        $easydcimUserId = self::resolveImpersonatedUser($client, $api, $module);
 
-        if (!empty($email)) {
-            $api->setImpersonateUser($email);
+        if ($easydcimUserId !== null) {
+            $api->setImpersonateUser($easydcimUserId);
         }
 
         return $api;
+    }
+
+    /**
+     * EasyDCIM user to impersonate for the account the adapter was built for, or
+     * null outside an account context (server-level calls, cron).
+     *
+     * Without a module instance the stored binding is only read: writing it
+     * behind the back of a module that later saves its own details would be
+     * undone by that save.
+     */
+    protected static function resolveImpersonatedUser(IClient $client, EasyDCIMClient $api, $module = null): ?int
+    {
+        $accountId = (int) $client->getAccountID();
+
+        if ($accountId <= 0) {
+            return null;
+        }
+
+        try {
+            $userId = EasyDCIMUserBinding::parseId(method_exists($client, 'getEasyClientID') ? $client->getEasyClientID() : null);
+
+            if ($userId !== null) {
+                return $userId;
+            }
+
+            return $module !== null
+                ? EasyDCIMUserBinding::resolveForAccount($accountId, $api, $module)
+                : EasyDCIMUserBinding::getForAccount($accountId);
+        } catch (\Throwable $e) {
+            error_log('[EasyDCIM] Could not resolve the EasyDCIM user of account #' . $accountId . ': ' . $e->getMessage());
+
+            return null;
+        }
     }
 
     /**

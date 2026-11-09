@@ -56,7 +56,7 @@ class widget_isoimages extends HostingWidget
         $this->params['clientsdetails'] = $module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($module->connection,$this->params);
         $this->client->getEasyServerID();
-        $this->api = ApiClientFactory::fromClient($this->client);
+        $this->api = ApiClientFactory::fromClient($this->client, $module);
         $this->isoImages = new IsoImages($this->api,$this->client);
         if (isset($_GET['createIsoImage']))
         {

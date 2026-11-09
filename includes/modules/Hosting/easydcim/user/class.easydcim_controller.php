@@ -18,7 +18,7 @@ class easydcim_controller extends HBController
         $this->serverDetails = $this->module->connection;
         $params['account']['clientsdetails'] = $this->module->getClient();
         $this->client = (new EasyDCIMConfigFactory())->fromParams($this->serverDetails,$params['account']);
-        $this->api = ApiClientFactory::fromClient($this->client);
+        $this->api = ApiClientFactory::fromClient($this->client, $this->module);
         $this->serverInformation = new ServerInformation($this->api,$this->client);
         $this->generalInformation = new GeneralInformation($this->api,$this->client);
         $this->locationInformation = new LocationInformation($this->api,$this->client);

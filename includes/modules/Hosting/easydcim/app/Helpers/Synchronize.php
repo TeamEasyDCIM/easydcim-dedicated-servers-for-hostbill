@@ -4,7 +4,6 @@ namespace ModulesGarden\Servers\EasyDCIMv2\App\Helpers;
 
 use ModulesGarden\Servers\EasyDCIMv2\App\Api\ApiClientFactory;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\EasyDCIMClient;
-use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Requests\Admin\User\UpdateUserRequest;
 use ModulesGarden\Servers\EasyDCIMv2\App\Libs\Api\EasyDCIM\Models\Responses\Admin\Device\DeviceData;
 use ModulesGarden\Servers\EasyDCIMv2\App\UI\admin\productConfig\sections\EmailNotifications;
 
@@ -23,7 +22,7 @@ class Synchronize
 
     public function __construct($client, $module, $mailer)
     {
-        $this->api = ApiClientFactory::fromClient($client);
+        $this->api = ApiClientFactory::fromClient($client, $module);
         $this->client = $client;
         $this->module = $module;
         $this->mailer = $mailer;
@@ -34,9 +33,9 @@ class Synchronize
      */
     public function synchronize($clientData, $server)
     {
-        $this->synchronizeClientDetails($clientData);
-
         $info = $this->getOrderInformation($this->client->getEasyOrderID());
+
+        $this->synchronizeOrderOwner($info);
 
         $service = $info->data === null ? null : $info->data->service;
 
@@ -83,64 +82,17 @@ class Synchronize
     }
 
     /**
-     * Push the HostBill client's contact details onto their EasyDCIM user.
-     *
-     * The `after_clientedit` hook is what normally keeps these in step (see
-     * ClientSync). This is the reconcile for everything the hook cannot catch:
-     * clients that existed before the module was installed, and edits made
-     * while EasyDCIM was unreachable.
-     *
-     * A failure here must not abort the synchronisation - the order and device
-     * data matter more than the contact details being a run behind.
+     * Link the account to the EasyDCIM user that owns its order, following an
+     * owner change made by an EasyDCIM administrator (EasyDCIMUserBinding).
      */
-    protected function synchronizeClientDetails($clientData): void
+    protected function synchronizeOrderOwner($info): void
     {
-        $email = $this->client->getEmail();
+        $orderUserId = $info->data === null ? 0 : (int) $info->data->user_id;
 
-        if (empty($email))
+        if ($orderUserId > 0)
         {
-            return;
+            EasyDCIMUserBinding::syncWithOrderOwner((int) $this->client->getAccountID(), $orderUserId, $this->module);
         }
-
-        try
-        {
-            $existing = $this->api->admin()->users()->fetchByEmail($email);
-
-            if (empty($existing->data === null ? null : $existing->data->id))
-            {
-                return;
-            }
-
-            $current = $existing->data;
-
-            $request = new UpdateUserRequest(null, null, $this->pick($clientData, 'firstname', $current->firstname), $this->pick($clientData, 'lastname', $current->lastname), $this->pick($clientData, 'companyname', $current->company), $this->pick($clientData, 'phonenumber', null));
-
-            if ($request->toArray() === [])
-            {
-                return;
-            }
-
-            $this->api->admin()->users()->update($current->id, $request);
-        }
-        catch (\Exception $e)
-        {
-            // Contact details are best-effort; the rest of the sync continues.
-        }
-    }
-
-    /**
-     * The HostBill value when it differs from what EasyDCIM already holds.
-     */
-    private function pick($clientData, string $field, ?string $current): ?string
-    {
-        $value = is_array($clientData) ? ($clientData[$field] ?? null) : null;
-
-        if ($value === null || $value === '' || (string) $value === (string) $current)
-        {
-            return null;
-        }
-
-        return (string) $value;
     }
 
     /**
